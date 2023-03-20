@@ -1,33 +1,57 @@
-# WanSen ERP UI
-Wansen erp system front-end ui
+# Ant Design Pro
 
-## Getting Started with Create React App
+This project is initialized with [Ant Design Pro](https://pro.ant.design). Follow is the quick guide for how to use.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Environment Prepare
 
-## Available Scripts
+Install `node_modules`:
 
-In the project directory, you can run:
+```bash
+npm install
+```
 
-### `npm start`
+or
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```bash
+yarn
+```
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Provided Scripts
 
-### `npm test`
+Ant Design Pro provides some useful script to help you quick start and build with web project, code style check and test.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Scripts provided in `package.json`. It's safe to modify or add additional script:
 
-### `npm run build`
+### Start project
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+npm start
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Build project
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+npm run build
+```
+
+### Check code style
+
+```bash
+npm run lint
+```
+
+You can also use script to auto fix some lint error:
+
+```bash
+npm run lint:fix
+```
+
+### Test code
+
+```bash
+npm test
+```
+
+## More
+
+You can view full document on our [official website](https://pro.ant.design). And welcome any feedback in our [github](https://github.com/ant-design/ant-design-pro).
