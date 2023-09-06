@@ -17,7 +17,6 @@
                 <a-form-item label="单据日期" :labelCol="labelCol" :wrapperCol="wrapperCol">
                   <a-range-picker
                     style="width:100%"
-                    v-model="queryParam.createTimeRange"
                     format="YYYY-MM-DD"
                     :placeholder="['开始时间', '结束时间']"
                     @change="onDateChange"
