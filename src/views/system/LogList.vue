@@ -20,7 +20,6 @@
                 <a-form-item label="创建时间" :labelCol="labelCol" :wrapperCol="wrapperCol">
                   <a-range-picker
                     style="width: 100%"
-                    v-model="queryParam.createTimeRange"
                     format="YYYY-MM-DD"
                     :placeholder="['开始时间', '结束时间']"
                     @change="onDateChange"
@@ -88,6 +87,7 @@
 <script>
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import JEllipsis from '@/components/jeecg/JEllipsis'
+  import { getAction } from '@api/manage'
 
   export default {
     name: "LogList",
@@ -101,7 +101,6 @@
         queryParam: {
           operation:'',
           content:'',
-          createTimeRange:[],
           userInfo: '',
           clientIp:'',
           status:''
