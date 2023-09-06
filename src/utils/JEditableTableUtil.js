@@ -26,7 +26,6 @@ export { FormTypes, VALIDATE_NO_PASSED }
  * 获取指定的 $refs 对象
  * 有时候可能会遇到组件未挂载到页面中的情况，导致无法获取 $refs 中的某个对象
  * 这个方法可以等待挂载完成之后再返回 $refs 的对象，避免报错
- * @author sunjianlei
  **/
 export function getRefPromise(vm, name) {
   return new Promise((resolve) => {
@@ -47,8 +46,6 @@ export function getRefPromise(vm, name) {
  * 一次性验证主表单和所有的次表单
  * @param form 主表单 form 对象
  * @param cases 接收一个数组，每项都是一个JEditableTable实例
- * @returns {Promise<any>}
- * @author sunjianlei
  */
 export function validateFormAndTables(form, cases) {
 
@@ -79,7 +76,6 @@ export function validateFormAndTables(form, cases) {
  * 验证并获取一个或多个表格的所有值
  * @param cases 接收一个数组，每项都是一个JEditableTable实例
  * @param deleteTempId 是否删除临时ID，如果设为true，行编辑就不返回新增行的ID，ID需要后台生成
- * @author sunjianlei
  */
 export function validateTables(cases, deleteTempId) {
   if (!(cases instanceof Array)) {
@@ -117,7 +113,6 @@ export function validateTables(cases, deleteTempId) {
  * @param form 主表单 form 对象
  * @param cases 接收一个数组，每项都是一个JEditableTable实例
  * @returns {Promise<any>}
- * @author sunjianlei
  */
 export function getListData(form, cases) {
   let options = {}
@@ -142,7 +137,6 @@ export function getListData(form, cases) {
  * 不验证直接获取一个或多个表格的所有值
  * @param cases 接收一个数组，每项都是一个JEditableTable实例
  * @param deleteTempId 是否删除临时ID，如果设为true，行编辑就不返回新增行的ID，ID需要后台生成
- * @author sunjianlei
  */
 export function getListTables(cases, deleteTempId) {
   if (!(cases instanceof Array)) {

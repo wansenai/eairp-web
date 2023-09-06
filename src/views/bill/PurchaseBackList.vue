@@ -180,7 +180,7 @@
     </a-col>
   </a-row>
 </template>
-<!-- by jisheng hua-->
+
 <script>
   import PurchaseBackModal from './modules/PurchaseBackModal'
   import BillDetail from './dialog/BillDetail'

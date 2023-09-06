@@ -263,8 +263,8 @@
             this.requestFailed(err)
             this.Logout();
           } else if(res.data.msgTip == 'tenant is black'){
-            if(loginName === 'jsh') {
-              err.message = 'jsh用户已停用，请注册租户进行体验！';
+            if(loginName === 'wansen') {
+              err.message = 'wansen用户已停用，请注册租户进行体验！';
             } else {
               err.message = '用户所属的租户被禁用';
             }

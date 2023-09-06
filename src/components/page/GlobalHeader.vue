@@ -88,7 +88,7 @@
         headerBarFixed: false,
         systemTitle: window.SYS_TITLE,
         companyName: '',
-        //update-begin--author:sunjianlei---date:20190508------for: 顶部导航栏过长时显示更多按钮-----
+        // 顶部导航栏过长时显示更多按钮
         topMenuStyle: {
           headerIndexLeft: {},
           topNavHeader: {},
@@ -111,14 +111,14 @@
         }
       }
     },
-    //update-end--author:sunjianlei---date:20190508------for: 顶部导航栏过长时显示更多按钮-----
+    // 顶部导航栏过长时显示更多按钮
     mounted() {
       window.addEventListener('scroll', this.handleScroll)
-      //update-begin--author:sunjianlei---date:20190508------for: 顶部导航栏过长时显示更多按钮-----
+      //顶部导航栏过长时显示更多按钮
       if (this.mode === 'topmenu') {
         this.buildTopMenuStyle()
       }
-      //update-end--author:sunjianlei---date:20190508------for: 顶部导航栏过长时显示更多按钮-----
+      // 顶部导航栏过长时显示更多按钮
     },
     created () {
       this.initSystemConfig()
@@ -139,7 +139,7 @@
       toggle() {
         this.$emit('toggle')
       },
-      //update-begin--author:sunjianlei---date:20190508------for: 顶部导航栏过长时显示更多按钮-----
+      // 顶部导航栏过长时显示更多按钮
       buildTopMenuStyle() {
         if (this.mode === 'topmenu') {
           if (this.device === 'mobile') {
@@ -167,13 +167,13 @@
           }
         })
       },
-      //update-begin--author:sunjianlei---date:20190508------for: 顶部导航栏过长时显示更多按钮-----
+      // 顶部导航栏过长时显示更多按钮
     }
   }
 </script>
 
 <style lang="less" scoped>
-  /* update_begin author:scott date:20190220 for: 缩小首页布局顶部的高度*/
+  /* 缩小首页布局顶部的高度 */
 
   @height: 49px;
 
@@ -229,6 +229,6 @@
     padding-left:16px
   }
 
-  /* update_end author:scott date:20190220 for: 缩小首页布局顶部的高度*/
+  /* 缩小首页布局顶部的高度 */
 
 </style>

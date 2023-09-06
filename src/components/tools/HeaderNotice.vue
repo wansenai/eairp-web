@@ -79,7 +79,7 @@
     mounted() {
       this.loadData();
       //this.timerFun();
-      //this.initWebSocket(); //注释by jishenghua  2021年1月13日
+      //this.initWebSocket();
      // this.heartCheckFun();
     },
     destroyed: function () { // 离开页面生命周期函数

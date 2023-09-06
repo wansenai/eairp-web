@@ -207,8 +207,6 @@ function getNoAuthCols(pre){
 
 /**
  * 额外增加方法【用于行编辑组件】
- * date: 2020-04-05
- * author: scott
  * @param pre
  * @returns {*[]}
  */

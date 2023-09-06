@@ -104,13 +104,11 @@
         type:[String,Array],
         required:false
       },
-      // update-begin- --- author:wangshuai ------ date:20190929 ---- for:Jupload组件增加是否能够点击
       disabled:{
         type:Boolean,
         required:false,
         default: false
       },
-      // update-end- --- author:wangshuai ------ date:20190929 ---- for:Jupload组件增加是否能够点击
       //此属性被废弃了
       triggerChange:{
         type: Boolean,
@@ -118,7 +116,6 @@
         default: false
       },
       /**
-       * update -- author:lvdandan -- date:20190219 -- for:Jupload组件增加是否返回url，
        * true：仅返回url
        * false：返回fileName filePath fileSize
        */

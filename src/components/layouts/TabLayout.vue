@@ -246,8 +246,8 @@
         this.linkList = this.linkList.filter(item => item !== key)
         index = index >= this.linkList.length ? this.linkList.length - 1 : index
         this.activePage = this.linkList[index]
-        //update-begin--Author:scott  Date:20201015 for：路由缓存问题，关闭了tab页时再打开就不刷新 #842
-        //关闭页面则从缓存cache_included_routes中删除路由，下次点击菜单会重新加载页面
+        // 路由缓存问题，关闭了tab页时再打开就不刷新
+        // 关闭页面则从缓存cache_included_routes中删除路由，下次点击菜单会重新加载页面
         let cacheRouterArray = Vue.ls.get(CACHE_INCLUDED_ROUTES) || []
         if (removeRoute && removeRoute[0]) {
           let componentName = removeRoute[0].meta.componentName
@@ -264,7 +264,7 @@
             item.hasOpen = false
           }
         })
-        //update-end--Author:scott  Date:20201015 for：路由缓存问题，关闭了tab页时再打开就不刷新 #842
+        // 路由缓存问题，关闭了tab页时再打开就不刷新
       },
       onContextmenu(e) {
         const pagekey = this.getPageKey(e.target)
@@ -379,10 +379,6 @@
 </script>
 
 <style lang="less">
-
-  /*
- * by ji-shenghua qq 75-27-18-920
- */
 
   .page-transition-enter {
     opacity: 0;

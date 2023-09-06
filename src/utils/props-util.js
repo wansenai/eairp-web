@@ -98,11 +98,9 @@ export function getStyle(ele, camel) {
     data = ele.$vnode.data
   }
 
-  // update-begin-author:sunjianlei date:20200303 for: style 和 staticStyle 可以共存
   let style = data.style || {}
   let staticStyle = data.staticStyle
   staticStyle = staticStyle ? objectCamelize(data.staticStyle) : {}
-  // update-end-author:sunjianlei date:20200303 for: style 和 staticStyle 可以共存
 
   if (typeof style === 'string') {
     style = parseStyleText(style, camel)

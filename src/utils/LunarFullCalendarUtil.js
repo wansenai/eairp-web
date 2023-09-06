@@ -1,11 +1,7 @@
 /**
  * LunarFullCalendar 公共 js
  *
- * @version 1.0.0
- * @author sunjianlei
- *
  * */
-
 import { getRefPromise } from '@/utils/JEditableTableUtil'
 
 /* 日历的视图类型 */

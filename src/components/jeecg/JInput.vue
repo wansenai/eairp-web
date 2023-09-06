@@ -33,11 +33,11 @@
           this.initVal();
         }
       },
-      // update-begin author:sunjianlei date:20200225 for:当 type 变化的时候重新计算值 ------
+      // 当 type 变化的时候重新计算值 ------
       type() {
         this.backValue({ target: { value: this.inputVal } })
       },
-      // update-end author:sunjianlei date:20200225 for:当 type 变化的时候重新计算值 ------
+      // 当 type 变化的时候重新计算值 ------
     },
     model: {
       prop: 'value',
