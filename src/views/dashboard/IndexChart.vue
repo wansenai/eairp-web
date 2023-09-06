@@ -133,7 +133,7 @@
               </div>
               <a-button type="link" v-if="showWeixinSpan()">万森ERP微信小程序</a-button>
             </a-popover>
-            &copy; 2015-2030 {{systemTitle}} V3.2
+            &copy; 2023-2033 {{systemTitle}} V1.1
           </div>
           <a-tag v-if="tenant.type==0" color="blue">试用到期：{{tenant.expireTime}}</a-tag>
           <a-tag v-if="tenant.type==0" color="blue">试用用户：{{tenant.userCurrentNum}}/{{tenant.userNumLimit}}</a-tag>
@@ -272,7 +272,7 @@
       },
       showWeixinSpan() {
         let host = window.location.host
-        if(host === 'cloud.huaxiaerp.vip' || host === 'cloud.huaxiaerp.com') {
+        if(host === 'erp.wansen.cloud' || host === 'erp.wansen.cloud') {
           return true
         } else {
           return false

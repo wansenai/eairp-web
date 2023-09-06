@@ -393,9 +393,6 @@
                         </span>
                       </a-tooltip>
                     </template>
-                    <!-- update-end-author:taoyan date:0827 for：popup -->
-
-                    <!-- update-begin-author:jsh date:20210308 for：popupJsh -->
                     <template v-else-if="col.type === formTypes.popupJsh">
                       <a-tooltip
                         :key="i"
@@ -420,9 +417,7 @@
                         </span>
                       </a-tooltip>
                     </template>
-                    <!-- update-end-author:jsh date:20210308 for：popupJsh -->
-
-                    <!-- update-beign-author:taoyan date:0827 for：文件/图片逻辑新增 -->
+                    <!-- 文件/图片逻辑新增 -->
                     <div v-else-if="col.type === formTypes.file" :key="i">
                       <template v-if="uploadValues[id] != null" v-for="(file,fileKey) of [(uploadValues[id]||{})]">
                         <div :key="fileKey" style="position: relative;">

@@ -1,4 +1,3 @@
-<!-- by j i s h e n g hua -->
 <template>
   <a-row :gutter="24">
     <a-col :md="24">

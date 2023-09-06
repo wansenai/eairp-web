@@ -74,7 +74,7 @@
 </script>
 <style lang="less" scoped>
 
-  /* update_begin author:sunjianlei date:20190509 for: 修改侧边导航栏滚动条的样式 */
+  /* 修改侧边导航栏滚动条的样式 */
   .sider {
     @scrollBarSize: 10px;
 
@@ -140,11 +140,11 @@
 
   }
 
-  /* update_end author:sunjianlei date:20190509 for: 修改侧边导航栏滚动条的样式 */
+  /* 修改侧边导航栏滚动条的样式 */
 
 </style>
 
-<!-- update_begin author:sunjianlei date:20190530 for: 选中首页的时候不显示背景颜色 -->
+<!-- 选中首页的时候不显示背景颜色 -->
 <style lang="less">
   .ant-menu.ant-menu-root {
     & > .ant-menu-item:first-child {
@@ -174,4 +174,4 @@
     }
   }
 </style>
-<!-- update_end author:sunjianlei date:20190530 for: 选中首页的时候不显示背景颜色 -->
+<!-- 选中首页的时候不显示背景颜色 -->

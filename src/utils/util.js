@@ -141,15 +141,15 @@ function generateChildRouters (data) {
     if (item.children && item.children.length > 0) {
       menu.children = [...generateChildRouters( item.children)];
     }
-    //--update-begin----author:scott---date:20190320------for:根据后台菜单配置，判断是否路由菜单字段，动态选择是否生成路由（为了支持参数URL菜单）------
-    //判断是否生成路由
+    // 根据后台菜单配置，判断是否路由菜单字段，动态选择是否生成路由（为了支持参数URL菜单）
+    // 判断是否生成路由
     if(item.route && item.route === '0'){
       //console.log(' 不生成路由 item.route：  '+item.route);
       //console.log(' 不生成路由 item.path：  '+item.path);
     }else{
       routers.push(menu);
     }
-    //--update-end----author:scott---date:20190320------for:根据后台菜单配置，判断是否路由菜单字段，动态选择是否生成路由（为了支持参数URL菜单）------
+    // 根据后台菜单配置，判断是否路由菜单字段，动态选择是否生成路由（为了支持参数URL菜单）
   }
   return routers
 }

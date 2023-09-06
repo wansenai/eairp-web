@@ -12,7 +12,7 @@
                 <a-col>
                   <a href="/">
                     <span class="title">{{systemTitle}}</span>
-                    <small class="desc">V3.2</small>
+                    <small class="desc">V1.1</small>
                   </a>
                 </a-col>
               </a-row>
@@ -23,47 +23,47 @@
       </div>
     </div>
     <div class="footer" v-if="device === 'desktop'">
-      <div class="third-party-platform" v-if="isShowRight">
-        <div class="platform-info" @click="openAndroid()">
-          <img src="/static/Android.png" style="height:30px" >
-          <span>安卓版</span>
-        </div>
-        <div style="width:50px"></div>
-        <div class="platform-info" @click="openIPhone()">
-          <img src="/static/iPhone.png" style="height:30px" >
-          <span>iPhone版</span>
-        </div>
-        <div style="width:50px"></div>
-        <div class="platform-info" @click="openMiniProgram()">
-          <img src="/static/mini-program.png" style="height:30px" >
-          <span>小程序版</span>
-        </div>
-      </div>
+<!--      <div class="third-party-platform" v-if="isShowRight">-->
+<!--        <div class="platform-info" @click="openAndroid()">-->
+<!--          <img src="/static/Android.png" style="height:30px" >-->
+<!--          <span>安卓版</span>-->
+<!--        </div>-->
+<!--        <div style="width:50px"></div>-->
+<!--        <div class="platform-info" @click="openIPhone()">-->
+<!--          <img src="/static/iPhone.png" style="height:30px" >-->
+<!--          <span>iPhone版</span>-->
+<!--        </div>-->
+<!--        <div style="width:50px"></div>-->
+<!--        <div class="platform-info" @click="openMiniProgram()">-->
+<!--          <img src="/static/mini-program.png" style="height:30px" >-->
+<!--          <span>小程序版</span>-->
+<!--        </div>-->
+<!--      </div>-->
       <p>
-        <span v-if="this.isShowRight">华丽软件</span>
+        <span v-if="this.isShowRight">万森软件</span>
         © 2015-2030 {{systemTitle}} - All Right Reserved 版权所有
         <a style="color:#00458a; padding-right: 10px" :href="systemUrl" target="_blank">官方网站</a>
-        <span v-if="this.isShowRight"><a href="http://beian.miit.gov.cn/" target="_blank">苏ICP备2021042833号</a></span>
+        <span v-if="this.isShowRight"><a href="http://beian.miit.gov.cn/" target="_blank">陕ICP备2023007248号</a></span>
       </p>
     </div>
-    <a-modal v-model="isAndroidShow" title="微信扫一扫下载安卓版" width="200" centered>
-      <template slot="footer">
-        <a-button key="back" @click="handleAndroidCancel">取消</a-button>
-      </template>
-      <div class="platform-modal"><img src="/static/android-code.png" style="width:200px" /></div>
-    </a-modal>
-    <a-modal v-model="isIphoneShow" title="微信扫一扫下载iPhone版" width="200" centered>
-      <template slot="footer">
-        <a-button key="back" @click="handleIphoneCancel">取消</a-button>
-      </template>
-      <div class="platform-modal"><img src="/static/iphone-code.png" style="width:200px" /></div>
-    </a-modal>
-    <a-modal v-model="isMiniProgramShow" title="微信扫一扫使用小程序版" width="200" centered>
-      <template slot="footer">
-        <a-button key="back" @click="handleMiniProgramCancel">取消</a-button>
-      </template>
-      <div class="platform-modal"><img src="/static/weixin-code.png" style="width:200px;" /></div>
-    </a-modal>
+<!--    <a-modal v-model="isAndroidShow" title="微信扫一扫下载安卓版" width="200" centered>-->
+<!--      <template slot="footer">-->
+<!--        <a-button key="back" @click="handleAndroidCancel">取消</a-button>-->
+<!--      </template>-->
+<!--      <div class="platform-modal"><img src="/static/android-code.png" style="width:200px" /></div>-->
+<!--    </a-modal>-->
+<!--    <a-modal v-model="isIphoneShow" title="微信扫一扫下载iPhone版" width="200" centered>-->
+<!--      <template slot="footer">-->
+<!--        <a-button key="back" @click="handleIphoneCancel">取消</a-button>-->
+<!--      </template>-->
+<!--      <div class="platform-modal"><img src="/static/iphone-code.png" style="width:200px" /></div>-->
+<!--    </a-modal>-->
+<!--    <a-modal v-model="isMiniProgramShow" title="微信扫一扫使用小程序版" width="200" centered>-->
+<!--      <template slot="footer">-->
+<!--        <a-button key="back" @click="handleMiniProgramCancel">取消</a-button>-->
+<!--      </template>-->
+<!--      <div class="platform-modal"><img src="/static/weixin-code.png" style="width:200px;" /></div>-->
+<!--    </a-modal>-->
   </div>
 </template>
 
@@ -93,7 +93,7 @@
     },
     created () {
       let host = window.location.host
-      if(host === 'cloud.huaxiaerp.vip' || host === 'cloud.huaxiaerp.com') {
+      if(host === 'erp.wansen.cloud' || host === 'erp.wansen.cloud') {
         this.isShowRight = true
       } else {
         this.isShowRight = false
