@@ -1,88 +1,53 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">首页</RouterLink>
-        <RouterLink to="/about">关于</RouterLink>
-        <RouterLink to="/test">测试</RouterLink>
-        <RouterLink to="/other">其他</RouterLink>
-        <RouterLink to="/data">数据</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+  <ConfigProvider :locale="getAntdLocale" :prefix-cls="cssPrefix">
+    <AppProvider>
+      <RouterView />
+    </AppProvider>
+  </ConfigProvider>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
+<script lang="ts" setup>
+  import { ConfigProvider } from 'ant-design-vue';
+  import { AppProvider } from '/@/components/Application';
+  import { useTitle } from '/@/hooks/web/useTitle';
+  import { useLocale } from '/@/locales/useLocale';
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
+  import 'dayjs/locale/zh-cn';
+  import { ref, watch } from 'vue';
+  import { useAppStore } from './store/modules/app';
+  import { CssPrefixEnum } from './enums/appEnum';
 
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
+  // support Multi-language
+  const { getAntdLocale } = useLocale();
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
+  const cssPrefix = ref<string>();
 
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
+  const appStore = useAppStore();
 
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
+  const changePrefix = function (value: string) {
+    if (value === CssPrefixEnum.DARK) {
+      cssPrefix.value = CssPrefixEnum.DARK;
+    } else {
+      cssPrefix.value = CssPrefixEnum.DEFAULT;
+    }
+  };
 
-nav a:first-of-type {
-  border: 0;
-}
+  changePrefix(appStore.getDarkMode);
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
+  watch(
+    () => appStore.getDarkMode,
+    (value, _oldValue) => {
+      changePrefix(value);
+    },
+  );
 
-  .logo {
-    margin: 0 2rem 0 0;
-  }
+  ConfigProvider.config({
+    prefixCls: cssPrefix.value,
+    // theme: {
+    //   primaryColor: '#262626',
+    // },
+  });
 
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
-</style>
+  // Listening to page changes and dynamically changing site titles
+  useTitle();
+</script>
