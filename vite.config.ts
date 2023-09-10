@@ -16,26 +16,14 @@ export default defineApplicationConfig({
     },
     server: {
       proxy: {
-        '/sys-api': {
-          target: 'http://localhost:9100',
+        '/wansenerp-api': {
+          target: 'http://localhost:9999',
           changeOrigin: true,
           ws: true,
-          rewrite: (path) => path.replace(new RegExp(`^/sys-api`), ''),
+          rewrite: (path) => path.replace(new RegExp(`^/wansenerp-api`), ''),
           // only https
           // secure: false
-        },
-        '/fms-api': {
-          target: 'http://localhost:9102',
-          changeOrigin: true,
-          ws: true,
-          rewrite: (path) => path.replace(new RegExp(`^/fms-api`), ''),
-        },
-        '/mms-api': {
-          target: 'http://localhost:9104',
-          changeOrigin: true,
-          ws: true,
-          rewrite: (path) => path.replace(new RegExp(`^/mms-api`), ''),
-        },
+        }
       },
     },
   },
