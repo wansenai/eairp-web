@@ -15,27 +15,16 @@ export default defineApplicationConfig({
       ],
     },
     server: {
+      port: 3000,
       proxy: {
-        '/sys-api': {
-          target: 'http://localhost:9100',
+        '/erp-api': {
+          target: 'http://localhost:9999',
           changeOrigin: true,
           ws: true,
-          rewrite: (path) => path.replace(new RegExp(`^/sys-api`), ''),
+          // rewrite: (path) => path.replace(/^\/api/, ''),
           // only https
           // secure: false
-        },
-        '/fms-api': {
-          target: 'http://localhost:9102',
-          changeOrigin: true,
-          ws: true,
-          rewrite: (path) => path.replace(new RegExp(`^/fms-api`), ''),
-        },
-        '/mms-api': {
-          target: 'http://localhost:9104',
-          changeOrigin: true,
-          ws: true,
-          rewrite: (path) => path.replace(new RegExp(`^/mms-api`), ''),
-        },
+        }
       },
     },
   },

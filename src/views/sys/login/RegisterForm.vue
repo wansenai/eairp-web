@@ -4,7 +4,7 @@
     <Form class="p-4 enter-x" :model="formData" :rules="getFormRules" ref="formRef">
       <div class="pt-4 pb-4">
         <ARadioGroup v-model:value="formData.msgType" button-style="solid" size="large">
-          <ARadioButton value="captcha"> {{ t('sys.login.captcha') }} </ARadioButton>
+          <ARadioButton value="captcha"> {{ t('sys.login.account') }} </ARadioButton>
           <ARadioButton value="email"> {{ t('sys.login.email') }} </ARadioButton>
           <ARadioButton value="sms"> {{ t('sys.login.mobile') }} </ARadioButton>
         </ARadioGroup>
@@ -73,7 +73,7 @@
         <Input size="large" v-model:value="formData.captcha" :placeholder="t('sys.login.captcha')">
           <template #suffix>
             <img
-              :src="formData.imgPath"
+              :src="formData.imagePath"
               class="absolute right-0 h-full cursor-pointer"
               @click="getCaptchaData()"
             />
@@ -139,7 +139,7 @@
     captcha: '',
     captchaId: '',
     captchaVerified: '',
-    imgPath: '',
+    imagePath: '',
     policy: false,
   });
 
@@ -170,7 +170,7 @@
         email: data.email,
       });
 
-      if (result.code === 0) {
+      if (result.code === "A0000") {
         setTimeout(() => {
           handleBackLogin();
         }, 2000);
@@ -187,7 +187,7 @@
         email: data.target,
       });
 
-      if (result.code === 0) {
+      if (result.code === "A0000") {
         setTimeout(() => {
           handleBackLogin();
         }, 2000);
@@ -203,7 +203,7 @@
         phoneNumber: data.target,
       });
 
-      if (result.code === 0) {
+      if (result.code === "A0000") {
         setTimeout(() => {
           handleBackLogin();
         }, 2000);
@@ -217,14 +217,14 @@
   async function handleSendCaptcha(): Promise<boolean> {
     if (formData.msgType == 'email') {
       const result = await getEmailCaptcha({ email: formData.target });
-      if (result.code == 0) {
+      if (result.code == "A0000") {
         return true;
       } else {
         return false;
       }
     } else {
       const result = await getSmsCaptcha({ phoneNumber: formData.target });
-      if (result.code == 0) {
+      if (result.code === "A0000") {
         return true;
       } else {
         return false;
@@ -234,9 +234,9 @@
 
   async function getCaptchaData() {
     const captcha = await getCaptcha('none').then();
-    if (captcha.code === 0) {
+    if (captcha.code === "A0000") {
       formData.captchaId = captcha.data.captchaId;
-      formData.imgPath = captcha.data.imgPath;
+      formData.imagePath = captcha.data.imagePath;
     }
   }
 

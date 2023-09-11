@@ -9,13 +9,13 @@ export interface BaseListResp<T> {
 }
 
 export interface BaseDataResp<T> {
-  code: number;
+  code: string;
   msg: string;
   data: T;
 }
 
 export interface BaseResp {
-  code?: number;
+  code?: string;
   msg: string;
 }
 

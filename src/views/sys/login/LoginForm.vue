@@ -10,7 +10,7 @@
   >
     <div class="pt-4 pb-4">
       <ARadioGroup v-model:value="formData.msgType" button-style="solid" size="large">
-        <ARadioButton value="captcha"> {{ t('sys.login.captcha') }} </ARadioButton>
+        <ARadioButton value="captcha"> {{ t('sys.login.account') }} </ARadioButton>
         <ARadioButton value="email"> {{ t('sys.login.email') }} </ARadioButton>
         <ARadioButton value="sms"> {{ t('sys.login.mobile') }} </ARadioButton>
       </ARadioGroup>
@@ -76,7 +76,7 @@
       >
         <template #suffix>
           <img
-            :src="formData.imgPath"
+            :src="formData.imagePath"
             class="absolute right-0 h-full cursor-pointer"
             @click="getCaptchaData()"
           />
@@ -171,7 +171,7 @@
     password: '',
     captcha: '',
     captchaId: '',
-    imgPath: '',
+    imagePath: '',
     target: '',
     captchaVerified: '',
   });
@@ -238,23 +238,23 @@
   // get captcha
   async function getCaptchaData() {
     const captcha = await getCaptcha('none');
-    if (captcha.code === 0) {
+    if (captcha.code === "A0000") {
       formData.captchaId = captcha.data.captchaId;
-      formData.imgPath = captcha.data.imgPath;
+      formData.imagePath = captcha.data.imagePath;
     }
   }
 
   async function handleSendCaptcha(): Promise<boolean> {
     if (formData.msgType == 'email') {
       const result = await getEmailCaptcha({ email: formData.target });
-      if (result.code == 0) {
+      if (result.code == "A0000") {
         return true;
       } else {
         return false;
       }
     } else {
       const result = await getSmsCaptcha({ phoneNumber: formData.target });
-      if (result.code == 0) {
+      if (result.code == "A0000") {
         return true;
       } else {
         return false;
@@ -269,7 +269,7 @@
       state: new Date().getMilliseconds() + '-' + provider,
       provider: provider,
     });
-    if (result.code === 0) window.open(result.data.URL);
+    if (result.code === "A0000") window.open(result.data.URL);
   }
 </script>
 

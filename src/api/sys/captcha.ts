@@ -4,9 +4,9 @@ import { ErrorMessageMode } from '/#/axios';
 import { defHttp } from '/@/utils/http/axios';
 
 enum Api {
-  GetCaptcha = '/sys-api/captcha',
-  SendEmailCaptcha = '/sys-api/captcha/email',
-  SendSmsCaptcha = '/sys-api/captcha/sms',
+  GetCaptcha = '/common/captcha',
+  SendEmailCaptcha = 'captcha/email',
+  SendSmsCaptcha = 'captcha/sms',
 }
 
 /**

@@ -63,16 +63,16 @@ export default {
     mobileSignInFormTitle: '手机登录',
     qrSignInFormTitle: '二维码登录',
     emailSignUpFormTitle: '邮箱注册',
-    signUpFormTitle: '注册',
+    signUpFormTitle: '注册租户',
     forgetFormTitle: '重置密码',
 
-    signInTitle: '分布式后台管理系统',
-    signInDesc: '快速搭建强大的分布式系统',
-    policy: '我同意xxx隐私政策',
+    signInTitle: '为企业提供下一代智能ERP系统软件',
+    signInDesc: '© 2023-2033 Wan Sen ERP - All Right Reserved 版权所有',
+    policy: '我同意《万森ERP系统使用》隐私政策',
     scanSign: `扫码后点击"确认"，即可完成登录`,
 
     loginButton: '登录',
-    registerButton: '注册',
+    registerButton: '注册租户',
     rememberMe: '记住我',
     forgetPassword: '忘记密码?',
     otherSignIn: '其他登录方式',
@@ -89,7 +89,7 @@ export default {
     emailPlaceholder: '请输入邮箱',
     smsPlaceholder: '请输入验证码',
     mobilePlaceholder: '请输入手机号码',
-    policyPlaceholder: '勾选后才能注册',
+    policyPlaceholder: '勾选后才能注册租户',
     diffPwd: '两次输入密码不一致',
 
     username: '用户名',
@@ -99,6 +99,7 @@ export default {
     smsCode: '短信验证码',
     mobile: '手机号码',
     captcha: '验证码',
+    account: '用户名'
   },
   menu: {
     // noun

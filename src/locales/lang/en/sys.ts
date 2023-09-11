@@ -69,7 +69,7 @@ export default {
     qrSignInFormTitle: 'Qr code sign in',
     signInFormTitle: 'Sign in',
     emailSignUpFormTitle: 'Sign up by email',
-    signUpFormTitle: 'Sign up',
+    signUpFormTitle: 'Sign up tenant',
     forgetFormTitle: 'Reset password',
 
     signInTitle: 'Distributed management system',
@@ -78,7 +78,7 @@ export default {
     scanSign: `scanning the code to complete the login`,
 
     loginButton: 'Sign in',
-    registerButton: 'Sign up',
+    registerButton: 'Sign up tenant',
     rememberMe: 'Remember me',
     forgetPassword: 'Forget Password?',
     otherSignIn: 'Sign in with',
@@ -105,6 +105,7 @@ export default {
     smsCode: 'SMS code',
     mobile: 'Mobile',
     captcha: 'Captcha',
+    account: 'Account'
   },
   menu: {
     // noun
