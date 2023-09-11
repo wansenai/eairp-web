@@ -34,8 +34,13 @@ body {
   }
 }
 
-a:focus,
-a:active,
+a {
+  &:focus,
+  &:active {
+    outline: none;
+  }
+}
+
 button,
 div,
 svg,

@@ -15,12 +15,13 @@ export default defineApplicationConfig({
       ],
     },
     server: {
+      port: 3000,
       proxy: {
-        '/wansenerp-api': {
+        '/erp-api': {
           target: 'http://localhost:9999',
           changeOrigin: true,
           ws: true,
-          rewrite: (path) => path.replace(new RegExp(`^/wansenerp-api`), ''),
+          // rewrite: (path) => path.replace(/^\/api/, ''),
           // only https
           // secure: false
         }
