@@ -106,11 +106,10 @@ export const useUserStore = defineStore({
       try {
         const { goHome = true, mode, ...loginParams } = params;
         const data = await login(loginParams, mode);
-        if (data.code !== 0) {
+        if (data.code !== '00000') {
           return Promise.reject(null);
         }
-        const { token } = data.data;
-
+        const token= data.data.token;
         // save token
         this.setToken(token);
         return this.afterLoginAction(goHome);
@@ -130,7 +129,7 @@ export const useUserStore = defineStore({
       try {
         const { goHome = true, mode, ...loginParams } = params;
         const data = await loginByEmail(loginParams, mode);
-        if (data.code !== 0) {
+        if (data.code !== '00000') {
           return Promise.reject(null);
         }
         const { token } = data.data;
@@ -154,7 +153,7 @@ export const useUserStore = defineStore({
       try {
         const { goHome = true, mode, ...loginParams } = params;
         const data = await loginBySms(loginParams, mode);
-        if (data.code !== 0) {
+        if (data.code !== '00000') {
           return Promise.reject(null);
         }
         const { token } = data.data;

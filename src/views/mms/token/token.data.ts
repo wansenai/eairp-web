@@ -91,8 +91,8 @@ export const searchFormSchema: FormSchema[] = [
     rules: [{ max: 50 }],
   },
   {
-    field: 'nickname',
-    label: t('sys.user.nickname'),
+    field: 'name',
+    label: t('sys.user.name'),
     component: 'Input',
     colProps: { span: 8 },
     rules: [{ max: 20 }],

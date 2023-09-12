@@ -1,6 +1,6 @@
 export interface FormData {
   avatar: string;
-  nickname: string;
+  name: string;
   email: string;
   mobile: string;
 }

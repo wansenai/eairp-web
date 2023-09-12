@@ -145,7 +145,7 @@
       }
 
       async function handleDelete(record: Recordable) {
-        if (record.nickname === 'admin') {
+        if (record.name === 'admin') {
           createMessage.warn(t('common.notAllowDeleteAdminData'));
           return;
         }

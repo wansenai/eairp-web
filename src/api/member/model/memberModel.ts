@@ -10,7 +10,7 @@ export interface MemberInfo {
   status?: number;
   username?: string;
   password?: string;
-  nickname?: string;
+  name?: string;
   rankId?: number;
   mobile?: string;
   email?: string;

@@ -185,7 +185,7 @@ export default {
   user: {
     // noun
     userList: '用户列表',
-    nickname: '昵称',
+    me: '昵称',
     avatar: '头像',
     oldPassword: '旧密码',
     newPassword: '新密码',

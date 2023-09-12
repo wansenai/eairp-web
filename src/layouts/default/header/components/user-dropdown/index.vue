@@ -4,7 +4,7 @@
       <img :class="`${prefixCls}__header`" :src="getUserInfo.avatar" />
       <span :class="`${prefixCls}__info hidden md:block`">
         <span :class="`${prefixCls}__name  `" class="truncate">
-          {{ getUserInfo.nickname }}
+          {{ getUserInfo.name }}
         </span>
         <span class="ml-4"
           ><Tag v-for="role in roleTag" :key="role" color="blue">{{ role }}</Tag></span
@@ -87,8 +87,8 @@
       const go = useGo();
 
       const getUserInfo = computed(() => {
-        const { nickname = '', avatar, desc } = userStore.getUserInfo || {};
-        return { nickname, avatar: avatar || headerImg, desc };
+        const { name = '', avatar, desc } = userStore.getUserInfo || {};
+        return { name, avatar: avatar || headerImg, desc };
       });
 
       const roleTag = computed(() => {

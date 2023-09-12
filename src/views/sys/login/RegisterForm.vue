@@ -170,7 +170,7 @@
         email: data.email,
       });
 
-      if (result.code === "A0000") {
+      if (result.code === "00000") {
         setTimeout(() => {
           handleBackLogin();
         }, 2000);
@@ -187,7 +187,7 @@
         email: data.target,
       });
 
-      if (result.code === "A0000") {
+      if (result.code === "00000") {
         setTimeout(() => {
           handleBackLogin();
         }, 2000);
@@ -203,7 +203,7 @@
         phoneNumber: data.target,
       });
 
-      if (result.code === "A0000") {
+      if (result.code === "00000") {
         setTimeout(() => {
           handleBackLogin();
         }, 2000);
@@ -217,14 +217,14 @@
   async function handleSendCaptcha(): Promise<boolean> {
     if (formData.msgType == 'email') {
       const result = await getEmailCaptcha({ email: formData.target });
-      if (result.code == "A0000") {
+      if (result.code === "00000") {
         return true;
       } else {
         return false;
       }
     } else {
       const result = await getSmsCaptcha({ phoneNumber: formData.target });
-      if (result.code === "A0000") {
+      if (result.code === "00000") {
         return true;
       } else {
         return false;
@@ -234,7 +234,7 @@
 
   async function getCaptchaData() {
     const captcha = await getCaptcha('none').then();
-    if (captcha.code === "A0000") {
+    if (captcha.code === "00000") {
       formData.captchaId = captcha.data.captchaId;
       formData.imagePath = captcha.data.imagePath;
     }

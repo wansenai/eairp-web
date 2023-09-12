@@ -18,8 +18,8 @@ export const columns: BasicColumn[] = [
     width: 30,
   },
   {
-    title: t('sys.user.nickname'),
-    dataIndex: 'nickname',
+    title: t('sys.user.name'),
+    dataIndex: 'name',
     width: 30,
   },
   {
@@ -79,8 +79,8 @@ export const searchFormSchema: FormSchema[] = [
     rules: [{ max: 50 }],
   },
   {
-    field: 'nickname',
-    label: t('sys.user.nickname'),
+    field: 'name',
+    label: t('sys.user.name'),
     component: 'Input',
     colProps: { span: 8 },
     rules: [{ max: 40 }],
@@ -139,8 +139,8 @@ export const formSchema: FormSchema[] = [
     rules: [{ max: 50 }],
   },
   {
-    field: 'nickname',
-    label: t('sys.user.nickname'),
+    field: 'name',
+    label: t('sys.user.name'),
     required: true,
     component: 'Input',
     rules: [{ max: 40 }],

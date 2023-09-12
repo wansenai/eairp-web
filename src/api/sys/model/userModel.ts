@@ -9,7 +9,7 @@ export interface UserInfo {
   updatedAt?: number;
   status?: number;
   username?: string;
-  nickname?: string;
+  name?: string;
   password?: string;
   description?: string;
   homePath?: string;
@@ -29,7 +29,7 @@ export type UserListResp = BaseListResp<UserInfo>;
 
 export interface UserProfile {
   avatar: string;
-  nickname: string;
+  name: string;
   email: string;
   mobile: string;
 }
@@ -114,7 +114,7 @@ export interface GetUserInfoModel {
   // 用户名
   username: string;
   // 昵称
-  nickname: string;
+  name: string;
   // 头像
   avatar: string;
   // 介绍

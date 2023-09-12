@@ -24,8 +24,8 @@
           <a-input v-model:value="formdata.avatar" v-show="false" />
         </AFormItem>
 
-        <AFormItem :label="t('sys.user.nickname')" name="nickname" :rules="[{ required: true }]">
-          <a-input v-model:value="formdata.nickname"
+        <AFormItem :label="t('sys.user.name')" name="name" :rules="[{ required: true }]">
+          <a-input v-model:value="formdata.name"
         /></AFormItem>
 
         <AFormItem :label="t('sys.login.mobile')" name="mobile">
@@ -93,7 +93,7 @@
 
   const formdata = reactive<FormData>({
     avatar: '',
-    nickname: '',
+    name: '',
     email: '',
     mobile: '',
   });
@@ -104,8 +104,8 @@
 
   async function getProfile() {
     const result = await getUserProfile();
-    if (result.code === 0) {
-      formdata.nickname = result.data.nickname;
+    if (result.code == "00000") {
+      formdata.name = result.data.name;
       formdata.email = result.data.email;
       formdata.mobile = result.data.mobile;
       formdata.avatar = result.data.avatar;
@@ -117,11 +117,11 @@
   async function handleSubmit() {
     const result = await updateProfile({
       avatar: formdata.avatar,
-      nickname: formdata.nickname,
+      name: formdata.name,
       email: formdata.email,
       mobile: formdata.mobile,
     });
-    if (result.code === 0) message.success(result.msg, 3);
+    if (result.code == "00000") message.success(result.msg, 3);
   }
 
   async function handleChangePasswordSubmit() {
