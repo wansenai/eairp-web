@@ -6,10 +6,10 @@ import { MenuInfo, MenuListResp, RoleMenuResp } from './model/menuModel';
 enum Api {
   CreateMenu = '/sys-api/menu/create',
   UpdateMenu = '/sys-api/menu/update',
-  GetMenuList = '/sys-api/menu/list',
+  GetMenuList = '/sysRole/menu',
   DeleteMenu = '/sys-api/menu/delete',
   GetMenuById = '/sys-api/menu',
-  GetMenuListByRole = '/sys-api/menu/role/list',
+  GetMenuListByRole = '/sysRole/menu',
 }
 
 /**

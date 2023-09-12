@@ -32,7 +32,7 @@ enum Api {
   RegisterBySms = '/sys-api/user/register_by_sms',
   Logout = '/sys-api/user/logout',
   GetUserInfo = '/user/info',
-  GetPermCode = '/sys-api/user/perm',
+  GetPermCode = '/user/perm',
   Profile = '/sys-api/user/profile',
   ChangePassword = '/sys-api/user/change_password',
   ResetPasswordByEmail = '/sys-api/user/reset_password_by_email',

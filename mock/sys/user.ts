@@ -8,7 +8,7 @@ const fakeCodeList: any = {
 };
 export default [
   {
-    url: '/sys-api/user/perm',
+    url: '/user/',
     timeout: 200,
     method: 'get',
     response: () => {

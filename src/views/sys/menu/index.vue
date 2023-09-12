@@ -86,7 +86,7 @@
 
       async function handleDelete(record: Recordable) {
         const result = await deleteMenu({ id: record.id }, 'message');
-        if (result.code === 0) {
+        if (result.code == "00000") {
           await reload();
         }
       }

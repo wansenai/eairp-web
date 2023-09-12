@@ -74,7 +74,7 @@
         }
 
         const result = unref(isUpdate) ? await updateMenu(values) : await createMenu(values);
-        if (result.code === 0) {
+        if (result.code == "00000") {
           closeDrawer();
           emit('success');
         }

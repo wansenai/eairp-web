@@ -56,7 +56,6 @@ interface Meta {
 }
 
 /**
- *  author: ryan
  *  @description: menu list response model
  */
 export type MenuListResp = BaseListResp<MenuInfo>;
