@@ -193,7 +193,7 @@ export default {
   user: {
     // noun
     userList: 'User List',
-    nickname: 'Nickname',
+    name: 'name',
     avatar: 'Avatar',
     oldPassword: 'Old Password',
     newPassword: 'New Password',
