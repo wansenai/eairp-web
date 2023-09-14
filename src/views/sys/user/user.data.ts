@@ -23,9 +23,19 @@ export const columns: BasicColumn[] = [
     width: 30,
   },
   {
+    title: t('sys.role.roleTitle'),
+    dataIndex: 'roleTitle',
+    width: 30,
+  },
+  {
     title: t('sys.login.email'),
     dataIndex: 'email',
-    width: 50,
+    width: 40,
+  },
+  {
+    title: t('sys.user.phoneNumber'),
+    dataIndex: 'phoneNumber',
+    width: 40,
   },
   {
     title: t('common.status'),

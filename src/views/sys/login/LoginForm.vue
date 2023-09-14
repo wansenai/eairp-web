@@ -115,8 +115,7 @@
 
     <div class="flex justify-evenly enter-x" :class="`${prefixCls}-sign-in-way`">
       <GithubFilled @click="oauthLoginHandler('github')" />
-      <!-- <WechatFilled @click="oauthLoginHandler('wechat')" />
-      <AlipayCircleFilled @click="oauthLoginHandler('alipay')" /> -->
+      <WechatFilled @click="oauthLoginHandler('wechat')" />
       <GoogleCircleFilled @click="oauthLoginHandler('google')" />
       <!-- <TwitterCircleFilled @click="oauthLoginHandler('twitter')" /> -->
     </div>

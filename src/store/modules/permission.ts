@@ -224,7 +224,9 @@ export const usePermissionStore = defineStore({
           try {
             await this.changePermissionCode();
             const menus = await getMenuListByRole();
+            console.info(menus)
             const menuTree = array2tree(menus.data.data);
+            console.info(menuTree)
             routeList = menuTree as AppRouteRecordRaw[];
           } catch (error) {
             console.error(error);

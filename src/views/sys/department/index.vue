@@ -1,21 +1,8 @@
 <template>
   <div>
     <BasicTable @register="registerTable">
-      <template #tableTitle>
-        <Button
-          type="primary"
-          danger
-          preIcon="ant-design:delete-outlined"
-          v-if="showDeleteButton"
-          @click="handleBatchDelete()"
-        >
-          {{ t('common.delete') }}
-        </Button>
-      </template>
       <template #toolbar>
-        <a-button type="primary" @click="handleCreate">
-          {{ t('sys.department.addDepartment') }}
-        </a-button>
+        <a-button type="primary" @click="handleCreate"> 新增部门 </a-button>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
@@ -29,7 +16,7 @@
                 icon: 'ant-design:delete-outlined',
                 color: 'error',
                 popConfirm: {
-                  title: t('common.deleteConfirm'),
+                  title: '是否确认删除',
                   placement: 'left',
                   confirm: handleDelete.bind(null, record),
                 },
@@ -39,114 +26,78 @@
         </template>
       </template>
     </BasicTable>
-    <DepartmentDrawer @register="registerDrawer" @success="handleSuccess" />
+    <DeptModal @register="registerModal" @success="handleSuccess" />
   </div>
 </template>
 <script lang="ts">
-  import { createVNode, defineComponent, ref } from 'vue';
-  import { Modal } from 'ant-design-vue';
-  import { ExclamationCircleOutlined } from '@ant-design/icons-vue/lib/icons';
-  import { BasicTable, useTable, TableAction } from '/@/components/Table';
-  import { Button } from '/@/components/Button';
+import { defineComponent } from 'vue';
 
-  import { useDrawer } from '/@/components/Drawer';
-  import DepartmentDrawer from './DepartmentDrawer.vue';
-  import { useI18n } from 'vue-i18n';
+import { BasicTable, useTable, TableAction } from '/@/components/Table';
+import { getDepartmentList} from '/@/api/sys/department';
 
-  import { columns, searchFormSchema } from './department.data';
-  import { getDepartmentList, deleteDepartment } from '/@/api/sys/department';
+import { useModal } from '/@/components/Modal';
+import DeptModal from './DepartmentDrawer.vue';
 
-  export default defineComponent({
-    name: 'DepartmentManagement',
-    components: { BasicTable, DepartmentDrawer, TableAction, Button },
-    setup() {
-      const { t } = useI18n();
-      const selectedIds = ref<number[] | string[]>();
-      const showDeleteButton = ref<boolean>(false);
+import { columns, searchFormSchema } from './department.data';
 
-      const [registerDrawer, { openDrawer }] = useDrawer();
-      const [registerTable, { reload }] = useTable({
-        title: t('sys.department.departmentList'),
-        api: getDepartmentList,
-        columns,
-        formConfig: {
-          labelWidth: 120,
-          schemas: searchFormSchema,
-        },
-        isTreeTable: true,
-        useSearchForm: true,
-        showTableSetting: true,
-        bordered: true,
-        showIndexColumn: false,
-        clickToRowSelect: false,
-        actionColumn: {
-          width: 30,
-          title: t('common.action'),
-          dataIndex: 'action',
-          fixed: undefined,
-        },
-        rowKey: 'id',
-        rowSelection: {
-          type: 'checkbox',
-          onChange: (selectedRowKeys, _selectedRows) => {
-            selectedIds.value = selectedRowKeys as number[];
-            showDeleteButton.value = selectedRowKeys.length > 0;
-          },
-        },
+export default defineComponent({
+  name: 'DeptManagement',
+  components: { BasicTable, DeptModal, TableAction },
+  setup() {
+    const [registerModal, { openModal }] = useModal();
+    const [registerTable, { reload }] = useTable({
+      title: '部门列表',
+      api: getDepartmentList,
+      columns,
+      formConfig: {
+        labelWidth: 120,
+        schemas: searchFormSchema,
+      },
+      pagination: false,
+      striped: false,
+      useSearchForm: true,
+      showTableSetting: true,
+      bordered: true,
+      showIndexColumn: false,
+      canResize: false,
+      actionColumn: {
+        width: 80,
+        title: '操作',
+        dataIndex: 'action',
+        // slots: { customRender: 'action' },
+        fixed: undefined,
+      },
+    });
+
+    function handleCreate() {
+      openModal(true, {
+        isUpdate: false,
       });
+    }
 
-      function handleCreate() {
-        openDrawer(true, {
-          isUpdate: false,
-        });
-      }
+    function handleEdit(record: Recordable) {
+      openModal(true, {
+        record,
+        isUpdate: true,
+      });
+    }
 
-      function handleEdit(record: Recordable) {
-        openDrawer(true, {
-          record,
-          isUpdate: true,
-        });
-      }
+    function handleDelete(record: Recordable) {
+      console.log(record);
+    }
 
-      async function handleDelete(record: Recordable) {
-        const result = await deleteDepartment({ ids: [record.id] });
-        if (result.code === 0) {
-          await reload();
-        }
-      }
+    function handleSuccess() {
+      reload();
+    }
 
-      async function handleBatchDelete() {
-        Modal.confirm({
-          title: t('common.deleteConfirm'),
-          icon: createVNode(ExclamationCircleOutlined),
-          async onOk() {
-            const result = await deleteDepartment({ ids: selectedIds.value as number[] });
-            if (result.code === 0) {
-              showDeleteButton.value = false;
-              await reload();
-            }
-          },
-          onCancel() {
-            console.log('Cancel');
-          },
-        });
-      }
-
-      async function handleSuccess() {
-        await reload();
-      }
-
-      return {
-        t,
-        registerTable,
-        registerDrawer,
-        handleCreate,
-        handleEdit,
-        handleDelete,
-        handleSuccess,
-        handleBatchDelete,
-        showDeleteButton,
-      };
-    },
-  });
+    return {
+      registerTable,
+      registerModal,
+      handleCreate,
+      handleEdit,
+      handleDelete,
+      handleSuccess,
+    };
+  },
+});
 </script>

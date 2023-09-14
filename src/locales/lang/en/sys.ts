@@ -204,6 +204,7 @@ export default {
     editUser: 'Edit User',
     changePassword: 'Change Password',
     forceLoggingOut: 'Force logging out',
+    phoneNumber: 'Phone Number'
   },
   init: {
     // noun
@@ -221,7 +222,7 @@ export default {
     navigation: 'Navigation',
     info: 'System Information',
     // notification
-    welcome: 'Welcome to use Simple Admin',
+    welcome: 'Welcome to use WanSen ERP',
   },
   dictionary: {
     // noun

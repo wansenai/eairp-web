@@ -185,7 +185,7 @@ export default {
   user: {
     // noun
     userList: '用户列表',
-    me: '昵称',
+    name: '昵称',
     avatar: '头像',
     oldPassword: '旧密码',
     newPassword: '新密码',
@@ -196,6 +196,7 @@ export default {
     editUser: '编辑用户',
     changePassword: '修改密码',
     forceLoggingOut: '强制登出',
+    phoneNumber: "电话号码"
   },
   init: {
     // noun
@@ -213,7 +214,7 @@ export default {
     navigation: '快捷导航',
     info: '系统信息',
     // notification
-    welcome: '欢迎使用 Simple Admin',
+    welcome: '欢迎使用 WanSen ERP',
   },
   dictionary: {
     // noun
