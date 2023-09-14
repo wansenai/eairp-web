@@ -4,7 +4,9 @@
 
 ## Project setup
 ```
-npm install
+npm install -g pnpm
+
+pnpm install
 ```
 
 ### Compiles and hot-reloads for development
@@ -14,12 +16,14 @@ npm run serve
 
 ### Compiles and minifies for production
 ```
-npm run build
+pnpm build
+
+pnpm preview
 ```
 
-### Lints and fixes files
+### view dist 
 ```
-npm run lint
+pnpm preview:dist
 ```
 
 ### Customize configuration
