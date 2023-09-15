@@ -69,7 +69,6 @@
 
   import { columns, searchFormSchema } from './user.data';
   import { getUserList, deleteUser } from '/@/api/sys/user';
-  import { useRoleStore } from '/@/store/modules/role';
   import { logout } from '/@/api/sys/token';
   import { useMessage } from '/@/hooks/web/useMessage';
   import Row from 'ant-design-vue/es/grid/Row';
@@ -97,10 +96,6 @@
       const searchInfo = reactive<Recordable>({});
 
       const [registerDrawer, { openDrawer }] = useDrawer();
-      const roleStoreData = useRoleStore();
-
-      // get role data
-      roleStoreData.getRoleInfoFromServer();
 
       const [registerTable, { reload, getSelectRows }] = useTable({
         title: t('sys.user.userList'),
@@ -151,7 +146,7 @@
         }
 
         const result = await deleteUser({ ids: [record.id] });
-        if (result.code === 0) {
+        if (result.code == "00000") {
           await reload();
         }
       }
@@ -169,7 +164,7 @@
             }
 
             const result = await deleteUser({ ids: ids });
-            if (result.code === 0) {
+            if (result.code == "00000") {
               await reload();
             }
           },

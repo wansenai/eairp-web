@@ -5,7 +5,7 @@ import {
   LoginResp,
   GetUserInfoModel,
   RegisterReq,
-  UserListResp,
+  UserListResp2,
   UserInfo,
   UserProfile,
   ChangePasswordReq,
@@ -21,7 +21,7 @@ import { BaseDataResp, BaseListReq, BaseResp, BaseUUIDReq, BaseUUIDsReq } from '
 enum Api {
   CreateUser = '/sys-api/user/create',
   UpdateUser = '/sys-api/user/update',
-  GetUserList = '/sys-api/user/list',
+  GetUserList = '/user/list',
   DeleteUser = '/sys-api/user/delete',
   GetUserById = '/sys-api/user',
   Login = '/user/login',
@@ -44,7 +44,7 @@ enum Api {
  */
 
 export const getUserList = (params: BaseListReq, mode: ErrorMessageMode = 'notice') => {
-  return defHttp.post<BaseDataResp<UserListResp>>(
+  return defHttp.post<BaseDataResp<UserListResp2>>(
     { url: Api.GetUserList, params },
     { errorMessageMode: mode },
   );

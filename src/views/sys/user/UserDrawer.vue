@@ -64,7 +64,7 @@
         }
         values['id'] = unref(isUpdate) ? values['id'] : '';
         const result = unref(isUpdate) ? await updateUser(values) : await createUser(values);
-        if (result.code === 0) {
+        if (result.code == "00000") {
           closeDrawer();
           emit('success');
         }
