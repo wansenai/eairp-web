@@ -4,9 +4,7 @@ import { formatToDateTime } from '/@/utils/dateUtil';
 import { h } from 'vue';
 import { Switch } from 'ant-design-vue';
 import { useMessage } from '/@/hooks/web/useMessage';
-import { getRoleList } from '/@/api/sys/role';
 import { getDepartmentList } from '/@/api/sys/department';
-import { getPositionList } from '/@/api/sys/position';
 import { updateUser } from '/@/api/sys/user';
 
 const { t } = useI18n();
@@ -96,22 +94,6 @@ export const searchFormSchema: FormSchema[] = [
     rules: [{ max: 40 }],
   },
   {
-    field: 'roleIds',
-    label: t('sys.role.roleTitle'),
-    component: 'ApiMultipleSelect',
-    componentProps: {
-      api: getRoleList,
-      params: {
-        page: 1,
-        pageSize: 100,
-      },
-      resultField: 'data.data',
-      labelField: 'trans',
-      valueField: 'id',
-    },
-    colProps: { span: 8 },
-  },
-  {
     field: 'mobile',
     label: t('sys.login.mobile'),
     component: 'Input',
@@ -189,22 +171,6 @@ export const formSchema: FormSchema[] = [
     component: 'Input',
   },
   {
-    field: 'roleIds',
-    label: t('sys.role.roleTitle'),
-    required: true,
-    component: 'ApiMultipleSelect',
-    componentProps: {
-      api: getRoleList,
-      params: {
-        page: 1,
-        pageSize: 100,
-      },
-      resultField: 'data.data',
-      labelField: 'trans',
-      valueField: 'id',
-    },
-  },
-  {
     field: 'departmentId',
     label: t('sys.department.userDepartment'),
     component: 'ApiTreeSelect',
@@ -217,24 +183,7 @@ export const formSchema: FormSchema[] = [
         name: '',
         leader: '',
       },
-      resultField: 'data.data',
-      labelField: 'trans',
-      valueField: 'id',
-    },
-  },
-  {
-    field: 'positionId',
-    label: t('sys.position.userPosition'),
-    component: 'ApiMultipleSelect',
-    required: true,
-    componentProps: {
-      api: getPositionList,
-      params: {
-        page: 1,
-        pageSize: 1000,
-        name: '',
-      },
-      resultField: 'data.data',
+      resultField: 'data',
       labelField: 'trans',
       valueField: 'id',
     },

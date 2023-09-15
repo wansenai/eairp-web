@@ -1,5 +1,12 @@
 import { BaseListResp } from '/@/api/model/baseModel';
 
+export interface PageUserInfo {
+  pages: number,
+  size: number,
+  total: number,
+}
+export type UserListResp2 = BaseListResp<PageUserInfo>;
+
 /**
  *  @description: User info response
  */
