@@ -1,12 +1,12 @@
 <template>
-  <ATree v-bind="getAttrs" @change="handleChange">
+  <a-tree v-bind="getAttrs" @change="handleChange">
     <template #[item]="data" v-for="item in Object.keys($slots)">
       <slot :name="item" v-bind="data || {}"></slot>
     </template>
     <template #suffixIcon v-if="loading">
       <LoadingOutlined spin />
     </template>
-  </ATree>
+  </a-tree>
 </template>
 
 <script lang="ts">
@@ -17,7 +17,6 @@
   import { get } from 'lodash-es';
   import { propTypes } from '/@/utils/propTypes';
   import { LoadingOutlined } from '@ant-design/icons-vue';
-  import type { DataNode } from 'ant-design-vue/lib/vc-tree/interface';
 
   export default defineComponent({
     name: 'ApiTree',
@@ -31,7 +30,7 @@
     },
     emits: ['options-change', 'change'],
     setup(props, { attrs, emit }) {
-      const treeData = ref<DataNode[]>([]);
+      const treeData = ref<Recordable<any>[]>([]);
       const isFirstLoaded = ref<Boolean>(false);
       const loading = ref(false);
       const getAttrs = computed(() => {
@@ -83,7 +82,7 @@
         if (!isArray(result)) {
           result = get(result, props.resultField);
         }
-        treeData.value = (result as DataNode[]) || [];
+        treeData.value = (result as Recordable<any>[]) || [];
         isFirstLoaded.value = true;
         emit('options-change', treeData.value);
       }

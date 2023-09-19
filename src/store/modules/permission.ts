@@ -14,16 +14,15 @@ import projectSetting from '/@/settings/projectSetting';
 import { PermissionModeEnum } from '/@/enums/appEnum';
 
 import { asyncRoutes } from '/@/router/routes';
-import { PAGE_NOT_FOUND_ROUTE } from '/@/router/routes/basic';
+import { ERROR_LOG_ROUTE, PAGE_NOT_FOUND_ROUTE } from '/@/router/routes/basic';
 
 import { filter } from '/@/utils/helper/treeHelper';
 
-import { getMenuListByRole } from '/@/api/sys/menu';
+import { getMenuList } from '/@/api/sys/menu';
 import { getPermCode } from '/@/api/sys/user';
 
 import { useMessage } from '/@/hooks/web/useMessage';
 import { PageEnum } from '/@/enums/pageEnum';
-import { array2tree } from '@axolo/tree-array';
 
 interface PermissionState {
   // Permission code list
@@ -61,20 +60,20 @@ export const usePermissionStore = defineStore({
     frontMenuList: [],
   }),
   getters: {
-    getPermCodeList(): string[] | number[] {
-      return this.permCodeList;
+    getPermCodeList(state): string[] | number[] {
+      return state.permCodeList;
     },
-    getBackMenuList(): Menu[] {
-      return this.backMenuList;
+    getBackMenuList(state): Menu[] {
+      return state.backMenuList;
     },
-    getFrontMenuList(): Menu[] {
-      return this.frontMenuList;
+    getFrontMenuList(state): Menu[] {
+      return state.frontMenuList;
     },
-    getLastBuildMenuTime(): number {
-      return this.lastBuildMenuTime;
+    getLastBuildMenuTime(state): number {
+      return state.lastBuildMenuTime;
     },
-    getIsDynamicAddedRoute(): boolean {
-      return this.isDynamicAddedRoute;
+    getIsDynamicAddedRoute(state): boolean {
+      return state.isDynamicAddedRoute;
     },
   },
   actions: {
@@ -106,7 +105,7 @@ export const usePermissionStore = defineStore({
     },
     async changePermissionCode() {
       const codeList = await getPermCode();
-      this.setPermCodeList(codeList.data);
+      this.setPermCodeList(codeList);
     },
 
     // 构建路由
@@ -195,7 +194,7 @@ export const usePermissionStore = defineStore({
           routes = routes.filter(routeRemoveIgnoreFilter);
           // 对菜单进行排序
           menuList.sort((a, b) => {
-            return (a.meta?.sort || 0) - (b.meta?.sort || 0);
+            return (a.meta?.orderNo || 0) - (b.meta?.orderNo || 0);
           });
 
           // 设置菜单列表
@@ -223,11 +222,7 @@ export const usePermissionStore = defineStore({
           let routeList: AppRouteRecordRaw[] = [];
           try {
             await this.changePermissionCode();
-            const menus = await getMenuListByRole();
-            console.info(menus)
-            const menuTree = array2tree(menus.data.data);
-            console.info(menuTree)
-            routeList = menuTree as AppRouteRecordRaw[];
+            routeList = (await getMenuList()) as AppRouteRecordRaw[];
           } catch (error) {
             console.error(error);
           }
@@ -251,6 +246,7 @@ export const usePermissionStore = defineStore({
           break;
       }
 
+      routes.push(ERROR_LOG_ROUTE);
       patchHomeAffix(routes);
       return routes;
     },

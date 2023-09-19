@@ -1,7 +1,7 @@
 // axios配置  可自行根据项目进行更改，只需更改该文件即可，其他文件可以不动
 // The axios configuration can be changed according to the project, just change the file, other files can be left unchanged
 
-import type { AxiosResponse } from 'axios';
+import type { AxiosInstance, AxiosResponse } from 'axios';
 import { clone } from 'lodash-es';
 import type { RequestOptions, Result } from '/#/axios';
 import type { AxiosTransform, CreateAxiosOptions } from './axiosTransform';
@@ -9,19 +9,20 @@ import { VAxios } from './Axios';
 import { checkStatus } from './checkStatus';
 import { useGlobSetting } from '/@/hooks/setting';
 import { useMessage } from '/@/hooks/web/useMessage';
-import { RequestEnum, ContentTypeEnum } from '/@/enums/httpEnum';
-import { isString } from '/@/utils/is';
+import { RequestEnum, ResultEnum, ContentTypeEnum } from '/@/enums/httpEnum';
+import { isString, isUnDef, isNull, isEmpty } from '/@/utils/is';
 import { getToken } from '/@/utils/auth';
 import { setObjToUrlParams, deepMerge } from '/@/utils';
 import { useErrorLogStoreWithOut } from '/@/store/modules/errorLog';
 import { useI18n } from '/@/hooks/web/useI18n';
 import { joinTimestamp, formatRequestDate } from './helper';
+import { useUserStoreWithOut } from '/@/store/modules/user';
 import { AxiosRetry } from '/@/utils/http/axios/axiosRetry';
-import { useLocaleStore } from '/@/store/modules/locale';
+import axios from 'axios';
 
 const globSetting = useGlobSetting();
 const urlPrefix = globSetting.urlPrefix;
-const { createMessage, createErrorModal, createSuccessModal, notification } = useMessage();
+const { createMessage, createErrorModal, createSuccessModal } = useMessage();
 
 /**
  * @description: 数据处理，方便区分多种处理方式
@@ -33,54 +34,66 @@ const transform: AxiosTransform = {
   transformResponseHook: (res: AxiosResponse<Result>, options: RequestOptions) => {
     const { t } = useI18n();
     const { isTransformResponse, isReturnNativeResponse } = options;
-    // wether return headers
-    // 是否返回请求头等信息
+    // 是否返回原生响应头 比如：需要获取响应头时使用该属性
     if (isReturnNativeResponse) {
       return res;
     }
-
-    // if isTransformResponse is false, return data directly
-    // 是否不处理数据直接返回
+    // 不进行任何处理，直接返回
+    // 用于页面代码可能需要直接获取code，data，message这些信息时开启
     if (!isTransformResponse) {
       return res.data;
     }
-
-    // if the response body is null, return error
     // 错误的时候返回
-    if (!res.data) {
+
+    const { data } = res;
+    if (!data) {
       // return '[HTTP] Request has no return value';
       throw new Error(t('sys.api.apiRequestFailed'));
     }
+    //  这里 code，result，message为 后台统一的字段，需要在 types.ts内修改为项目自己的接口返回格式
+    const { code, result, message } = data;
 
-    if (res.data.code === 0 || res.data.code === undefined) {
-      if (options.successMessageMode === 'message') {
-        createMessage.success(res.data.msg);
-      } else if (options.successMessageMode === 'modal') {
-        createSuccessModal({ title: res.data.msg, content: res.data.msg });
-      } else if (options.successMessageMode === 'notice') {
-        notification.success({
-          message: t('common.successful'),
-          description: t(res.data.msg),
-          duration: 3,
-        });
+    // 这里逻辑可以根据项目进行修改
+    const hasSuccess = data && Reflect.has(data, 'code') && code === ResultEnum.SUCCESS;
+    if (hasSuccess) {
+      let successMsg = message;
+
+      if (isNull(successMsg) || isUnDef(successMsg) || isEmpty(successMsg)) {
+        successMsg = t(`sys.api.operationSuccess`);
       }
 
-      return res.data;
-    } else {
-      if (options.errorMessageMode === 'message') {
-        createMessage.error(res.data.msg);
-      } else if (options.errorMessageMode === 'modal') {
-        createErrorModal({ title: res.data.msg, content: res.data.msg });
-      } else if (options.errorMessageMode === 'notice') {
-        notification.warning({
-          message: t('common.failed'),
-          description: t(res.data.msg),
-          duration: 3,
-        });
+      if (options.successMessageMode === 'modal') {
+        createSuccessModal({ title: t('sys.api.successTip'), content: successMsg });
+      } else if (options.successMessageMode === 'message') {
+        createMessage.success(successMsg);
       }
-
-      return res.data;
+      return result;
     }
+
+    // 在此处根据自己项目的实际情况对不同的code执行不同的操作
+    // 如果不希望中断当前请求，请return数据，否则直接抛出异常即可
+    let timeoutMsg = '';
+    switch (code) {
+      case ResultEnum.TIMEOUT:
+        timeoutMsg = t('sys.api.timeoutMessage');
+        const userStore = useUserStoreWithOut();
+        userStore.logout(true);
+        break;
+      default:
+        if (message) {
+          timeoutMsg = message;
+        }
+    }
+
+    // errorMessageMode='modal'的时候会显示modal错误弹窗，而不是消息提示，用于一些比较重要的错误
+    // errorMessageMode='none' 一般是调用时明确表示不希望自动弹出错误提示
+    if (options.errorMessageMode === 'modal') {
+      createErrorModal({ title: t('sys.api.errorTip'), content: timeoutMsg });
+    } else if (options.errorMessageMode === 'message') {
+      createMessage.error(timeoutMsg);
+    }
+
+    throw new Error(timeoutMsg || t('sys.api.apiRequestFailed'));
   },
 
   // 请求之前处理config
@@ -109,7 +122,11 @@ const transform: AxiosTransform = {
     } else {
       if (!isString(params)) {
         formatDate && formatRequestDate(params);
-        if (Reflect.has(config, 'data') && config.data && Object.keys(config.data).length > 0) {
+        if (
+          Reflect.has(config, 'data') &&
+          config.data &&
+          (Object.keys(config.data).length > 0 || config.data instanceof FormData)
+        ) {
           config.data = data;
           config.params = params;
         } else {
@@ -144,10 +161,6 @@ const transform: AxiosTransform = {
         ? `${options.authenticationScheme} ${token}`
         : token;
     }
-
-    // 设置 accept language
-    const locale = useLocaleStore();
-    if (config.headers != null) config.headers['Accept-Language'] = locale.getLocale;
     return config;
   },
 
@@ -161,15 +174,19 @@ const transform: AxiosTransform = {
   /**
    * @description: 响应错误处理
    */
-  responseInterceptorsCatch: (axiosInstance: AxiosResponse, error: any) => {
+  responseInterceptorsCatch: (axiosInstance: AxiosInstance, error: any) => {
     const { t } = useI18n();
     const errorLogStore = useErrorLogStoreWithOut();
     errorLogStore.addAjaxErrorInfo(error);
     const { response, code, message, config } = error || {};
     const errorMessageMode = config?.requestOptions?.errorMessageMode || 'none';
-    const msg: string = response?.data['msg'] ?? '';
+    const msg: string = response?.data?.error?.message ?? '';
     const err: string = error?.toString?.() ?? '';
     let errMessage = '';
+
+    if (axios.isCancel(error)) {
+      return Promise.reject(error);
+    }
 
     try {
       if (code === 'ECONNABORTED' && message.indexOf('timeout') !== -1) {
@@ -213,7 +230,7 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
         // authentication schemes，e.g: Bearer
         // authenticationScheme: 'Bearer',
         authenticationScheme: '',
-        timeout: 30 * 1000,
+        timeout: 10 * 1000,
         // 基础接口地址
         // baseURL: globSetting.apiUrl,
 
@@ -241,7 +258,7 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
           // 接口拼接地址
           urlPrefix: urlPrefix,
           //  是否加入时间戳
-          joinTime: false,
+          joinTime: true,
           // 忽略重复请求
           ignoreCancelToken: true,
           // 是否携带token
@@ -251,7 +268,6 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
             count: 5,
             waitTime: 100,
           },
-          decompress: false,
         },
       },
       opt || {},
@@ -259,3 +275,11 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
   );
 }
 export const defHttp = createAxios();
+
+// other api url
+// export const otherHttp = createAxios({
+//   requestOptions: {
+//     apiUrl: 'xxx',
+//     urlPrefix: 'xxx',
+//   },
+// });

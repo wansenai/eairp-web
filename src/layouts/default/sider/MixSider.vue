@@ -84,7 +84,7 @@
   import type { RouteLocationNormalized } from 'vue-router';
   import { ScrollContainer } from '/@/components/Container';
   import { SimpleMenu, SimpleMenuTag } from '/@/components/SimpleMenu';
-  import { Icon } from '@/components/Icon';
+  import Icon from '@/components/Icon/Icon.vue';
   import { AppLogo } from '/@/components/Application';
   import { useMenuSetting } from '/@/hooks/setting/useMenuSetting';
   import { usePermissionStore } from '/@/store/modules/permission';
@@ -343,7 +343,7 @@
   });
 </script>
 <style lang="less">
-  @prefix-cls: ~'@{name-space}-layout-mix-sider';
+  @prefix-cls: ~'@{namespace}-layout-mix-sider';
   @width: 80px;
   .@{prefix-cls} {
     position: fixed;
@@ -451,13 +451,10 @@
     &-module {
       position: relative;
       padding-top: 1px;
-      padding-inline-start: 0;
 
       &__item {
         position: relative;
-        width: 100%;
         padding: 12px 0;
-        list-style-type: none;
         transition: all 0.3s ease;
         color: rgb(255 255 255 / 65%);
         text-align: center;

@@ -15,7 +15,7 @@ const modules = import.meta.glob('./modules/**/*.ts', { eager: true });
 const menuModules: MenuModule[] = [];
 
 Object.keys(modules).forEach((key) => {
-  const mod = modules[key] || {};
+  const mod = (modules as Recordable)[key].default || {};
   const modList = Array.isArray(mod) ? [...mod] : [mod];
   menuModules.push(...modList);
 });
@@ -43,7 +43,7 @@ const isRoleMode = () => {
 const staticMenus: Menu[] = [];
 (() => {
   menuModules.sort((a, b) => {
-    return (a.sort || 0) - (b.sort || 0);
+    return (a.orderNo || 0) - (b.orderNo || 0);
   });
 
   for (const menu of menuModules) {

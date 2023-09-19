@@ -4,7 +4,6 @@ export default {
     // user dropdown
     dropdownItemDoc: '文档',
     dropdownItemLoginOut: '退出系统',
-    profile: '个人信息',
 
     // tooltip
     tooltipErrorLog: '错误日志',
@@ -57,11 +56,10 @@ export default {
 
     copyBtn: '拷贝',
     clearBtn: '清空缓存并返回登录页',
-    clearDictionaryCache: '清空字典缓存',
 
     drawerTitle: '项目配置',
 
-    darkMode: '夜间模式',
+    darkMode: '主题',
     navMode: '导航栏模式',
     interfaceFunction: '界面功能',
     interfaceDisplay: '界面显示',

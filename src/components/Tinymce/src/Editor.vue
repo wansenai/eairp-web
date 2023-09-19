@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts">
-  import type { Editor, RawEditorOptions } from 'tinymce';
+  import type { Editor, RawEditorSettings } from 'tinymce';
   import tinymce from 'tinymce/tinymce';
   import 'tinymce/themes/silver';
   import 'tinymce/icons/default/icons';
@@ -27,22 +27,28 @@
   import 'tinymce/plugins/anchor';
   import 'tinymce/plugins/autolink';
   import 'tinymce/plugins/autosave';
-  import 'tinymce/plugins/autoresize';
   import 'tinymce/plugins/code';
   import 'tinymce/plugins/codesample';
   import 'tinymce/plugins/directionality';
-  import 'tinymce/plugins/emoticons';
   import 'tinymce/plugins/fullscreen';
+  import 'tinymce/plugins/hr';
   import 'tinymce/plugins/insertdatetime';
   import 'tinymce/plugins/link';
   import 'tinymce/plugins/lists';
   import 'tinymce/plugins/media';
   import 'tinymce/plugins/nonbreaking';
+  import 'tinymce/plugins/noneditable';
   import 'tinymce/plugins/pagebreak';
+  import 'tinymce/plugins/paste';
   import 'tinymce/plugins/preview';
+  import 'tinymce/plugins/print';
   import 'tinymce/plugins/save';
   import 'tinymce/plugins/searchreplace';
+  import 'tinymce/plugins/spellchecker';
+  import 'tinymce/plugins/tabfocus';
+  // import 'tinymce/plugins/table';
   import 'tinymce/plugins/template';
+  import 'tinymce/plugins/textpattern';
   import 'tinymce/plugins/visualblocks';
   import 'tinymce/plugins/visualchars';
   import 'tinymce/plugins/wordcount';
@@ -56,12 +62,13 @@
     watch,
     onDeactivated,
     onBeforeUnmount,
+    PropType,
   } from 'vue';
   import ImgUpload from './ImgUpload.vue';
   import { toolbar, plugins } from './tinymce';
   import { buildShortUUID } from '/@/utils/uuid';
   import { bindHandlers } from './helper';
-  import { onMountedOrActivated } from '/@/hooks/core/onMountedOrActivated';
+  import { onMountedOrActivated } from '@vben/hooks';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { isNumber } from '/@/utils/is';
   import { useLocale } from '/@/locales/useLocale';
@@ -69,7 +76,7 @@
 
   const tinymceProps = {
     options: {
-      type: Object as PropType<Partial<RawEditorOptions>>,
+      type: Object as PropType<Partial<RawEditorSettings>>,
       default: () => ({}),
     },
     value: {
@@ -110,10 +117,10 @@
     props: tinymceProps,
     emits: ['change', 'update:modelValue', 'inited', 'init-error'],
     setup(props, { emit, attrs }) {
-      const editorRef = ref<Nullable<Editor>>(null);
+      const editorRef = ref<Editor | null>(null);
       const fullscreen = ref(false);
       const tinymceId = ref<string>(buildShortUUID('tiny-vue'));
-      const elRef = ref<Nullable<HTMLElement>>(null);
+      const elRef = ref<HTMLElement | null>(null);
 
       const { prefixCls } = useDesign('tinymce-container');
 
@@ -138,12 +145,12 @@
         return ['zh_CN', 'en'].includes(lang) ? lang : 'zh_CN';
       });
 
-      const initOptions = computed((): RawEditorOptions => {
+      const initOptions = computed((): RawEditorSettings => {
         const { height, options, toolbar, plugins } = props;
         const publicPath = import.meta.env.VITE_PUBLIC_PATH || '/';
         return {
           selector: `#${unref(tinymceId)}`,
-          height: height,
+          height,
           toolbar,
           menubar: 'file edit insert view format table',
           plugins,
@@ -155,7 +162,6 @@
           object_resizing: false,
           auto_focus: true,
           skin: skinName.value,
-          model_url: publicPath + 'resource/tinymce/models/dom/model.min.js',
           skin_url: publicPath + 'resource/tinymce/skins/ui/' + skinName.value,
           content_css:
             publicPath + 'resource/tinymce/skins/ui/' + skinName.value + '/content.min.css',
@@ -172,7 +178,7 @@
         const getdDisabled = options && Reflect.get(options, 'readonly');
         const editor = unref(editorRef);
         if (editor) {
-          editor.mode.set(getdDisabled ? 'readonly' : 'design');
+          editor.setMode(getdDisabled ? 'readonly' : 'design');
         }
         return getdDisabled ?? false;
       });
@@ -184,7 +190,7 @@
           if (!editor) {
             return;
           }
-          editor.mode.set(attrs.disabled ? 'readonly' : 'design');
+          editor.setMode(attrs.disabled ? 'readonly' : 'design');
         },
       );
 
@@ -240,7 +246,7 @@
         bindHandlers(e, attrs, unref(editorRef));
       }
 
-      function setValue(editor: Recordable, val: string, prevVal?: string) {
+      function setValue(editor: Record<string, any>, val: string, prevVal?: string) {
         if (
           editor &&
           typeof val === 'string' &&
@@ -256,14 +262,14 @@
         const normalizedEvents = Array.isArray(modelEvents) ? modelEvents.join(' ') : modelEvents;
 
         watch(
-          () => props.modelValue as string,
+          () => props.modelValue,
           (val: string, prevVal: string) => {
             setValue(editor, val, prevVal);
           },
         );
 
         watch(
-          () => props.value as string,
+          () => props.value,
           (val: string, prevVal: string) => {
             setValue(editor, val, prevVal);
           },
@@ -327,7 +333,7 @@
 <style lang="less" scoped></style>
 
 <style lang="less">
-  @prefix-cls: ~'@{name-space}-tinymce-container';
+  @prefix-cls: ~'@{namespace}-tinymce-container';
 
   .@{prefix-cls} {
     position: relative;

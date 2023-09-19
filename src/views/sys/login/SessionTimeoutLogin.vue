@@ -13,6 +13,7 @@
   import { usePermissionStore } from '/@/store/modules/permission';
   import { useAppStore } from '/@/store/modules/app';
   import { PermissionModeEnum } from '/@/enums/appEnum';
+  import { type Nullable } from '@vben/types';
 
   const { prefixCls } = useDesign('st-login');
   const userStore = useUserStore();
@@ -41,7 +42,7 @@
   });
 </script>
 <style lang="less" scoped>
-  @prefix-cls: ~'@{name-space}-st-login';
+  @prefix-cls: ~'@{namespace}-st-login';
 
   .@{prefix-cls} {
     position: fixed;

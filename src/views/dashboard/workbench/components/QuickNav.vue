@@ -1,27 +1,15 @@
 <template>
-  <Card :title="t('sys.sys.navigation')" v-bind="$attrs">
-    <CardGrid v-for="(item, index) in navItems" :key="index">
-      <span class="flex flex-col items-center" @click="go(item.redirect)">
+  <Card title="快捷导航">
+    <CardGrid v-for="item in navItems" :key="item.title">
+      <span class="flex flex-col items-center">
         <Icon :icon="item.icon" :color="item.color" size="20" />
-        <span class="text-md mt-2">{{ t(item.title) }}</span>
+        <span class="text-md mt-2 truncate">{{ item.title }}</span>
       </span>
     </CardGrid>
   </Card>
 </template>
-<script lang="ts">
+<script lang="ts" setup>
   import { Card, CardGrid } from 'ant-design-vue';
-  import { defineComponent } from 'vue';
   import { navItems } from './data';
-  import { Icon } from '@/components/Icon';
-  import { useGo } from '/@/hooks/web/usePage';
-  import { useI18n } from '/@/hooks/web/useI18n';
-
-  export default defineComponent({
-    components: { Card, CardGrid, Icon },
-    setup() {
-      const { t } = useI18n();
-      const go = useGo();
-      return { go, t, navItems };
-    },
-  });
+  import Icon from '@/components/Icon/Icon.vue';
 </script>

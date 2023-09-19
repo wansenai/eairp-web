@@ -10,11 +10,6 @@
       {{ t('common.resetText') }}
     </a-button>
 
-    <a-button color="error" block @click="handleClearDictionaryCache" class="mb-3">
-      <RedoOutlined class="mr-2" />
-      {{ t('layout.setting.clearDictionaryCache') }}
-    </a-button>
-
     <a-button color="error" block @click="handleClearAndRedo">
       <RedoOutlined class="mr-2" />
       {{ t('layout.setting.clearBtn') }}
@@ -40,7 +35,6 @@
   import { updateGrayMode } from '/@/logics/theme/updateGrayMode';
   import defaultSetting from '/@/settings/projectSetting';
   import { updateSidebarBgColor } from '/@/logics/theme/updateBackground';
-  import { useDictionaryStore } from '/@/store/modules/dictionary';
 
   export default defineComponent({
     name: 'SettingFooter',
@@ -85,29 +79,18 @@
         userStore.resetState();
         location.reload();
       }
-
-      function handleClearDictionaryCache() {
-        const dictStore = useDictionaryStore();
-        dictStore.clear();
-        if (dictStore.getDataSize === 0) {
-          createMessage.success(t('layout.setting.operatingTitle'));
-          location.reload();
-        }
-      }
-
       return {
         prefixCls,
         t,
         handleCopy,
         handleResetSetting,
         handleClearAndRedo,
-        handleClearDictionaryCache,
       };
     },
   });
 </script>
 <style lang="less" scoped>
-  @prefix-cls: ~'@{name-space}-setting-footer';
+  @prefix-cls: ~'@{namespace}-setting-footer';
 
   .@{prefix-cls} {
     display: flex;

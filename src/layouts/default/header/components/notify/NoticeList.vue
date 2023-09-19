@@ -113,7 +113,7 @@
       const isTitleClickable = computed(() => !!props.onTitleClick);
       const getPagination = computed(() => {
         const { list, pageSize } = props;
-        if ((pageSize as number) > 0 && list && list.length > (pageSize as number)) {
+        if (pageSize > 0 && list && list.length > pageSize) {
           return {
             total: list.length,
             pageSize,
@@ -138,7 +138,7 @@
   });
 </script>
 <style lang="less" scoped>
-  @prefix-cls: ~'@{name-space}-header-notify-list';
+  @prefix-cls: ~'@{namespace}-header-notify-list';
 
   .@{prefix-cls} {
     &::-webkit-scrollbar {

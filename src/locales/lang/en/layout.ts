@@ -3,8 +3,7 @@ export default {
   header: {
     // user dropdown
     dropdownItemDoc: 'Document',
-    dropdownItemLoginOut: 'Login Out',
-    profile: 'Profile',
+    dropdownItemLoginOut: 'Log Out',
 
     tooltipErrorLog: 'Error log',
     tooltipLock: 'Lock screen',
@@ -57,7 +56,6 @@ export default {
 
     copyBtn: 'Copy',
     clearBtn: 'Clear cache and to the login page',
-    clearDictionaryCache: 'Clear dictionary cache',
 
     drawerTitle: 'Configuration',
 

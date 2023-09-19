@@ -1,10 +1,9 @@
-import isString from 'lodash-es/isString';
 import type { VNode, FunctionalComponent } from 'vue';
-
 import { h } from 'vue';
-import { Icon } from '@/components/Icon';
+import { isString } from 'lodash-es';
+import Icon from '@/components/Icon/Icon.vue';
 
-export const TreeIcon: FunctionalComponent = (Icon: { icon: VNode | string }) => {
+export const TreeIcon: FunctionalComponent = ({ icon }: { icon: VNode | string }) => {
   if (!icon) return null;
   if (isString(icon)) {
     return h(Icon, { icon, class: 'mr-1' });

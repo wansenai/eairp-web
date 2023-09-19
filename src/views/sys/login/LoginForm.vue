@@ -8,52 +8,15 @@
     v-show="getShow"
     @keypress.enter="handleLogin"
   >
-    <div class="pt-4 pb-4">
-      <ARadioGroup v-model:value="formData.msgType" button-style="solid" size="large">
-        <ARadioButton value="captcha"> {{ t('sys.login.account') }} </ARadioButton>
-        <ARadioButton value="email"> {{ t('sys.login.email') }} </ARadioButton>
-        <ARadioButton value="sms"> {{ t('sys.login.mobile') }} </ARadioButton>
-      </ARadioGroup>
-    </div>
-
-    <FormItem v-if="formData.msgType !== 'captcha'" name="target" class="enter-x">
-      <Input
-        size="large"
-        v-model:value="formData.target"
-        v-model:placeholder="emailOrPhonePlaceholder"
-      />
-    </FormItem>
-
-    <FormItem v-if="formData.msgType !== 'captcha'" name="captchaVerified" class="enter-x">
-      <CountdownInput
-        size="large"
-        v-model:value="formData.captchaVerified"
-        :count="60"
-        :placeholder="t('sys.login.captcha')"
-        :send-code-api="handleSendCaptcha"
-      />
-    </FormItem>
-
-    <FormItem
-      name="account"
-      v-if="formData.msgType === 'captcha'"
-      class="enter-x"
-      :rules="[{ required: true, max: 30 }]"
-    >
+    <FormItem name="account" class="enter-x">
       <Input
         size="large"
         v-model:value="formData.account"
-        :placeholder="t('sys.login.username')"
+        :placeholder="t('sys.login.userName')"
         class="fix-auto-fill"
       />
     </FormItem>
-
-    <FormItem
-      name="password"
-      class="enter-x"
-      v-if="formData.msgType === 'captcha'"
-      :rules="[{ required: true, min: 6, max: 30 }]"
-    >
+    <FormItem name="password" class="enter-x">
       <InputPassword
         size="large"
         visibilityToggle
@@ -62,38 +25,39 @@
       />
     </FormItem>
 
-    <FormItem
-      name="captcha"
-      v-if="formData.msgType === 'captcha'"
-      class="enter-x"
-      :rules="[{ required: true, len: 5 }]"
-    >
-      <Input
-        size="large"
-        v-model:value="formData.captcha"
-        :placeholder="t('sys.login.captcha')"
-        class="fix-auto-fill"
-      >
-        <template #suffix>
-          <img
-            :src="formData.imagePath"
-            class="absolute right-0 h-full cursor-pointer"
-            @click="getCaptchaData()"
-          />
-        </template>
-      </Input>
-    </FormItem>
-
-    <FormItem name="captchaId" class="enter-x" v-show="false">
-      <Input :value="formData.captchaId" />
-    </FormItem>
+    <ARow class="enter-x">
+      <ACol :span="12">
+        <FormItem>
+          <!-- No logic, you need to deal with it yourself -->
+          <Checkbox v-model:checked="rememberMe" size="small">
+            {{ t('sys.login.rememberMe') }}
+          </Checkbox>
+        </FormItem>
+      </ACol>
+      <ACol :span="12">
+        <FormItem :style="{ 'text-align': 'right' }">
+          <!-- No logic, you need to deal with it yourself -->
+          <Button type="link" size="small" @click="setLoginState(LoginStateEnum.RESET_PASSWORD)">
+            {{ t('sys.login.forgetPassword') }}
+          </Button>
+        </FormItem>
+      </ACol>
+    </ARow>
 
     <FormItem class="enter-x">
       <Button type="primary" size="large" block @click="handleLogin" :loading="loading">
         {{ t('sys.login.loginButton') }}
       </Button>
+      <!-- <Button size="large" class="mt-4 enter-x" block @click="handleRegister">
+        {{ t('sys.login.registerButton') }}
+      </Button> -->
     </FormItem>
-    <ARow class="enter-x" :gutter="5">
+    <ARow class="enter-x" :gutter="[16, 16]">
+      <ACol :md="8" :xs="24">
+        <Button block @click="setLoginState(LoginStateEnum.MOBILE)">
+          {{ t('sys.login.mobileSignInFormTitle') }}
+        </Button>
+      </ACol>
       <ACol :md="8" :xs="24">
         <Button block @click="setLoginState(LoginStateEnum.QR_CODE)">
           {{ t('sys.login.qrSignInFormTitle') }}
@@ -104,49 +68,46 @@
           {{ t('sys.login.registerButton') }}
         </Button>
       </ACol>
-      <ACol :md="8" :xs="24">
-        <Button block @click="setLoginState(LoginStateEnum.RESET_PASSWORD)">
-          {{ t('sys.login.forgetFormTitle') }}
-        </Button>
-      </ACol>
     </ARow>
 
     <Divider class="enter-x">{{ t('sys.login.otherSignIn') }}</Divider>
 
     <div class="flex justify-evenly enter-x" :class="`${prefixCls}-sign-in-way`">
-      <GithubFilled @click="oauthLoginHandler('github')" />
-      <WechatFilled @click="oauthLoginHandler('wechat')" />
-      <GoogleCircleFilled @click="oauthLoginHandler('google')" />
-      <!-- <TwitterCircleFilled @click="oauthLoginHandler('twitter')" /> -->
+      <GithubFilled />
+      <WechatFilled />
+      <AlipayCircleFilled />
+      <GoogleCircleFilled />
+      <TwitterCircleFilled />
     </div>
   </Form>
 </template>
 <script lang="ts" setup>
   import { reactive, ref, unref, computed } from 'vue';
 
-  import { Form, Input, Row, Col, Button, Divider, RadioGroup, RadioButton } from 'ant-design-vue';
-  import { GithubFilled, GoogleCircleFilled } from '@ant-design/icons-vue';
+  import { Checkbox, Form, Input, Row, Col, Button, Divider } from 'ant-design-vue';
+  import {
+    GithubFilled,
+    WechatFilled,
+    AlipayCircleFilled,
+    GoogleCircleFilled,
+    TwitterCircleFilled,
+  } from '@ant-design/icons-vue';
   import LoginFormTitle from './LoginFormTitle.vue';
 
   import { useI18n } from '/@/hooks/web/useI18n';
+  import { useMessage } from '/@/hooks/web/useMessage';
 
   import { useUserStore } from '/@/store/modules/user';
   import { LoginStateEnum, useLoginState, useFormRules, useFormValid } from './useLogin';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { getCaptcha, getEmailCaptcha, getSmsCaptcha } from '/@/api/sys/captcha';
-  import { useGo } from '/@/hooks/web/usePage';
-  import { PageEnum } from '/@/enums/pageEnum';
-  import { oauthLogin } from '/@/api/sys/oauthProvider';
-  import { CountdownInput } from '/@/components/CountDown';
+  //import { onKeyStroke } from '@vueuse/core';
 
   const ACol = Col;
   const ARow = Row;
   const FormItem = Form.Item;
   const InputPassword = Input.Password;
-  const ARadioGroup = RadioGroup;
-  const ARadioButton = RadioButton;
-  const go = useGo();
   const { t } = useI18n();
+  const { notification, createErrorModal } = useMessage();
   const { prefixCls } = useDesign('login');
   const userStore = useUserStore();
 
@@ -155,125 +116,44 @@
 
   const formRef = ref();
   const loading = ref(false);
-
-  const emailOrPhonePlaceholder = computed(() => {
-    if (formData.msgType === 'email') {
-      return t('sys.login.emailPlaceholder');
-    } else {
-      return t('sys.login.mobilePlaceholder');
-    }
-  });
+  const rememberMe = ref(false);
 
   const formData = reactive({
-    msgType: 'captcha',
-    account: '',
-    password: '',
-    captcha: '',
-    captchaId: '',
-    imagePath: '',
-    target: '',
-    captchaVerified: '',
+    account: 'vben',
+    password: '123456',
   });
 
   const { validForm } = useFormValid(formRef);
+
+  //onKeyStroke('Enter', handleLogin);
 
   const getShow = computed(() => unref(getLoginState) === LoginStateEnum.LOGIN);
 
   async function handleLogin() {
     const data = await validForm();
     if (!data) return;
-    loading.value = true;
-    if (formData.msgType === 'captcha') {
-      userStore
-        .login({
-          password: data.password,
-          username: data.account,
-          captcha: data.captcha,
-          captchaId: data.captchaId,
-          goHome: false,
-          mode: 'notice',
-        })
-        .then(() => {
-          loading.value = false;
-          go(PageEnum.BASE_HOME);
-        })
-        .catch(() => {
-          getCaptchaData();
-          loading.value = false;
+    try {
+      loading.value = true;
+      const userInfo = await userStore.login({
+        password: data.password,
+        username: data.account,
+        mode: 'none', //不要默认的错误提示
+      });
+      if (userInfo) {
+        notification.success({
+          message: t('sys.login.loginSuccessTitle'),
+          description: `${t('sys.login.loginSuccessDesc')}: ${userInfo.realName}`,
+          duration: 3,
         });
-    } else if (formData.msgType === 'email') {
-      userStore
-        .loginByEmail({
-          captcha: data.captchaVerified,
-          email: data.target,
-          goHome: false,
-          mode: 'notice',
-        })
-        .then(() => {
-          loading.value = false;
-          go(PageEnum.BASE_HOME);
-        })
-        .catch(() => {
-          loading.value = false;
-        });
-    } else if (formData.msgType === 'sms') {
-      userStore
-        .loginBySms({
-          captcha: data.captchaVerified,
-          phoneNumber: data.target,
-          goHome: false,
-          mode: 'notice',
-        })
-        .then(() => {
-          loading.value = false;
-          go(PageEnum.BASE_HOME);
-        })
-        .catch(() => {
-          loading.value = false;
-        });
-    }
-  }
-
-  // get captcha
-  async function getCaptchaData() {
-    const captcha = await getCaptcha('none');
-    if (captcha.code === "00000") {
-      formData.captchaId = captcha.data.captchaId;
-      formData.imagePath = captcha.data.imagePath;
-    }
-  }
-
-  async function handleSendCaptcha(): Promise<boolean> {
-    if (formData.msgType == 'email') {
-      const result = await getEmailCaptcha({ email: formData.target });
-      if (result.code == "00000") {
-        return true;
-      } else {
-        return false;
       }
-    } else {
-      const result = await getSmsCaptcha({ phoneNumber: formData.target });
-      if (result.code == "00000") {
-        return true;
-      } else {
-        return false;
-      }
+    } catch (error) {
+      createErrorModal({
+        title: t('sys.api.errorTip'),
+        content: (error as unknown as Error).message || t('sys.api.networkExceptionMsg'),
+        getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
+      });
+    } finally {
+      loading.value = false;
     }
-  }
-
-  getCaptchaData();
-
-  async function oauthLoginHandler(provider: string) {
-    const result = await oauthLogin({
-      state: new Date().getMilliseconds() + '-' + provider,
-      provider: provider,
-    });
-    if (result.code === "00000") window.open(result.data.URL);
   }
 </script>
-
-<style scoped>
-  .captcha .ant-input {
-    width: '10px';
-  }
-</style>

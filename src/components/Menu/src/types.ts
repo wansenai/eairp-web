@@ -1,12 +1,9 @@
 // import { ComputedRef } from 'vue';
 // import { ThemeEnum } from '/@/enums/appEnum';
-
-import { Key } from 'ant-design-vue/lib/_util/type';
-
 // import { MenuModeEnum } from '/@/enums/menuEnum';
 export interface MenuState {
   // 默认选中的列表
-  defaultSelectedKeys: Key[];
+  defaultSelectedKeys: string[];
 
   // 模式
   // mode: MenuModeEnum;
@@ -18,11 +15,11 @@ export interface MenuState {
   inlineIndent?: number;
 
   // 展开数组
-  openKeys: Key[];
+  openKeys: string[];
 
   // 当前选中的菜单项 key 数组
-  selectedKeys: Key[];
+  selectedKeys: string[];
 
   // 收缩状态下展开的数组
-  collapsedOpenKeys: Key[];
+  collapsedOpenKeys: string[];
 }

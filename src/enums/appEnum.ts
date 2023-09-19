@@ -14,11 +14,6 @@ export enum ThemeEnum {
   LIGHT = 'light',
 }
 
-export enum CssPrefixEnum {
-  DARK = 'dark',
-  DEFAULT = 'ant',
-}
-
 export enum SettingButtonPositionEnum {
   AUTO = 'auto',
   HEADER = 'header',
@@ -54,8 +49,4 @@ export enum RouterTransitionEnum {
   FADE = 'fade',
   FADE_BOTTOM = 'fade-bottom',
   FADE_SCALE = 'fade-scale',
-}
-
-export enum ParentIdEnum {
-  DEFAULT = 1000000,
 }

@@ -1,36 +1,9 @@
-export interface BaseListReq {
+export interface BasicPageParams {
   page: number;
   pageSize: number;
 }
 
-export interface BaseListResp<T> {
-  data: T[];
+export interface BasicFetchResult<T> {
+  items: T[];
   total: number;
-}
-
-export interface BaseDataResp<T> {
-  code: string;
-  msg: string;
-  data: T;
-}
-
-export interface BaseResp {
-  code?: string;
-  msg: string;
-}
-
-export interface BaseIDReq {
-  id: number;
-}
-
-export interface BaseIDsReq {
-  ids: number[];
-}
-
-export interface BaseUUIDReq {
-  id: string;
-}
-
-export interface BaseUUIDsReq {
-  ids: string[];
 }

@@ -7,7 +7,7 @@
 
       <a @click="openWindow(DOC_URL)">{{ t('layout.footer.onlineDocument') }}</a>
     </div>
-    <div>Copyright &copy;2023 Simple Admin</div>
+    <div>Copyright &copy;2020 Vben Admin</div>
   </Footer>
 </template>
 
@@ -62,7 +62,7 @@
   });
 </script>
 <style lang="less" scoped>
-  @prefix-cls: ~'@{name-space}-layout-footer';
+  @prefix-cls: ~'@{namespace}-layout-footer';
 
   @normal-color: rgba(0, 0, 0, 0.45);
 

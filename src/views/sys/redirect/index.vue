@@ -8,11 +8,9 @@
   const { currentRoute, replace } = useRouter();
 
   const { params, query } = unref(currentRoute);
-  const { path } = params;
+  const { path, _redirect_type = 'path' } = params;
 
-  const { _redirect_type } = query;
-
-  Reflect.deleteProperty(query, '_redirect_type');
+  Reflect.deleteProperty(params, '_redirect_type');
   Reflect.deleteProperty(params, 'path');
 
   const _path = Array.isArray(path) ? path.join('/') : path;
@@ -21,7 +19,7 @@
     replace({
       name: _path,
       query,
-      params,
+      params: JSON.parse((params._origin_params as string) ?? '{}'),
     });
   } else {
     replace({

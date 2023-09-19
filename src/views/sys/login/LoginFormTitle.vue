@@ -1,5 +1,5 @@
 <template>
-  <h2 class="mb-3 text-2xl font-bold text-center xl:text-3xl enter-x xl:text-left form-title">
+  <h2 class="mb-3 text-2xl font-bold text-center xl:text-3xl enter-x xl:text-left">
     {{ getFormTitle }}
   </h2>
 </template>
@@ -19,20 +19,7 @@
       [LoginStateEnum.REGISTER]: t('sys.login.signUpFormTitle'),
       [LoginStateEnum.MOBILE]: t('sys.login.mobileSignInFormTitle'),
       [LoginStateEnum.QR_CODE]: t('sys.login.qrSignInFormTitle'),
-      [LoginStateEnum.REGISTER_BY_EMAIL]: t('sys.login.emailSignUpFormTitle'),
     };
     return titleObj[unref(getLoginState)];
   });
 </script>
-
-<style lang="less" scoped>
-  [data-theme='dark'] {
-    .form-title {
-      color: #fff;
-    }
-  }
-
-  .form-title {
-    color: #5e5e5e;
-  }
-</style>

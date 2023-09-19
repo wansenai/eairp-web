@@ -1,5 +1,5 @@
 <template>
-  <Drawer :class="prefixCls" @close="onClose" v-bind="getBindValues">
+  <Drawer :rootClassName="prefixCls" @close="onClose" v-bind="getBindValues">
     <template #title v-if="!$slots.title">
       <DrawerHeader
         :title="getMergeProps.title"
@@ -14,10 +14,6 @@
     </template>
     <template v-else #title>
       <slot name="title"></slot>
-    </template>
-
-    <template #extra>
-      <slot name="extra"></slot>
     </template>
 
     <ScrollContainer
@@ -62,9 +58,9 @@
     components: { Drawer, ScrollContainer, DrawerFooter, DrawerHeader },
     inheritAttrs: false,
     props: basicProps,
-    emits: ['visible-change', 'ok', 'close', 'register'],
+    emits: ['open-change', 'ok', 'close', 'register'],
     setup(props, { emit }) {
-      const visibleRef = ref(false);
+      const openRef = ref(false);
       const attrs = useAttrs();
       const propsRef = ref<Partial<DrawerProps | null>>(null);
 
@@ -73,7 +69,7 @@
 
       const drawerInstance: DrawerInstance = {
         setDrawerProps: setDrawerProps as any,
-        emitVisible: undefined,
+        emitOpen: undefined,
       };
 
       const instance = getCurrentInstance();
@@ -89,7 +85,7 @@
           placement: 'right',
           ...unref(attrs),
           ...unref(getMergeProps),
-          visible: unref(visibleRef),
+          open: unref(openRef),
         };
         opt.title = undefined;
         const { isDetail, width, wrapClassName, getContainer } = opt;
@@ -98,7 +94,7 @@
             opt.width = '100%';
           }
           const detailCls = `${prefixCls}__detail`;
-          opt.class = wrapClassName ? `${wrapClassName} ${detailCls}` : detailCls;
+          opt.rootClassName = wrapClassName ? `${wrapClassName} ${detailCls}` : detailCls;
 
           if (!getContainer) {
             // TODO type error?
@@ -139,19 +135,19 @@
       });
 
       watch(
-        () => props.visible,
+        () => props.open,
         (newVal, oldVal) => {
-          if (newVal !== oldVal) visibleRef.value = newVal;
+          if (newVal !== oldVal) openRef.value = newVal;
         },
         { deep: true },
       );
 
       watch(
-        () => visibleRef.value,
-        (visible) => {
+        () => openRef.value,
+        (open) => {
           nextTick(() => {
-            emit('visible-change', visible);
-            instance && drawerInstance.emitVisible?.(visible, instance.uid);
+            emit('open-change', open);
+            instance && drawerInstance.emitOpen?.(open, instance.uid);
           });
         },
       );
@@ -162,18 +158,18 @@
         emit('close', e);
         if (closeFunc && isFunction(closeFunc)) {
           const res = await closeFunc();
-          visibleRef.value = !res;
+          openRef.value = !res;
           return;
         }
-        visibleRef.value = false;
+        openRef.value = false;
       }
 
       function setDrawerProps(props: Partial<DrawerProps>): void {
         // Keep the last setDrawerProps
         propsRef.value = deepMerge(unref(propsRef) || ({} as any), props);
 
-        if (Reflect.has(props, 'visible')) {
-          visibleRef.value = !!props.visible;
+        if (Reflect.has(props, 'open')) {
+          openRef.value = !!props.open;
         }
       }
 
@@ -199,66 +195,8 @@
 <style lang="less">
   @header-height: 60px;
   @detail-header-height: 40px;
-  @prefix-cls: ~'@{name-space}-basic-drawer';
-  @prefix-cls-detail: ~'@{name-space}-basic-drawer__detail';
-
-  [data-theme='dark'] {
-    .@{prefix-cls} {
-      .dark-drawer-wrapper-body {
-        overflow: hidden;
-      }
-
-      .dark-drawer-close {
-        &:hover {
-          color: @error-color;
-        }
-      }
-
-      .dark-drawer-body {
-        height: calc(100% - @header-height);
-        padding: 0;
-        background-color: #262626;
-
-        .scrollbar__wrap {
-          margin-bottom: 0 !important;
-          padding: 16px !important;
-        }
-
-        > .scrollbar > .scrollbar__bar.is-horizontal {
-          display: none;
-        }
-      }
-    }
-
-    .@{prefix-cls-detail} {
-      position: absolute;
-
-      .dark-drawer-header {
-        box-sizing: border-box;
-        width: 100%;
-        height: @detail-header-height;
-        padding: 0;
-        border-top: 1px solid @border-color-base;
-      }
-
-      .dark-drawer-title {
-        height: 100%;
-      }
-
-      .dark-drawer-close {
-        height: @detail-header-height;
-        line-height: @detail-header-height;
-      }
-
-      .scrollbar__wrap {
-        padding: 0 !important;
-      }
-
-      .dark-drawer-body {
-        height: calc(100% - @detail-header-height);
-      }
-    }
-  }
+  @prefix-cls: ~'@{namespace}-basic-drawer';
+  @prefix-cls-detail: ~'@{namespace}-basic-drawer__detail';
 
   .@{prefix-cls} {
     .ant-drawer-wrapper-body {

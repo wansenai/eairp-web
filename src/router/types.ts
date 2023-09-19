@@ -38,7 +38,7 @@ export interface Menu {
 
   children?: Menu[];
 
-  sort?: number;
+  orderNo?: number;
 
   roles?: RoleEnum[];
 
@@ -50,7 +50,7 @@ export interface Menu {
 }
 
 export interface MenuModule {
-  sort?: number;
+  orderNo?: number;
   menu: Menu;
 }
 

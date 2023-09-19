@@ -44,7 +44,7 @@
 </template>
 <script lang="ts">
   import { defineComponent, reactive, ref, toRefs, unref, computed, PropType } from 'vue';
-  import { Upload, Alert, message } from 'ant-design-vue';
+  import { Upload, Alert } from 'ant-design-vue';
   import { BasicModal, useModalInner } from '/@/components/Modal';
   //   import { BasicTable, useTable } from '/@/components/Table';
   // hooks
@@ -61,8 +61,6 @@
   import { warn } from '/@/utils/log';
   import FileList from './FileList.vue';
   import { useI18n } from '/@/hooks/web/useI18n';
-  import file2md5 from 'file2md5';
-  import useClipboard from 'vue-clipboard3';
 
   export default defineComponent({
     components: { BasicModal, Upload, Alert, FileList },
@@ -79,14 +77,10 @@
         fileList: [],
       });
 
-      const { toClipboard } = useClipboard();
-      const { createErrorModal } = useMessage();
-
       //   是否正在上传
       const isUploadingRef = ref(false);
       const fileListRef = ref<FileItem[]>([]);
       const { accept, helpText, maxNumber, maxSize } = toRefs(props);
-      let tempFileMd5 = {};
 
       const { t } = useI18n();
       const [register, { closeModal }] = useModalInner();
@@ -128,7 +122,7 @@
       });
 
       // 上传前校验
-      async function beforeUpload(file: File) {
+      function beforeUpload(file: File) {
         const { size, name } = file;
         const { maxSize } = props;
         // 设置最大值，则判断
@@ -145,18 +139,6 @@
           percent: 0,
           type: name.split('.').pop(),
         };
-
-        // 计算md5
-        message.loading(t('fms.file.preprocessing'));
-        file2md5(file, { chunkSize: 3 * 1024 * 1024 })
-          .then((data) => {
-            message.success(t('common.successful'));
-            tempFileMd5[file.name] = data;
-          })
-          .catch(() => {
-            message.error(t('common.failed'));
-          });
-
         // 生成图片缩略图
         if (checkImgType(file)) {
           // beforeUpload，如果异步会调用自带上传方法
@@ -183,25 +165,13 @@
         emit('delete', record);
       }
 
-      async function handleCopy(record: FileItem) {
-        try {
-          if (record.responseData !== undefined) {
-            await toClipboard(record.responseData?.data.url);
-            createMessage.success(t('fms.file.copyURLSuccess'));
-          } else {
-            createErrorModal({
-              title: t('common.failed'),
-              content: t('fms.file.uploadFirst'),
-            });
-          }
-        } catch (e) {
-          console.error(e);
-          createErrorModal({
-            title: t('fms.file.copyURLFailed'),
-            content: record.responseData?.data.url,
-          });
-        }
-      }
+      // 预览
+      // function handlePreview(record: FileItem) {
+      //   const { thumbUrl = '' } = record;
+      //   createImgPreview({
+      //     imageList: [thumbUrl],
+      //   });
+      // }
 
       async function uploadApiByItem(item: FileItem) {
         const { api } = props;
@@ -210,13 +180,10 @@
         }
         try {
           item.status = UploadResultStatus.UPLOADING;
-          const params = props.uploadParams;
-          params['md5'] = item.md5;
-          // eslint-disable-next-line no-unsafe-optional-chaining
-          const { data } = await props.api?.(
+          const ret = await props.api?.(
             {
               data: {
-                ...(params || {}),
+                ...(props.uploadParams || {}),
               },
               file: item.file,
               name: props.name,
@@ -227,21 +194,13 @@
               item.percent = complete;
             },
           );
-          if (data.code !== 0) {
-            message.error(data.msg);
-            item.status = UploadResultStatus.ERROR;
-            return {
-              success: false,
-              error: data.msg,
-            };
-          } else {
-            item.status = UploadResultStatus.SUCCESS;
-            item.responseData = data;
-            return {
-              success: true,
-              error: null,
-            };
-          }
+          const { data } = ret;
+          item.status = UploadResultStatus.SUCCESS;
+          item.responseData = data;
+          return {
+            success: true,
+            error: null,
+          };
         } catch (e) {
           console.log(e);
           item.status = UploadResultStatus.ERROR;
@@ -263,10 +222,6 @@
           // 只上传不是成功状态的
           const uploadFileList =
             fileListRef.value.filter((item) => item.status !== UploadResultStatus.SUCCESS) || [];
-          // 添加md5
-          for (let i = 0; i < uploadFileList.length; i++) {
-            uploadFileList[i].md5 = tempFileMd5[uploadFileList[i].name];
-          }
           const data = await Promise.all(
             uploadFileList.map((item) => {
               return uploadApiByItem(item);
@@ -297,7 +252,7 @@
         for (const item of fileListRef.value) {
           const { status, responseData } = item;
           if (status === UploadResultStatus.SUCCESS && responseData) {
-            fileList.push(responseData.data.url);
+            fileList.push(responseData.url);
           }
         }
         // 存在一个上传成功的即可保存
@@ -322,7 +277,7 @@
 
       return {
         columns: createTableColumns() as any[],
-        actionColumn: createActionColumn(handleRemove, handleCopy) as any,
+        actionColumn: createActionColumn(handleRemove) as any,
         register,
         closeModal,
         getHelpText,

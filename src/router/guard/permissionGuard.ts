@@ -36,14 +36,13 @@ export function createPermissionGuard(router: Router) {
       if (to.path === LOGIN_PATH && token) {
         const isSessionTimeout = userStore.getSessionTimeout;
         try {
-          await userStore.afterLoginAction(true);
+          await userStore.afterLoginAction();
           if (!isSessionTimeout) {
-            // next((to.query?.redirect as string) || '/');
-            next(userStore.getUserInfo.homePath ? userStore.getUserInfo.homePath : '/');
+            next((to.query?.redirect as string) || '/');
             return;
           }
         } catch {
-          /* empty */
+          //
         }
       }
       next();
