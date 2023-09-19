@@ -1,43 +1,20 @@
 <template>
-  <span :class="`${prefixCls}__extra-redo`" @click="handleRedo" :style="{ color: btnColor }">
-    <!-- <RedoOutlined :spin="loading" /> -->
-    <Icon icon="ant-design:undo-outlined" :spin="loading"
-  /></span>
+  <span :class="`${prefixCls}__extra-redo`" @click="handleRedo">
+    <RedoOutlined :spin="loading" />
+  </span>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, watch } from 'vue';
+  import { defineComponent, ref } from 'vue';
+  import { RedoOutlined } from '@ant-design/icons-vue';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useTabs } from '/@/hooks/web/useTabs';
-  import { useAppStore } from '/@/store/modules/app';
-  import { ThemeEnum } from '/@/enums/appEnum';
-  import { Icon } from '@/components/Icon';
 
   export default defineComponent({
     name: 'TabRedo',
-    components: { Icon },
+    components: { RedoOutlined },
 
     setup() {
       const loading = ref(false);
-      const btnColor = ref<string>();
-
-      const appStore = useAppStore();
-
-      const changePrefix = function (value: string) {
-        if (value === ThemeEnum.DARK) {
-          btnColor.value = 'white';
-        } else {
-          btnColor.value = 'gray';
-        }
-      };
-
-      changePrefix(appStore.getDarkMode);
-
-      watch(
-        () => appStore.getDarkMode,
-        (value, _oldValue) => {
-          changePrefix(value);
-        },
-      );
 
       const { prefixCls } = useDesign('multiple-tabs-content');
       const { refreshPage } = useTabs();
@@ -50,7 +27,12 @@
           // Animation execution time
         }, 1200);
       }
-      return { prefixCls, handleRedo, loading, btnColor };
+      return { prefixCls, handleRedo, loading };
     },
   });
 </script>
+<style lang="less" scoped>
+  span.anticon-redo {
+    vertical-align: baseline !important;
+  }
+</style>

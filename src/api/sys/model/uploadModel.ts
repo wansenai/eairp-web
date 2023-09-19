@@ -1,10 +1,5 @@
-export interface UploadApiResp {
-  msg: string;
+export interface UploadApiResult {
+  message: string;
   code: number;
-  data: UploadInfo;
-}
-
-export interface UploadInfo {
-  name: string;
   url: string;
 }

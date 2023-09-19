@@ -4,7 +4,6 @@
       ref="formRef"
       submitOnReset
       v-bind="getFormProps"
-      labelAlign="right"
       v-if="getBindValues.useSearchForm"
       :tableAction="tableAction"
       @register="registerForm"
@@ -27,11 +26,17 @@
         <slot :name="item" v-bind="data || {}"></slot>
       </template>
       <template #headerCell="{ column }">
-        <HeaderCell :column="column" />
+        <slot name="headerCell" v-bind="{ column }">
+          <HeaderCell :column="column" />
+        </slot>
       </template>
+      <!-- 增加对antdv3.x兼容 -->
       <template #bodyCell="data">
         <slot name="bodyCell" v-bind="data || {}"></slot>
       </template>
+      <!--      <template #[`header-${column.dataIndex}`] v-for="(column, index) in columns" :key="index">-->
+      <!--        <HeaderCell :column="column" />-->
+      <!--      </template>-->
     </Table>
   </div>
 </template>
@@ -46,7 +51,7 @@
   import { defineComponent, ref, computed, unref, toRaw, inject, watchEffect } from 'vue';
   import { Table } from 'ant-design-vue';
   import { BasicForm, useForm } from '/@/components/Form/index';
-  import { PageWrapperFixedHeightKey } from '/@/components/Page';
+  import { PageWrapperFixedHeightKey } from '/@/enums/pageEnum';
   import HeaderCell from './components/HeaderCell.vue';
   import { InnerHandlers } from './types/table';
 
@@ -70,9 +75,25 @@
   import { basicProps } from './props';
   import { isFunction } from '/@/utils/is';
   import { warn } from '/@/utils/log';
-  import { TablePaginationConfig } from 'ant-design-vue/es/table/interface';
-  import { FilterValue, SorterResult } from 'ant-design-vue/lib/table/interface';
-  import { DefaultRecordType } from 'ant-design-vue/lib/vc-table/interface';
+
+  const events = [
+    'fetch-success',
+    'fetch-error',
+    'selection-change',
+    'register',
+    'row-click',
+    'row-dbClick',
+    'row-contextmenu',
+    'row-mouseenter',
+    'row-mouseleave',
+    'edit-end',
+    'edit-cancel',
+    'edit-row-end',
+    'edit-change',
+    'expanded-rows-change',
+    'change',
+    'columns-change',
+  ];
 
   export default defineComponent({
     name: 'BasicTable',
@@ -82,27 +103,10 @@
       HeaderCell,
     },
     props: basicProps,
-    emits: [
-      'fetch-success',
-      'fetch-error',
-      'selection-change',
-      'register',
-      'row-click',
-      'row-dbClick',
-      'row-contextmenu',
-      'row-mouseenter',
-      'row-mouseleave',
-      'edit-end',
-      'edit-cancel',
-      'edit-row-end',
-      'edit-change',
-      'expanded-rows-change',
-      'change',
-      'columns-change',
-    ],
+    emits: events,
     setup(props, { attrs, emit, slots, expose }) {
       const tableElRef = ref(null);
-      const tableData = ref<Recordable[]>([]);
+      const tableData = ref([]);
 
       const wrapRef = ref(null);
       const formRef = ref(null);
@@ -172,24 +176,19 @@
         emit,
       );
 
-      function handleTableChange(
-        pagination: TablePaginationConfig,
-        filters: Record<string, FilterValue | null>,
-        sorter: SorterResult<DefaultRecordType> | SorterResult<DefaultRecordType>[],
-      ) {
-        onTableChange.call(undefined, pagination, filters, sorter);
-        emit('change', [pagination, filters, sorter]);
+      function handleTableChange(...args) {
+        onTableChange.call(undefined, ...args);
+        emit('change', ...args);
         // 解决通过useTable注册onChange时不起作用的问题
         const { onChange } = unref(getProps);
-        onChange &&
-          isFunction(onChange) &&
-          onChange.call(undefined, pagination, filters, sorter, undefined);
+        onChange && isFunction(onChange) && onChange.call(undefined, ...args);
       }
 
       const {
         getViewColumns,
         getColumns,
         setCacheColumnsByField,
+        setCacheColumns,
         setColumns,
         getColumnsRef,
         getCacheColumns,
@@ -245,7 +244,7 @@
 
       const getBindValues = computed(() => {
         const dataSource = unref(getDataSourceRef);
-        let propsData: Recordable = {
+        let propsData: any = {
           ...attrs,
           customRow,
           ...unref(getProps),
@@ -329,6 +328,7 @@
         getSize: () => {
           return unref(getBindValues).size as SizeType;
         },
+        setCacheColumns,
       };
       createTableContext({ ...tableAction, wrapRef, getBindValues });
 
@@ -361,41 +361,24 @@
 <style lang="less">
   @border-color: #cecece4d;
 
-  @prefix-cls: ~'@{name-space}-basic-table';
+  @prefix-cls: ~'@{namespace}-basic-table';
 
   [data-theme='dark'] {
-    .@{prefix-cls} {
-      max-width: 100%;
-      height: 100%;
-
-      &-form-container {
-        padding: 16px;
-
-        .dark-form {
-          width: 100%;
-          margin-bottom: 16px;
-          padding: 12px 10px 6px;
-          border-radius: 2px;
-          background-color: #141414;
-        }
-      }
-
-      .dark-tag {
-        margin-right: 0;
-      }
-
-      .dark-table-wrapper {
-        height: 100%;
-        padding: 6px;
-        border-radius: 2px;
-        background-color: #141414;
-      }
+    .ant-table-tbody > tr:hover.ant-table-row-selected > td,
+    .ant-table-tbody > tr.ant-table-row-selected td {
+      background-color: #262626;
     }
   }
 
   .@{prefix-cls} {
     max-width: 100%;
     height: 100%;
+
+    &-row__striped {
+      td {
+        background-color: @app-content-background;
+      }
+    }
 
     &-form-container {
       padding: 16px;
@@ -409,14 +392,73 @@
       }
     }
 
-    .ant-tag {
-      margin-right: 0;
+    .ant-table-cell {
+      .ant-tag {
+        margin-right: 0;
+      }
     }
 
     .ant-table-wrapper {
       padding: 6px;
       border-radius: 2px;
       background-color: @component-background;
+
+      .ant-table-title {
+        min-height: 40px;
+        padding: 0 0 8px !important;
+      }
+
+      .ant-table.ant-table-bordered .ant-table-title {
+        border: none !important;
+      }
+    }
+
+    .ant-table {
+      width: 100%;
+      overflow-x: hidden;
+
+      &-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 6px;
+        border-bottom: none;
+      }
+
+      //.ant-table-tbody > tr.ant-table-row-selected td {
+      //background-color: fade(@primary-color, 8%) !important;
+      //}
+    }
+
+    .ant-pagination {
+      margin: 10px 0 0;
+    }
+
+    .ant-table-footer {
+      padding: 0;
+
+      .ant-table-wrapper {
+        padding: 0;
+      }
+
+      table {
+        border: none !important;
+      }
+
+      .ant-table-body {
+        overflow-x: hidden !important;
+        //  overflow-y: scroll !important;
+      }
+
+      td {
+        padding: 12px 8px;
+      }
+    }
+
+    &--inset {
+      .ant-table-wrapper {
+        padding: 0;
+      }
     }
   }
 </style>

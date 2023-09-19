@@ -178,7 +178,7 @@
   }
 </script>
 <style lang="less">
-  @prefix-cls: ~'@{name-space}-icon-picker';
+  @prefix-cls: ~'@{namespace}-icon-picker';
 
   .@{prefix-cls} {
     .ant-input-group-addon {

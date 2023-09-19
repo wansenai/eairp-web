@@ -3,22 +3,14 @@
     <span :class="[prefixCls, `${prefixCls}--${theme}`]" class="flex">
       <img :class="`${prefixCls}__header`" :src="getUserInfo.avatar" />
       <span :class="`${prefixCls}__info hidden md:block`">
-        <span :class="`${prefixCls}__name  `" class="truncate">
-          {{ getUserInfo.name }}
+        <span :class="`${prefixCls}__name`" class="truncate">
+          {{ getUserInfo.realName }}
         </span>
-        <span class="ml-4"
-          ><Tag v-for="role in roleTag" :key="role" color="blue">{{ role }}</Tag></span
-        >
       </span>
     </span>
 
     <template #overlay>
       <Menu @click="handleMenuClick">
-        <MenuItem
-          key="profile"
-          :text="t('layout.header.profile')"
-          icon="ion:document-text-outline"
-        />
         <MenuItem
           key="doc"
           :text="t('layout.header.dropdownItemDoc')"
@@ -44,7 +36,7 @@
 </template>
 <script lang="ts">
   // components
-  import { Dropdown, Menu, Tag } from 'ant-design-vue';
+  import { Dropdown, Menu } from 'ant-design-vue';
   import type { MenuInfo } from 'ant-design-vue/lib/menu/src/interface';
 
   import { defineComponent, computed } from 'vue';
@@ -62,16 +54,14 @@
   import { openWindow } from '/@/utils';
 
   import { createAsyncComponent } from '/@/utils/factory/createAsyncComponent';
-  import { useGo } from '/@/hooks/web/usePage';
 
-  type MenuEvent = 'logout' | 'doc' | 'lock' | 'profile';
+  type MenuEvent = 'logout' | 'doc' | 'lock';
 
   export default defineComponent({
     name: 'UserDropdown',
     components: {
       Dropdown,
       Menu,
-      Tag,
       MenuItem: createAsyncComponent(() => import('./DropMenuItem.vue')),
       MenuDivider: Menu.Divider,
       LockAction: createAsyncComponent(() => import('../lock/LockModal.vue')),
@@ -84,16 +74,10 @@
       const { t } = useI18n();
       const { getShowDoc, getUseLockPage } = useHeaderSetting();
       const userStore = useUserStore();
-      const go = useGo();
 
       const getUserInfo = computed(() => {
-        const { name = '', avatar, desc } = userStore.getUserInfo || {};
-        return { name, avatar: avatar || headerImg, desc };
-      });
-
-      const roleTag = computed(() => {
-        let roleData = userStore.getRoleName;
-        return roleData.length > 3 ? roleData.slice(0, 3) : roleData;
+        const { realName = '', avatar, desc } = userStore.getUserInfo || {};
+        return { realName, avatar: avatar || headerImg, desc };
       });
 
       const [register, { openModal }] = useModal();
@@ -112,11 +96,6 @@
         openWindow(DOC_URL);
       }
 
-      // open modal for change self information
-      function handleProfile() {
-        go('/profile');
-      }
-
       function handleMenuClick(e: MenuInfo) {
         switch (e.key as MenuEvent) {
           case 'logout':
@@ -127,9 +106,6 @@
             break;
           case 'lock':
             handleLock();
-            break;
-          case 'profile':
-            handleProfile();
             break;
         }
       }
@@ -142,13 +118,12 @@
         getShowDoc,
         register,
         getUseLockPage,
-        roleTag,
       };
     },
   });
 </script>
 <style lang="less">
-  @prefix-cls: ~'@{name-space}-header-user-dropdown';
+  @prefix-cls: ~'@{namespace}-header-user-dropdown';
 
   .@{prefix-cls} {
     align-items: center;

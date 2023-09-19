@@ -1,5 +1,5 @@
 <template>
-  <a-tree-select v-bind="getAttrs" @change="handleChange">
+  <a-tree-select v-bind="getAttrs" @change="handleChange" :field-names="fieldNames">
     <template #[item]="data" v-for="item in Object.keys($slots)">
       <slot :name="item" v-bind="data || {}"></slot>
     </template>
@@ -10,32 +10,38 @@
 </template>
 
 <script lang="ts">
-  import { computed, defineComponent, watch, ref, onMounted, unref } from 'vue';
+  import { type Recordable } from '@vben/types';
+  import {
+    type PropType,
+    computed,
+    defineComponent,
+    watchEffect,
+    watch,
+    ref,
+    onMounted,
+    unref,
+  } from 'vue';
   import { TreeSelect } from 'ant-design-vue';
   import { isArray, isFunction } from '/@/utils/is';
   import { get } from 'lodash-es';
   import { propTypes } from '/@/utils/propTypes';
   import { LoadingOutlined } from '@ant-design/icons-vue';
-  import { buildTreeNode } from '/@/utils/tree';
 
   export default defineComponent({
     name: 'ApiTreeSelect',
     components: { ATreeSelect: TreeSelect, LoadingOutlined },
     props: {
-      api: { type: Function as PropType<(arg?: Recordable) => Promise<Recordable>> },
+      api: { type: Function as PropType<(arg?: Recordable<any>) => Promise<Recordable<any>>> },
       params: { type: Object },
       immediate: { type: Boolean, default: true },
       resultField: propTypes.string.def(''),
-      labelField: propTypes.string.def(''),
-      valueField: propTypes.string.def(''),
-      idKeyField: propTypes.string.def('id'),
-      parentKeyField: propTypes.string.def('parentId'),
-      childrenKeyField: propTypes.string.def('children'),
-      defaultValue: { type: Object },
+      labelField: propTypes.string.def('title'),
+      valueField: propTypes.string.def('value'),
+      childrenField: propTypes.string.def('children'),
     },
     emits: ['options-change', 'change'],
     setup(props, { attrs, emit }) {
-      const treeData = ref<Recordable[]>([]);
+      const treeData = ref<Recordable<any>[]>([]);
       const isFirstLoaded = ref<Boolean>(false);
       const loading = ref(false);
       const getAttrs = computed(() => {
@@ -44,6 +50,11 @@
           ...attrs,
         };
       });
+      const fieldNames = {
+        children: props.childrenField,
+        value: props.valueField,
+        label: props.labelField,
+      };
 
       function handleChange(...args) {
         emit('change', ...args);
@@ -70,7 +81,7 @@
 
       async function fetch() {
         const { api } = props;
-        if (!api || !isFunction(api)) return;
+        if (!api || !isFunction(api) || loading.value) return;
         loading.value = true;
         treeData.value = [];
         let result;
@@ -84,18 +95,11 @@
         if (!isArray(result)) {
           result = get(result, props.resultField);
         }
-        treeData.value = buildTreeNode(result, {
-          idKeyField: props.idKeyField,
-          parentKeyField: props.parentKeyField,
-          childrenKeyField: props.childrenKeyField,
-          valueField: props.valueField,
-          labelField: props.labelField,
-          defaultValue: props.defaultValue,
-        });
+        treeData.value = (result as Recordable<any>[]) || [];
         isFirstLoaded.value = true;
         emit('options-change', treeData.value);
       }
-      return { getAttrs, loading, handleChange };
+      return { getAttrs, loading, handleChange, fieldNames };
     },
   });
 </script>

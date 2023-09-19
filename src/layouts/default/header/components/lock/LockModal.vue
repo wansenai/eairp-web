@@ -45,7 +45,7 @@
       const userStore = useUserStore();
       const lockStore = useLockStore();
 
-      const getRealName = computed(() => userStore.getUserInfo?.name);
+      const getRealName = computed(() => userStore.getUserInfo?.realName);
       const [register, { closeModal }] = useModalInner();
 
       const [registerForm, { validateFields, resetFields }] = useForm({
@@ -93,7 +93,7 @@
   });
 </script>
 <style lang="less">
-  @prefix-cls: ~'@{name-space}-header-lock-modal';
+  @prefix-cls: ~'@{namespace}-header-lock-modal';
 
   .@{prefix-cls} {
     &__entry {

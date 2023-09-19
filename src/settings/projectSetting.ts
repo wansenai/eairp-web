@@ -25,7 +25,7 @@ const setting: ProjectConfig = {
   settingButtonPosition: SettingButtonPositionEnum.AUTO,
 
   // Permission mode
-  permissionMode: PermissionModeEnum.BACK,
+  permissionMode: PermissionModeEnum.ROUTE_MAPPING,
 
   // Permission-related cache is stored in sessionStorage or localStorage
   permissionCacheType: CacheTypeEnum.LOCAL,
@@ -71,7 +71,7 @@ const setting: ProjectConfig = {
     // Whether to show the document button
     showDoc: true,
     // Whether to show the notification button
-    showNotice: false,
+    showNotice: true,
     // Whether to display the menu search
     showSearch: true,
   },

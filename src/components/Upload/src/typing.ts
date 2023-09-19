@@ -1,4 +1,4 @@
-import { UploadApiResp } from '/@/api/sys/model/uploadModel';
+import { UploadApiResult } from '/@/api/sys/model/uploadModel';
 
 export enum UploadResultStatus {
   SUCCESS = 'success',
@@ -11,11 +11,10 @@ export interface FileItem {
   name: string;
   size: string | number;
   type?: string;
-  md5?: string;
   percent: number;
   file: File;
   status?: UploadResultStatus;
-  responseData?: UploadApiResp;
+  responseData?: UploadApiResult;
   uuid: string;
 }
 

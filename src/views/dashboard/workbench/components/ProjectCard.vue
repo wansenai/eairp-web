@@ -1,23 +1,32 @@
 <template>
-  <Card :title="t('sys.sys.info')" v-bind="$attrs">
-    <List bordered :data-source="systemInfoData">
-      <template #renderItem="{ item }">
-        <ListItem>{{ t(item[0]) }} : {{ item[1] }}</ListItem>
-      </template>
-    </List>
+  <Card title="项目" v-bind="$attrs">
+    <template #extra>
+      <a-button type="link" size="small">更多</a-button>
+    </template>
+
+    <CardGrid v-for="item in items" :key="item.title" class="!md:w-1/3 !w-full">
+      <span class="flex">
+        <Icon :icon="item.icon" :color="item.color" size="30" />
+        <span class="text-lg ml-4">{{ item.title }}</span>
+      </span>
+      <div class="flex mt-2 h-10 text-secondary">{{ item.desc }}</div>
+      <div class="flex justify-between text-secondary">
+        <span>{{ item.group }}</span>
+        <span>{{ item.date }}</span>
+      </div>
+    </CardGrid>
   </Card>
 </template>
 <script lang="ts">
   import { defineComponent } from 'vue';
-  import { Card, List, ListItem } from 'ant-design-vue';
-  import { systemInfoData } from './data';
-  import { useI18n } from '/@/hooks/web/useI18n';
+  import { Card, CardGrid } from 'ant-design-vue';
+  import Icon from '@/components/Icon/Icon.vue';
+  import { groupItems } from './data';
 
   export default defineComponent({
-    components: { Card, List, ListItem },
+    components: { Card, CardGrid, Icon },
     setup() {
-      const { t } = useI18n();
-      return { systemInfoData: systemInfoData, t };
+      return { items: groupItems };
     },
   });
 </script>

@@ -78,23 +78,6 @@
   });
 </script>
 <style lang="less">
-  [data-theme='dark'] {
-    .scroll-container {
-      width: 100%;
-      height: 100%;
-
-      .scrollbar__wrap {
-        margin-bottom: 18px !important;
-        overflow-x: hidden;
-        color: #d2d2d2;
-      }
-
-      .scrollbar__view {
-        box-sizing: border-box;
-      }
-    }
-  }
-
   .scroll-container {
     width: 100%;
     height: 100%;
@@ -102,7 +85,6 @@
     .scrollbar__wrap {
       margin-bottom: 18px !important;
       overflow-x: hidden;
-      color: @text-color;
     }
 
     .scrollbar__view {

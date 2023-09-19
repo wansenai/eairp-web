@@ -2,7 +2,6 @@ import type { ExtractPropTypes } from 'vue';
 import type { TreeDataItem } from 'ant-design-vue/es/tree/Tree';
 
 import { buildProps } from '/@/utils/props';
-import { DataNode } from 'ant-design-vue/lib/vc-tree/interface';
 
 export enum ToolbarEnum {
   SELECT_ALL,
@@ -101,12 +100,12 @@ export const treeProps = buildProps({
   },
 
   checkedKeys: {
-    type: Array as PropType<CheckKeys>,
+    type: [Array, Object] as PropType<CheckKeys>,
     default: () => [],
   },
 
   beforeRightClick: {
-    type: Function as PropType<(...arg: any) => ContextMenuItem[] | ContextMenuOptions>,
+    type: Function as PropType<(...arg: any) => Promise<ContextMenuItem[] | ContextMenuOptions>>,
     default: undefined,
   },
 
@@ -185,7 +184,7 @@ export interface TreeActionType {
   insertNodeByKey: (opt: InsertNodeParams) => void;
   insertNodesByKey: (opt: InsertNodeParams) => void;
   deleteNodeByKey: (key: string) => void;
-  updateNodeByKey: (key: string, node: DataNode, list?: DataNode[] | undefined) => void;
+  updateNodeByKey: (key: string, node: Omit<TreeDataItem, 'key'>) => void;
   setSearchValue: (value: string) => void;
   getSearchValue: () => string;
   getSelectedNode: (

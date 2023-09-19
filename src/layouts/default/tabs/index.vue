@@ -49,7 +49,6 @@
   import { listenerRouteChange } from '/@/logics/mitt/routeChange';
 
   import { useRouter } from 'vue-router';
-  import { Key } from 'ant-design-vue/es/_util/type';
 
   export default defineComponent({
     name: 'MultipleTabs',
@@ -119,13 +118,13 @@
       }
 
       // Close the current tab
-      function handleEdit(targetKey: Key | KeyboardEvent | MouseEvent) {
+      function handleEdit(targetKey: string) {
         // Added operation to hide, currently only use delete operation
         if (unref(unClose)) {
           return;
         }
 
-        tabStore.closeTabByKey(targetKey as Key, router);
+        tabStore.closeTabByKey(targetKey, router);
       }
       return {
         getWrapClass,

@@ -90,7 +90,6 @@ export type ComponentType =
   | 'InputCountDown'
   | 'Select'
   | 'ApiSelect'
-  | 'ApiMultipleSelect'
   | 'TreeSelect'
   | 'ApiTree'
   | 'ApiTreeSelect'
@@ -107,6 +106,7 @@ export type ComponentType =
   | 'RangePicker'
   | 'WeekPicker'
   | 'TimePicker'
+  | 'TimeRangePicker'
   | 'Switch'
   | 'StrengthMeter'
   | 'Upload'
@@ -115,5 +115,4 @@ export type ComponentType =
   | 'Slider'
   | 'Rate'
   | 'Divider'
-  | 'ApiTransfer'
-  | 'DictionarySelect';
+  | 'ApiTransfer';

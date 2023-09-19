@@ -1,11 +1,14 @@
 <template>
   <div :class="prefixCls" class="relative w-full h-full px-4">
-    <AppLocalePicker
-      class="absolute text-white top-5 right-4 enter-x xl:text-gray-600 text-lg"
-      :showText="false"
-      v-if="!sessionTimeout && showLocale"
-    />
-    <AppDarkModeToggle class="absolute top-4 right-8 enter-x" />
+    <div class="flex items-center absolute right-4 top-4">
+      <AppDarkModeToggle class="enter-x mr-2" v-if="!sessionTimeout" />
+      <AppLocalePicker
+        class="text-white enter-x xl:text-gray-600"
+        :show-text="false"
+        v-if="!sessionTimeout && showLocale"
+      />
+    </div>
+
     <span class="-enter-x xl:hidden">
       <AppLogo :alwaysShowTitle="true" />
     </span>
@@ -17,13 +20,13 @@
           <div class="my-auto">
             <img
               :alt="title"
-              src="../../../assets/images/login-page-bg-2.png"
-              class="w-2/3 -mt-16 -enter-x"
+              src="../../../assets/svg/login-box-bg.svg"
+              class="w-1/2 -mt-16 -enter-x"
             />
             <div class="mt-10 font-medium text-white -enter-x">
               <span class="inline-block mt-4 text-3xl"> {{ t('sys.login.signInTitle') }}</span>
             </div>
-            <div class="mt-5 font-normal text-white text-md dark:text-gray-500 -enter-x">
+            <div class="mt-5 font-normal text-white dark:text-gray-500 -enter-x">
               {{ t('sys.login.signInDesc') }}
             </div>
           </div>
@@ -35,8 +38,9 @@
           >
             <LoginForm />
             <ForgetPasswordForm />
-            <QrCodeForm />
             <RegisterForm />
+            <MobileForm />
+            <QrCodeForm />
           </div>
         </div>
       </div>
@@ -45,10 +49,11 @@
 </template>
 <script lang="ts" setup>
   import { computed } from 'vue';
-  import { AppLocalePicker, AppLogo, AppDarkModeToggle } from '/@/components/Application';
+  import { AppLogo, AppLocalePicker, AppDarkModeToggle } from '/@/components/Application';
   import LoginForm from './LoginForm.vue';
   import ForgetPasswordForm from './ForgetPasswordForm.vue';
   import RegisterForm from './RegisterForm.vue';
+  import MobileForm from './MobileForm.vue';
   import QrCodeForm from './QrCodeForm.vue';
   import { useGlobSetting } from '/@/hooks/setting';
   import { useI18n } from '/@/hooks/web/useI18n';
@@ -69,9 +74,9 @@
   const title = computed(() => globSetting?.title ?? '');
 </script>
 <style lang="less">
-  @prefix-cls: ~'@{name-space}-login';
-  @logo-prefix-cls: ~'@{name-space}-app-logo';
-  @countdown-prefix-cls: ~'@{name-space}-countdown-input';
+  @prefix-cls: ~'@{namespace}-login';
+  @logo-prefix-cls: ~'@{namespace}-app-logo';
+  @countdown-prefix-cls: ~'@{namespace}-countdown-input';
   @dark-bg: #293146;
 
   html[data-theme='dark'] {
@@ -87,7 +92,7 @@
         background-color: #232a3b;
       }
 
-      .ant-btn:not(.ant-btn-link):not(.ant-btn-primary) {
+      .ant-btn:not(.ant-btn-link, .ant-btn-primary) {
         border: 1px solid #4a5569;
       }
 
@@ -110,15 +115,12 @@
   .@{prefix-cls} {
     min-height: 100%;
     overflow: hidden;
-    background-color: #fff;
-    color: @text-color;
 
     @media (max-width: @screen-xl) {
       background-color: #293146;
 
       .@{prefix-cls}-form {
         background-color: #fff;
-        color: @text-color;
       }
     }
 

@@ -30,7 +30,7 @@
           <div :class="`${prefixCls}-entry__header enter-x`">
             <img :src="userinfo.avatar || headerImg" :class="`${prefixCls}-entry__header-img`" />
             <p :class="`${prefixCls}-entry__header-name`">
-              {{ userinfo.name }}
+              {{ userinfo.realName }}
             </p>
           </div>
           <InputPassword
@@ -133,7 +133,7 @@
   }
 </script>
 <style lang="less" scoped>
-  @prefix-cls: ~'@{name-space}-lock-page';
+  @prefix-cls: ~'@{namespace}-lock-page';
 
   .@{prefix-cls} {
     z-index: @lock-page-z-index;

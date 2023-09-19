@@ -20,9 +20,10 @@
       placement="right"
       :overlayClassName="`${prefixCls}-menu-popover`"
       v-else
-      :visible="getIsOpend"
-      @visible-change="handleVisibleChange"
+      :open="getIsOpend"
+      @on-open-change="handleVisibleChange"
       :overlayStyle="getOverlayStyle"
+      :overlayInnerStyle="{ padding: 0 }"
       :align="{ offset: [0, 0] }"
     >
       <div :class="getSubClass" v-bind="getEvents(false)">
@@ -75,7 +76,7 @@
   import { useMenuItem } from './useMenu';
   import { useSimpleRootMenuContext } from './useSimpleMenuContext';
   import { CollapseTransition } from '/@/components/Transition';
-  import { Icon } from '@/components/Icon';
+  import Icon from '@/components/Icon/Icon.vue';
   import { Popover } from 'ant-design-vue';
   import { isBoolean, isObject } from '/@/utils/is';
   import { mitt } from '/@/utils/mitt';
