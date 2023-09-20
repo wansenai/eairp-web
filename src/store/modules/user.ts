@@ -7,9 +7,9 @@ import { ROLES_KEY, ROLES_NAME_KEY, TOKEN_KEY, USER_INFO_KEY } from '/@/enums/ca
 import { getAuthCache, setAuthCache } from '/@/utils/auth';
 import {
   GetUserInfoModel,
-  LoginReq,
+  LoginReq, mobileLoginReq, updatePasswordReq,
 } from '/@/api/sys/model/userModel';
-import { doLogout, getUserInfo, login} from '/@/api/sys/user';
+import {doLogout, getUserInfo, login, mobileLogin} from '/@/api/sys/user';
 import { useI18n } from '/@/hooks/web/useI18n';
 import { useMessage } from '/@/hooks/web/useMessage';
 import { router } from '/@/router';
@@ -104,6 +104,31 @@ export const useUserStore = defineStore({
       try {
         const { goHome = true, mode, ...loginParams } = params;
         const data = await login(loginParams, mode);
+        if (data.code !== '00000') {
+          return Promise.reject(null);
+        }
+        const { token } = data.data;
+
+        // save token
+        this.setToken(token);
+        return this.afterLoginAction(goHome);
+      } catch (error) {
+        return Promise.reject(error);
+      }
+    },
+
+    /**
+     * @description: mobileLogin
+     */
+    async mobileLogin(
+        params: mobileLoginReq & {
+          goHome?: boolean;
+          mode?: ErrorMessageMode;
+        },
+    ): Promise<GetUserInfoModel | null> {
+      try {
+        const { goHome = true, mode, ...mobileLoginReq } = params;
+        const data = await mobileLogin(mobileLoginReq, mode);
         if (data.code !== '00000') {
           return Promise.reject(null);
         }

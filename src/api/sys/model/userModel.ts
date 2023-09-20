@@ -8,6 +8,26 @@ export interface LoginReq {
   captchaId: string;
 }
 
+export interface mobileLoginReq {
+  phoneNumber: string;
+  sms: string;
+  type: number;
+}
+
+export interface registerReq {
+  username: string;
+  password: string;
+  phoneNumber: string;
+  sms: number;
+}
+
+export interface updatePasswordReq {
+  username: string;
+  password: string;
+  phoneNumber: string;
+  sms: number;
+}
+
 export interface RoleInfo {
   roleName: string;
   value: string;
