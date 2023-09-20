@@ -25,6 +25,31 @@
       />
     </FormItem>
 
+    <FormItem
+      name="captcha"
+      v-if="formData.msgType === 'captcha'"
+      class="enter-x"
+      :rules="[{ required: true, len: 5 }]"
+    >
+      <Input
+        size="large"
+        v-model:value="formData.captcha"
+        :placeholder="t('sys.login.captcha')"
+        class="fix-auto-fill"
+      >
+        <template #suffix>
+          <img
+            :src="formData.imagePath"
+            class="absolute right-0 h-full cursor-pointer"
+            @click="getCaptchaData()"/>
+        </template>
+      </Input>
+    </FormItem>
+
+    <FormItem name="captchaId" class="enter-x" v-show="false">
+      <Input :value="formData.captchaId" />
+    </FormItem>
+
     <ARow class="enter-x">
       <ACol :span="12">
         <FormItem>
@@ -73,41 +98,36 @@
     <Divider class="enter-x">{{ t('sys.login.otherSignIn') }}</Divider>
 
     <div class="flex justify-evenly enter-x" :class="`${prefixCls}-sign-in-way`">
-      <GithubFilled />
       <WechatFilled />
-      <AlipayCircleFilled />
-      <GoogleCircleFilled />
       <TwitterCircleFilled />
     </div>
   </Form>
 </template>
 <script lang="ts" setup>
   import { reactive, ref, unref, computed } from 'vue';
-
+  import { getCaptcha } from '/@/api/sys/captcha';
   import { Checkbox, Form, Input, Row, Col, Button, Divider } from 'ant-design-vue';
   import {
-    GithubFilled,
     WechatFilled,
-    AlipayCircleFilled,
-    GoogleCircleFilled,
     TwitterCircleFilled,
   } from '@ant-design/icons-vue';
   import LoginFormTitle from './LoginFormTitle.vue';
 
   import { useI18n } from '/@/hooks/web/useI18n';
-  import { useMessage } from '/@/hooks/web/useMessage';
 
   import { useUserStore } from '/@/store/modules/user';
   import { LoginStateEnum, useLoginState, useFormRules, useFormValid } from './useLogin';
   import { useDesign } from '/@/hooks/web/useDesign';
+  import {PageEnum} from "@/enums/pageEnum";
+  import {useGo} from "@/hooks/web/usePage";
   //import { onKeyStroke } from '@vueuse/core';
 
   const ACol = Col;
   const ARow = Row;
+  const go = useGo();
   const FormItem = Form.Item;
   const InputPassword = Input.Password;
   const { t } = useI18n();
-  const { notification, createErrorModal } = useMessage();
   const { prefixCls } = useDesign('login');
   const userStore = useUserStore();
 
@@ -119,8 +139,14 @@
   const rememberMe = ref(false);
 
   const formData = reactive({
-    account: 'vben',
-    password: '123456',
+    msgType: 'captcha',
+    account: '',
+    password: '',
+    captcha: '',
+    captchaId: '',
+    imagePath: '',
+    target: '',
+    captchaVerified: '',
   });
 
   const { validForm } = useFormValid(formRef);
@@ -132,28 +158,42 @@
   async function handleLogin() {
     const data = await validForm();
     if (!data) return;
-    try {
-      loading.value = true;
-      const userInfo = await userStore.login({
+    loading.value = true;
+    userStore
+      .login({
         password: data.password,
         username: data.account,
-        mode: 'none', //不要默认的错误提示
+        captcha: data.captcha,
+        captchaId: data.captchaId,
+        goHome: false,
+        mode: 'notice',
+      })
+      .then(() => {
+        loading.value = false;
+        go(PageEnum.BASE_HOME);
+      })
+      .catch(() => {
+        getCaptchaData();
+        loading.value = false;
       });
-      if (userInfo) {
-        notification.success({
-          message: t('sys.login.loginSuccessTitle'),
-          description: `${t('sys.login.loginSuccessDesc')}: ${userInfo.realName}`,
-          duration: 3,
-        });
-      }
-    } catch (error) {
-      createErrorModal({
-        title: t('sys.api.errorTip'),
-        content: (error as unknown as Error).message || t('sys.api.networkExceptionMsg'),
-        getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-      });
-    } finally {
-      loading.value = false;
+  }
+
+  async function getCaptchaData() {
+    const captcha = await getCaptcha('none');
+    if (captcha.code === '00000') {
+      formData.captchaId = captcha.data.captchaId;
+      formData.imagePath = captcha.data.imagePath;
     }
   }
+
+
+getCaptchaData();
+
 </script>
+
+
+<style scoped>
+.captcha .ant-input {
+  width: '10px';
+}
+</style>

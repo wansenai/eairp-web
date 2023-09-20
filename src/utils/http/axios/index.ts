@@ -19,6 +19,7 @@ import { joinTimestamp, formatRequestDate } from './helper';
 import { useUserStoreWithOut } from '/@/store/modules/user';
 import { AxiosRetry } from '/@/utils/http/axios/axiosRetry';
 import axios from 'axios';
+import {notification} from "ant-design-vue";
 
 const globSetting = useGlobSetting();
 const urlPrefix = globSetting.urlPrefix;
@@ -50,50 +51,42 @@ const transform: AxiosTransform = {
       // return '[HTTP] Request has no return value';
       throw new Error(t('sys.api.apiRequestFailed'));
     }
-    //  这里 code，result，message为 后台统一的字段，需要在 types.ts内修改为项目自己的接口返回格式
-    const { code, result, message } = data;
 
     // 这里逻辑可以根据项目进行修改
-    const hasSuccess = data && Reflect.has(data, 'code') && code === ResultEnum.SUCCESS;
-    if (hasSuccess) {
-      let successMsg = message;
+    if (!res.data) {
+      // return '[HTTP] Request has no return value';
+      throw new Error(t('sys.api.apiRequestFailed'));
+    }
 
-      if (isNull(successMsg) || isUnDef(successMsg) || isEmpty(successMsg)) {
-        successMsg = t(`sys.api.operationSuccess`);
+    if (res.data.code === '00000' || res.data.code === undefined) {
+      if (options.successMessageMode === 'message') {
+        createMessage.success(res.data.msg);
+      } else if (options.successMessageMode === 'modal') {
+        createSuccessModal({ title: res.data.msg, content: res.data.msg });
+      } else if (options.successMessageMode === 'notice') {
+        notification.success({
+          message: t('common.successful'),
+          description: t(res.data.msg),
+          duration: 3,
+        });
       }
 
-      if (options.successMessageMode === 'modal') {
-        createSuccessModal({ title: t('sys.api.successTip'), content: successMsg });
-      } else if (options.successMessageMode === 'message') {
-        createMessage.success(successMsg);
+      return res.data;
+    } else {
+      if (options.errorMessageMode === 'message') {
+        createMessage.error(res.data.msg);
+      } else if (options.errorMessageMode === 'modal') {
+        createErrorModal({ title: res.data.msg, content: res.data.msg });
+      } else if (options.errorMessageMode === 'notice') {
+        notification.warning({
+          message: t('common.failed'),
+          description: t(res.data.msg),
+          duration: 3,
+        });
       }
-      return result;
-    }
 
-    // 在此处根据自己项目的实际情况对不同的code执行不同的操作
-    // 如果不希望中断当前请求，请return数据，否则直接抛出异常即可
-    let timeoutMsg = '';
-    switch (code) {
-      case ResultEnum.TIMEOUT:
-        timeoutMsg = t('sys.api.timeoutMessage');
-        const userStore = useUserStoreWithOut();
-        userStore.logout(true);
-        break;
-      default:
-        if (message) {
-          timeoutMsg = message;
-        }
+      return res.data;
     }
-
-    // errorMessageMode='modal'的时候会显示modal错误弹窗，而不是消息提示，用于一些比较重要的错误
-    // errorMessageMode='none' 一般是调用时明确表示不希望自动弹出错误提示
-    if (options.errorMessageMode === 'modal') {
-      createErrorModal({ title: t('sys.api.errorTip'), content: timeoutMsg });
-    } else if (options.errorMessageMode === 'message') {
-      createMessage.error(timeoutMsg);
-    }
-
-    throw new Error(timeoutMsg || t('sys.api.apiRequestFailed'));
   },
 
   // 请求之前处理config
@@ -230,7 +223,7 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
         // authentication schemes，e.g: Bearer
         // authenticationScheme: 'Bearer',
         authenticationScheme: '',
-        timeout: 10 * 1000,
+        timeout: 30 * 1000,
         // 基础接口地址
         // baseURL: globSetting.apiUrl,
 
@@ -258,7 +251,7 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
           // 接口拼接地址
           urlPrefix: urlPrefix,
           //  是否加入时间戳
-          joinTime: true,
+          joinTime: false,
           // 忽略重复请求
           ignoreCancelToken: true,
           // 是否携带token
@@ -268,6 +261,7 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
             count: 5,
             waitTime: 100,
           },
+          decompress: false,
         },
       },
       opt || {},
@@ -275,11 +269,3 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
   );
 }
 export const defHttp = createAxios();
-
-// other api url
-// export const otherHttp = createAxios({
-//   requestOptions: {
-//     apiUrl: 'xxx',
-//     urlPrefix: 'xxx',
-//   },
-// });
