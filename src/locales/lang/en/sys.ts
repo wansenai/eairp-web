@@ -66,6 +66,7 @@ export default {
     placeholder: 'Please enter the lock screen password or user password',
   },
   login: {
+    captcha: 'Verification code',
     backSignIn: 'Back sign in',
     mobileSignInFormTitle: 'Mobile sign in',
     qrSignInFormTitle: 'Qr code sign in',
@@ -73,9 +74,9 @@ export default {
     signUpFormTitle: 'Sign up',
     forgetFormTitle: 'Reset password',
 
-    signInTitle: 'Backstage management system',
-    signInDesc: 'Enter your personal details and get started!',
-    policy: 'I agree to the xxx Privacy Policy',
+    signInTitle: 'Provide next-generation intelligent ERP system software for enterprises',
+    signInDesc: '© 2023-2033 Wan Sen ERP - All Right Reserved',
+    policy: 'I agree, to the WanSer ERP System Privacy Policy',
     scanSign: `scanning the code to complete the login`,
 
     loginButton: 'Sign in',
