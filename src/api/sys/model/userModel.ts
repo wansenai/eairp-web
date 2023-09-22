@@ -53,19 +53,17 @@ export interface LoginResultModel {
  */
 export interface GetUserInfoModel {
   // 用户id
-  userId: string | number;
+  id: string | number;
   // 用户名
   username: string;
   // 昵称
   name: string;
-  // 头像
-  avatar: string;
-  // 介绍
-  desc?: string;
-  // 用户首页
-  homePath: string;
-  // 用户角色
-  roles?: string[];
+  // 邮箱
+  email: string;
+  // 电话
+  phoneNumber: string;
+  // 状态
+  status: number;
   // 用户角色名称
-  roleName: string[];
+  roleName: string;
 }
