@@ -17,4 +17,11 @@ export default {
 
   light: '亮色主题',
   dark: '黑暗主题',
+
+  on: '启用',
+  off: '停用',
+  delete: '删除',
+  deleteConfirm: '确认删除',
+  createTime: '创建时间',
+  updateTime: '修改时间'
 };

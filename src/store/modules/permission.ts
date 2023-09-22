@@ -23,6 +23,7 @@ import { getPermCode } from '/@/api/sys/user';
 
 import { useMessage } from '/@/hooks/web/useMessage';
 import { PageEnum } from '/@/enums/pageEnum';
+import {array2tree} from "@axolo/tree-array";
 
 interface PermissionState {
   // Permission code list
@@ -222,7 +223,10 @@ export const usePermissionStore = defineStore({
           let routeList: AppRouteRecordRaw[] = [];
           try {
             await this.changePermissionCode();
-            routeList = (await getMenuList()) as AppRouteRecordRaw[];
+           // routeList = (await getMenuList()) as AppRouteRecordRaw[];
+            const menus = await getMenuList();
+            const menuTree = array2tree(menus.data.data);
+            routeList = menuTree as AppRouteRecordRaw[];
           } catch (error) {
             console.error(error);
           }

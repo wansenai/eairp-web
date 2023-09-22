@@ -17,4 +17,11 @@ export default {
 
   light: 'Light',
   dark: 'Dark',
+
+  on: 'On',
+  off: 'Off',
+  delete: 'Delete',
+  deleteConfirm: 'Confirm Delete',
+  createTime: 'Create Time',
+  updateTimeT: 'Update Time'
 };

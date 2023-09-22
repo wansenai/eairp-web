@@ -101,4 +101,9 @@ export default {
     smsCode: '短信验证码',
     mobile: '手机号码',
   },
+  user: {
+    userList: '用户列表',
+    name: '昵称',
+    status: '用户状态',
+  }
 };

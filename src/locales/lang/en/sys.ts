@@ -107,4 +107,9 @@ export default {
     smsCode: 'SMS code',
     mobile: 'Mobile',
   },
+  user: {
+    userList: 'User Table',
+    name: 'Nick Name',
+    status: 'Status'
+  }
 };
