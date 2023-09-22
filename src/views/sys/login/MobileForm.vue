@@ -2,10 +2,10 @@
   <div v-if="getShow">
     <LoginFormTitle class="enter-x" />
     <Form class="p-4 enter-x" :model="formData" :rules="getFormRules" ref="formRef">
-      <FormItem name="mobile" class="enter-x">
+      <FormItem name="phoneNumber" class="enter-x">
         <Input
           size="large"
-          v-model:value="formData.mobile"
+          v-model:value="formData.phoneNumber"
           :placeholder="t('sys.login.mobile')"
           class="fix-auto-fill"
         />
@@ -16,6 +16,8 @@
           class="fix-auto-fill"
           v-model:value="formData.sms"
           :placeholder="t('sys.login.smsCode')"
+          count=120
+          :sendCodeApi="sendCodeApi"
         />
       </FormItem>
 
@@ -37,18 +39,24 @@
   import LoginFormTitle from './LoginFormTitle.vue';
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useLoginState, useFormRules, useFormValid, LoginStateEnum } from './useLogin';
+  import {sendSmsRegister} from "@/api/sys/user";
+  import {PageEnum} from "@/enums/pageEnum";
+  import {useUserStore} from "@/store/modules/user";
+  import {useGo} from "@/hooks/web/usePage";
 
   const FormItem = Form.Item;
   const { t } = useI18n();
   const { handleBackLogin, getLoginState } = useLoginState();
   const { getFormRules } = useFormRules();
-
+  const userStore = useUserStore();
+  const go = useGo();
   const formRef = ref();
   const loading = ref(false);
 
   const formData = reactive({
-    mobile: '',
+    phoneNumber: '',
     sms: '',
+    type: 1
   });
 
   const { validForm } = useFormValid(formRef);
@@ -58,6 +66,33 @@
   async function handleLogin() {
     const data = await validForm();
     if (!data) return;
-    console.log(data);
+    loading.value = true;
+    userStore
+        .mobileLogin({
+          phoneNumber: data.phoneNumber,
+          sms: data.sms,
+          type: data.type
+        })
+        .then(() => {
+          loading.value = false;
+          go(PageEnum.BASE_HOME);
+        })
+        .catch(() => {
+          loading.value = false;
+        });
   }
+
+  async function sendCodeApi():Promise<boolean> {
+    const phoneNumber = await formRef.value.validateFields(['phoneNumber']);
+    if(phoneNumber == false) {
+      return Promise.resolve(false)
+    }
+    // sen code
+    const result = await sendSmsRegister(1, formData.phoneNumber);
+    if (result.code !== "A0002") {
+      return Promise.resolve(false)
+    }
+    return Promise.resolve(true)
+  }
+
 </script>

@@ -27,9 +27,7 @@
 
     <FormItem
       name="captcha"
-      v-if="formData.msgType === 'captcha'"
       class="enter-x"
-      :rules="[{ required: true, len: 5 }]"
     >
       <Input
         size="large"
