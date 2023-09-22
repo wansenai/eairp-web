@@ -3,22 +3,21 @@
 
 ## 项目设置
 ```
-npm install
-```
+npm install -g pnpm
 
-### 用于开发的编译和热重载
-```
-npm run serve
+pnpm install
 ```
 
 ### 用于打包生产环境的编译程序
 ```
-npm run build
+pnpm build
+
+pnpm preview
 ```
 
-### 整理和修复文件
+### 查看打包后的程序
 ```
-npm run lint
+pnpm preview:dist
 ```
 
 ### Vue-Cli 自定义配置
