@@ -11,6 +11,9 @@ importers:
       '@ant-design/icons-vue':
         specifier: ^6.1.0
         version: 6.1.0(vue@3.3.4)
+      '@axolo/tree-array':
+        specifier: ^0.1.0
+        version: registry.npmmirror.com/@axolo/tree-array@0.1.0
       '@iconify/iconify':
         specifier: ^3.1.1
         version: 3.1.1
@@ -1283,7 +1286,7 @@ packages:
     dependencies:
       '@iconify/iconify': 2.1.2
       axios: registry.npmmirror.com/axios@0.26.1(debug@4.3.4)
-      debug: 4.3.4
+      debug: registry.npmmirror.com/debug@4.3.4
       fast-glob: 3.3.1
       fs-extra: 10.1.0
     transitivePeerDependencies:
@@ -3323,7 +3326,7 @@ packages:
       supports-color:
         optional: true
     dependencies:
-      ms: 2.0.0
+      ms: registry.npmmirror.com/ms@2.0.0
     dev: true
 
   /debug@3.2.7(supports-color@5.5.0):
@@ -6102,10 +6105,6 @@ packages:
   /mrmime@1.0.1:
     resolution: {integrity: sha512-hzzEagAgDyoU1Q6yg5uI+AorQgdvMCur3FcKf7NhMKWsaYg+RnbTyHRa/9IlLF9rf455MOCtcqqrQQ83pPP7Uw==}
     engines: {node: '>=10'}
-    dev: true
-
-  /ms@2.0.0:
-    resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}
     dev: true
 
   /ms@2.1.2:
@@ -9206,6 +9205,12 @@ packages:
       '@ant-design/colors': registry.npmmirror.com/@ant-design/colors@6.0.0
       '@ant-design/icons-svg': registry.npmmirror.com/@ant-design/icons-svg@4.3.1
       vue: 3.3.4
+    dev: false
+
+  registry.npmmirror.com/@axolo/tree-array@0.1.0:
+    resolution: {integrity: sha512-lmvLattovjw1sqKJNLhPnBTQUm8g7U7FkHG9xUt+hR06YUL9Gtz7zbbe+UQVVGSzwlE7Yf9jiACygMdCxHJRYQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@axolo/tree-array/-/tree-array-0.1.0.tgz}
+    name: '@axolo/tree-array'
+    version: 0.1.0
     dev: false
 
   registry.npmmirror.com/@babel/code-frame@7.22.13:
@@ -13371,7 +13376,7 @@ packages:
       debug:
         optional: true
     dependencies:
-      debug: 4.3.4
+      debug: registry.npmmirror.com/debug@4.3.4
 
   registry.npmmirror.com/form-data@3.0.1:
     resolution: {integrity: sha512-RHkBKtLWUVwd7SqRIvCZMEvAMoGUp0XU+seQiZejj0COz3RI3hWP4sCv3gZWWLjJTd7rGwcsF5eKZGii0r/hbg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/form-data/-/form-data-3.0.1.tgz}
