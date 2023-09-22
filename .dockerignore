@@ -1,7 +1,0 @@
-node_modules/
-.husky/
-build/
-public/
-src/
-tests/
-types/
