@@ -219,9 +219,12 @@ importers:
       rimraf:
         specifier: ^5.0.1
         version: 5.0.1
+<<<<<<< HEAD
       turbo:
         specifier: ^1.10.7
         version: registry.npmmirror.com/turbo@1.10.14
+=======
+>>>>>>> 60b91f5bbe7bf78d3d653a236169e97812f6f02c
       typescript:
         specifier: ^5.1.6
         version: registry.npmmirror.com/typescript@5.2.2
@@ -15289,6 +15292,7 @@ packages:
     version: 2.6.2
     dev: true
 
+<<<<<<< HEAD
   registry.npmmirror.com/turbo-darwin-64@1.10.14:
     resolution: {integrity: sha512-I8RtFk1b9UILAExPdG/XRgGQz95nmXPE7OiGb6ytjtNIR5/UZBS/xVX/7HYpCdmfriKdVwBKhalCoV4oDvAGEg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/turbo-darwin-64/-/turbo-darwin-64-1.10.14.tgz}
     name: turbo-darwin-64
@@ -15363,6 +15367,8 @@ packages:
       turbo-windows-arm64: registry.npmmirror.com/turbo-windows-arm64@1.10.14
     dev: true
 
+=======
+>>>>>>> 60b91f5bbe7bf78d3d653a236169e97812f6f02c
   registry.npmmirror.com/type-detect@4.0.8:
     resolution: {integrity: sha512-0fr/mIH1dlO+x7TlcMy+bIDqKPsw/70tVyeHW787goQjhmqaZe10uwLujubK9q9Lg6Fiho1KUKDYz0Z7k7g5/g==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/type-detect/-/type-detect-4.0.8.tgz}
     name: type-detect
