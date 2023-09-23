@@ -1,6 +1,29 @@
-# WanSen ERP UI
+<p align="center">
+  <a href="https://www.antdv.com/">
+    <img width="350" src="/images/wansenai-logo.png">
+  </a>
+</p>
 
-[Enginsh](https://github.com/wansenai/wansen-erp-ui/blob/master/README.md) / [简体中文](https://github.com/wansenai/wansen-erp/blob/master/docs/README_ZH.md)
+<h1 align="center">
+  <a href="#" target="_blank">WanSen ERP</a>
+</h1>
+
+
+<div align="center">
+  <a href="">
+    <img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsummer-os%2Fsummer-boot.svg?type=shield"
+      alt="ors enabled" />
+  </a>
+</div>
+
+<div align="center">
+Next generation artificial intelligent ERP system.
+</div>
+<br />
+
+![](images/login-page-en.png)
+
+English | [简体中文](./README-zh_CN.md)
 
 ## Project setup
 ```
