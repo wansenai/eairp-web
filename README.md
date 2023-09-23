@@ -3,21 +3,26 @@
     <img width="350" src="/images/wansenai-logo.png">
   </a>
 </p>
-
 <h1 align="center">
   <a href="#" target="_blank">WanSen ERP</a>
 </h1>
-
-
 <div align="center">
-  <a href="">
-    <img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsummer-os%2Fsummer-boot.svg?type=shield"
-      alt="ors enabled" />
+  <!-- nodejs build status-->
+  <a href="https://github.com/wansenai/wansen-erp/blob/master/.github/workflows/node.js.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/wansenai/wansen-erp/node.js.yml"
+    alt="Crates.io version" />
   </a>
+  <a href="">
+    <img src="https://img.shields.io/github/repo-size/wansenai/wansen-erp"/>
+  </a>
+  <a href="">
+    <img src="https://img.shields.io/github/last-commit/wansenai/wansen-erp"/>
+  </a>
+
 </div>
 
 <div align="center">
-Next generation artificial intelligent ERP system.
+   <strong>Next generation artificial intelligent ERP system.</strong>
 </div>
 <br />
 
