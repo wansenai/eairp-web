@@ -23,7 +23,6 @@ export default defineApplicationConfig({
           ws: true,
           // rewrite: (path) => path.replace(/^\/api/, ''),
           // only https
-          // secure: false
         }
       },
     },
