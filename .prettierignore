@@ -10,3 +10,8 @@ public
 .npmrc
 
 internal/**/dist
+
+deploy
+docs
+docker
+mock
