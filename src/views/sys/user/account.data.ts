@@ -3,6 +3,7 @@ import { useI18n } from '/@/hooks/web/useI18n';
 import { h } from 'vue';
 import { Switch } from 'ant-design-vue';
 import { useMessage } from '/@/hooks/web/useMessage';
+import {updateStatus} from "@/api/sys/user";
 
 const { t } = useI18n();
 
@@ -36,16 +37,15 @@ export const columns: BasicColumn[] = [
             createMessage.warn('提示');
             return;
           }
-
           record.pendingStatus = true;
-          // const newStatus = checked ? 0 : 1;
-          // updateUser({id: record.id, status: newStatus})
-          //   .then(() => {
-          //     record.status = newStatus;
-          //   })
-          //   .finally(() => {
-          //     record.pendingStatus = false;
-          //   });
+          const newStatus = checked ? 0 : 1;
+          updateStatus({id: record.id, status: newStatus} )
+            .then(() => {
+              record.status = newStatus;
+            })
+            .finally(() => {
+              record.pendingStatus = false;
+            });
         },
       });
     }
