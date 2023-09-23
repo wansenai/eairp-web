@@ -19,6 +19,11 @@ export const columns: BasicColumn[] = [
     width: 120,
   },
   {
+    title: t('sys.user.roleName'),
+    dataIndex: 'roleName',
+    width: 120,
+  },
+  {
     title: t('sys.user.status'),
     dataIndex: 'status',
     width: 100,
@@ -56,14 +61,14 @@ export const columns: BasicColumn[] = [
     width: 120,
   },
   {
+    title: t('sys.login.mobile'),
+    dataIndex: 'phoneNumber',
+    width: 120,
+  },
+  {
     title: t('common.createTime'),
     dataIndex: 'createTime',
     width: 180,
-  },
-  {
-    title: t('sys.login.mobile'),
-    dataIndex: 'phoneNumber',
-    width: 200,
   },
 ];
 
@@ -84,10 +89,16 @@ export const searchFormSchema: FormSchema[] = [
 
 export const accountFormSchema: FormSchema[] = [
   {
-    field: 'account',
+    field: 'id',
+    label: '用户id',
+    show: false,
+    component: 'Input',
+  },
+  {
+    field: 'username',
     label: t('sys.login.userName'),
     component: 'Input',
-    helpMessage: ['本字段演示异步验证', '不能输入带有admin的用户名'],
+    helpMessage: ['这里需要异步验证', '不能输入带有admin的用户名'],
     rules: [
       {
         required: true,
@@ -96,14 +107,7 @@ export const accountFormSchema: FormSchema[] = [
     ],
   },
   {
-    field: 'pwd',
-    label: '密码',
-    component: 'InputPassword',
-    required: true,
-    ifShow: false,
-  },
-  {
-    field: 'dept',
+    field: 'deptName',
     label: '所属部门',
     component: 'TreeSelect',
     componentProps: {
@@ -117,22 +121,32 @@ export const accountFormSchema: FormSchema[] = [
     required: true,
   },
   {
-    field: 'nickname',
+    field: 'roleName',
+    label: t('sys.user.roleName'),
+    component: 'Input',
+    required: true,
+  },
+  {
+    field: 'name',
     label: t('sys.user.name'),
     component: 'Input',
     required: true,
   },
-
   {
-    label: '邮箱',
-    field: t('sys.login.email'),
+    field: 'phoneNumber',
+    label: t('sys.login.mobile'),
     component: 'Input',
     required: true,
   },
-
   {
-    label: '备注',
+    field: 'email',
+    label: t('sys.login.email'),
+    component: 'Input',
+    required: true,
+  },
+  {
     field: 'remark',
+    label: '备注',
     component: 'InputTextArea',
   },
 ];
