@@ -8,4 +8,4 @@
 *.{bat,[bB][aA][tT]} text eol=crlf
 
 # Denote all files that are truly binary and should not be modified.
-*.{ico,png,jpg,jpeg,gif,webp,svg,woff,woff2} binary
+*.{ico,png,jpg,jpeg,gif,bmp,webp,svg,woff,woff2} binary
