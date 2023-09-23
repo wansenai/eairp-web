@@ -5,7 +5,7 @@ module.exports = {
   singleQuote: true,
   trailingComma: 'all',
   proseWrap: 'never',
-  htmlWhitespaceSensitivity: 'strict',
+  htmlWhitespaceSensitivity: 'ignore',
   endOfLine: 'auto',
   plugins: ['prettier-plugin-packagejson'],
   overrides: [
