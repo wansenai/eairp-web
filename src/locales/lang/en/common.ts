@@ -18,6 +18,8 @@ export default {
   light: 'Light',
   dark: 'Dark',
 
+  successful: 'Success',
+  failed: 'Failed',
   on: 'On',
   off: 'Off',
   delete: 'Delete',
