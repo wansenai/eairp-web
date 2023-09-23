@@ -5,7 +5,7 @@ import {
   LoginResp,
   mobileLoginReq,
   registerReq,
-  updatePasswordReq
+  updatePasswordReq, updateUserInfoReq
 } from './model/userModel';
 
 import {ErrorMessageMode} from '/#/axios';
@@ -21,7 +21,8 @@ enum Api {
   GetUserInfo = '/user/info',
   GetPermCode = '/user/perm',
   TestRetry = '/testRetry',
-  List = '/user/list'
+  List = '/user/list',
+  UpdateUser = '/user/update'
 }
 
 /**
@@ -109,6 +110,26 @@ export function getUserList(params: updatePasswordReq, mode: ErrorMessageMode = 
       successMessageMode: mode,
     },
   );
+}
+
+export function updateUser(params: updateUserInfoReq, mode: ErrorMessageMode = 'notice') {
+    return defHttp.post<BaseResp>(
+        {url: Api.UpdateUser, params},
+        {
+            errorMessageMode: mode,
+            successMessageMode: mode,
+        },
+    )
+}
+
+export function updateStatus(params: { id: any; status: number }, mode: ErrorMessageMode = 'notice') {
+  return defHttp.post<BaseResp>(
+      {url: Api.UpdateUser, params},
+      {
+        errorMessageMode: mode,
+        successMessageMode: mode,
+      },
+  )
 }
 
 export function getPermCode() {

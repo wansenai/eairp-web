@@ -28,6 +28,16 @@ export interface updatePasswordReq {
   sms: number;
 }
 
+export interface updateUserInfoReq {
+  id: number | string;
+  name: string;
+  status: number;
+  email: string;
+  phoneNumber: string;
+  position: string;
+  leaderFlag: number;
+}
+
 export interface RoleInfo {
   roleName: string;
   value: string;
