@@ -18,6 +18,8 @@ export default {
   light: '亮色主题',
   dark: '黑暗主题',
 
+  successful: '成功',
+  failed: '失败',
   on: '启用',
   off: '停用',
   delete: '删除',

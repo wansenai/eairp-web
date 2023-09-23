@@ -9,14 +9,13 @@ import { VAxios } from './Axios';
 import { checkStatus } from './checkStatus';
 import { useGlobSetting } from '/@/hooks/setting';
 import { useMessage } from '/@/hooks/web/useMessage';
-import { RequestEnum, ResultEnum, ContentTypeEnum } from '/@/enums/httpEnum';
-import { isString, isUnDef, isNull, isEmpty } from '/@/utils/is';
+import { RequestEnum, ContentTypeEnum } from '/@/enums/httpEnum';
+import { isString} from '/@/utils/is';
 import { getToken } from '/@/utils/auth';
 import { setObjToUrlParams, deepMerge } from '/@/utils';
 import { useErrorLogStoreWithOut } from '/@/store/modules/errorLog';
 import { useI18n } from '/@/hooks/web/useI18n';
 import { joinTimestamp, formatRequestDate } from './helper';
-import { useUserStoreWithOut } from '/@/store/modules/user';
 import { AxiosRetry } from '/@/utils/http/axios/axiosRetry';
 import axios from 'axios';
 import {notification} from "ant-design-vue";
@@ -57,8 +56,10 @@ const transform: AxiosTransform = {
       // return '[HTTP] Request has no return value';
       throw new Error(t('sys.api.apiRequestFailed'));
     }
+    // 这里定义了我返回后端正确业务的状态
+    const validCodes = ['00000', 'A0001', 'A0002', 'A0013', 'A0014']; // 定义包含可能值的数组
 
-    if (res.data.code === '00000' || res.data.code === undefined) {
+    if (validCodes.includes(res.data.code) || res.data.code === undefined) {
       if (options.successMessageMode === 'message') {
         createMessage.success(res.data.msg);
       } else if (options.successMessageMode === 'modal') {
