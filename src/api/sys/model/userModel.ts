@@ -38,6 +38,17 @@ export interface updateUserInfoReq {
   leaderFlag: number;
 }
 
+export interface addOrUpdateUserReq {
+  id: number | string;
+  username: string;
+  name: string;
+  email: string;
+  phoneNumber: string;
+  roleId: number;
+  deptId: number;
+  remake: string;
+}
+
 export interface RoleInfo {
   roleName: string;
   value: string;
