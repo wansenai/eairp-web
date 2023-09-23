@@ -1,7 +1,7 @@
 <p align="center">
-  <a href="https://www.antdv.com/">
+<!--   <a href="https://www.antdv.com/">
     <img width="350" src="/images/wansenai-logo.png">
-  </a>
+  </a> -->
 </p>
 <h1 align="center">
   <a href="#" target="_blank">WanSen ERP</a>
