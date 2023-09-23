@@ -1,6 +1,6 @@
 # WanSen ERP UI
 
-[Enginsh](https://github.com/wansenai/wansen-erp-ui/blob/master/README.md) / [简体中文](https://github.com/wansenai/wansen-erp/docs/README_ZH.md)
+[Enginsh](https://github.com/wansenai/wansen-erp-ui/blob/master/README.md) / [简体中文](https://github.com/wansenai/wansen-erp/blob/master/docs/README_ZH.md)
 
 ## Project setup
 ```
