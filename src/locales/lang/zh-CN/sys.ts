@@ -105,5 +105,6 @@ export default {
     userList: '用户列表',
     name: '昵称',
     status: '用户状态',
+    roleName: '角色'
   }
 };

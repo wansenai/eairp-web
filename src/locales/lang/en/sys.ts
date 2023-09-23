@@ -110,6 +110,7 @@ export default {
   user: {
     userList: 'User Table',
     name: 'Nick Name',
-    status: 'Status'
+    status: 'Status',
+    roleName: 'Role Name'
   }
 };
