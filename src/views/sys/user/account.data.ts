@@ -3,7 +3,9 @@ import { useI18n } from '/@/hooks/web/useI18n';
 import { h } from 'vue';
 import { Switch } from 'ant-design-vue';
 import { useMessage } from '/@/hooks/web/useMessage';
-import {updateStatus} from "@/api/sys/user";
+import { updateStatus } from "@/api/sys/user";
+import { getDeptList } from "@/api/sys/dept";
+import { getRoleList } from "@/api/sys/role";
 
 const { t } = useI18n();
 
@@ -107,24 +109,41 @@ export const accountFormSchema: FormSchema[] = [
     ],
   },
   {
-    field: 'deptName',
+    field: 'deptId',
     label: '所属部门',
-    component: 'TreeSelect',
+    component: 'ApiTreeSelect',
+    required: true,
     componentProps: {
-      fieldNames: {
-        label: 'deptName',
-        key: 'id',
-        value: 'id',
-      },
-      getPopupContainer: () => document.body,
+      api: getDeptList,
+      resultField: 'data',
+      labelField: 'deptName',
+      valueField: 'id',
     },
-    required: true,
   },
+  // {
+  //   field: 'deptId',
+  //   label: '所属部门',
+  //   component: 'TreeSelect',
+  //   required: true,
+  //   componentProps: {
+  //     fieldNames:{
+  //       label: 'deptName',
+  //       key: 'id',
+  //       value: 'id',
+  //     }
+  //   },
+  // },
   {
-    field: 'roleName',
+    field: 'roleId',
     label: t('sys.user.roleName'),
-    component: 'Input',
     required: true,
+    component: 'ApiMultipleSelect',
+    componentProps: {
+      api: getRoleList,
+      resultField: 'data',
+      labelField: 'roleName',
+      valueField: 'id',
+    },
   },
   {
     field: 'name',
