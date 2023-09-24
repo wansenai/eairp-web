@@ -25,5 +25,6 @@ export default {
   delete: 'Delete',
   deleteConfirm: 'Confirm Delete',
   createTime: 'Create Time',
-  updateTimeT: 'Update Time'
+  updateTime: 'Update Time',
+  notAllowDeleteAdminData: 'Disallow deletion of administrator data'
 };

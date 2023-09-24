@@ -25,5 +25,6 @@ export default {
   delete: '删除',
   deleteConfirm: '确认删除',
   createTime: '创建时间',
-  updateTime: '修改时间'
+  updateTime: '修改时间',
+  notAllowDeleteAdminData: '禁止删除管理员数据'
 };

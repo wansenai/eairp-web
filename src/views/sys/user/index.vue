@@ -39,9 +39,8 @@
 </template>
 <script lang="ts">
   import { defineComponent, reactive } from 'vue';
-  import { useI18n } from 'vue-i18n';
   import { BasicTable, useTable, TableAction } from '/@/components/Table';
-  import { getUserList } from '/@/api/sys/user';
+  import { getUserList, deleteUser } from '/@/api/sys/user';
   import { PageWrapper } from '/@/components/Page';
   import DeptTree from './DeptTree.vue';
 
@@ -50,14 +49,15 @@
 
   import { columns, searchFormSchema } from './account.data';
   import { useGo } from '/@/hooks/web/usePage';
-  import {t} from "vxe-table";
+  import { useI18n } from 'vue-i18n';
+  import { useMessage } from "@/hooks/web/useMessage";
 
   export default defineComponent({
     name: 'AccountManagement',
-    methods: {t},
     components: { BasicTable, PageWrapper, DeptTree, AccountModal, TableAction },
     setup() {
       const { t } = useI18n();
+      const { createMessage } = useMessage();
       const go = useGo();
       const [registerModal, { openModal }] = useModal();
       const searchInfo = reactive<Recordable>({});
@@ -102,8 +102,15 @@
         });
       }
 
-      function handleDelete(record: Recordable) {
-        console.log(record);
+      async function handleDelete(record: Recordable) {
+        if (record.username === 'admin') {
+          createMessage.warn(t('common.notAllowDeleteAdminData'));
+          return;
+        }
+        const result = await deleteUser([record.id]);
+        if (result.code === 'A0003') {
+          await reload();
+        }
       }
 
       function handleSuccess() {
@@ -111,10 +118,12 @@
       }
 
       function handleView(record: Recordable) {
-        go('/system/account_detail/' + record.id);
+        console.info(record.id);
+        // go('/system/account_detail/' + record.id);
       }
 
       return {
+        t,
         registerTable,
         registerModal,
         handleCreate,

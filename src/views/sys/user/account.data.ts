@@ -111,7 +111,7 @@ export const accountFormSchema: FormSchema[] = [
   {
     field: 'deptId',
     label: '所属部门',
-    component: 'ApiTreeSelect',
+    component: 'ApiMultipleTreeSelect',
     required: true,
     componentProps: {
       api: getDeptList,
