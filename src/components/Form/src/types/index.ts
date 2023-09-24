@@ -93,6 +93,7 @@ export type ComponentType =
   | 'TreeSelect'
   | 'ApiTree'
   | 'ApiTreeSelect'
+  | 'ApiMultipleSelect'
   | 'ApiRadioGroup'
   | 'RadioButtonGroup'
   | 'RadioGroup'

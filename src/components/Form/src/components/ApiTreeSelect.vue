@@ -15,7 +15,6 @@
     type PropType,
     computed,
     defineComponent,
-    watchEffect,
     watch,
     ref,
     onMounted,

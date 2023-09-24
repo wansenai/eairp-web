@@ -64,8 +64,8 @@ export default defineComponent({
           name: values.name,
           email: values.email,
           phoneNumber: values.phoneNumber,
-          roleId: values.roleName,
-          deptId: values.deptName,
+          roleId: values.roleId,
+          deptId: values.deptId,
           remake: values.remake,
         }
         console.info(userObject)
