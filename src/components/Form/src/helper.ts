@@ -79,6 +79,7 @@ export const NO_AUTO_LINK_COMPONENTS: ComponentType[] = [
   'ApiTransfer',
   'ApiTree',
   'ApiSelect',
+  'ApiMultipleSelect',
   'ApiTreeSelect',
   'ApiRadioGroup',
   'ApiCascader',
