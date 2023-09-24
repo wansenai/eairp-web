@@ -69,7 +69,7 @@ export default defineComponent({
           remake: values.remake,
         }
         console.info(userObject)
-        // await addOrUpdateUser(userObject)
+        await addOrUpdateUser(userObject)
 
         closeModal();
         emit('success', {isUpdate: unref(isUpdate), values: {...values, id: rowId.value}});

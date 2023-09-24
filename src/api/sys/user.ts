@@ -6,7 +6,8 @@ import {
     LoginResp,
     mobileLoginReq,
     registerReq,
-    updatePasswordReq, updateUserInfoReq
+    updatePasswordReq,
+    updateUserInfoReq,
 } from './model/userModel';
 
 import {ErrorMessageMode} from '/#/axios';
@@ -24,7 +25,8 @@ enum Api {
   TestRetry = '/testRetry',
   List = '/user/list',
   UpdateUser = '/user/update',
-  addOrUpdateUser = '/user/addOrUpdate'
+  AddOrUpdateUser = '/user/addOrUpdate',
+  DeleteUser = '/user/delete',
 }
 
 /**
@@ -136,7 +138,17 @@ export function updateStatus(params: { id: any; status: number }, mode: ErrorMes
 
 export function addOrUpdateUser(params: addOrUpdateUserReq, mode: ErrorMessageMode = 'notice') {
     return defHttp.post<BaseResp>(
-        {url: Api.addOrUpdateUser, params},
+        {url: Api.AddOrUpdateUser, params},
+        {
+            errorMessageMode: mode,
+            successMessageMode: mode,
+        }
+    )
+}
+
+export function deleteUser(ids: string[] , mode: ErrorMessageMode = 'notice') {
+    return defHttp.post<BaseResp>(
+        { url: `${Api.DeleteUser}?ids=${ids}`},
         {
             errorMessageMode: mode,
             successMessageMode: mode,
