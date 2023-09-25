@@ -18,6 +18,8 @@ export default {
   light: 'Light',
   dark: 'Dark',
 
+  action: 'Action',
+
   successful: 'Success',
   failed: 'Failed',
   on: 'On',
@@ -26,5 +28,7 @@ export default {
   deleteConfirm: 'Confirm Delete',
   createTime: 'Create Time',
   updateTime: 'Update Time',
-  notAllowDeleteAdminData: 'Disallow deletion of administrator data'
+  notAllowEditAdminData: 'Disallow edit of administrator data',
+  notAllowDeleteAdminData: 'Disallow deletion of administrator data',
+  notAllowResetAdmin: 'Disallow reset password of administrator'
 };

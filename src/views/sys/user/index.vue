@@ -3,7 +3,7 @@
     <DeptTree class="w-1/4 xl:w-1/5" @select="handleSelect" />
     <BasicTable @register="registerTable" class="w-3/4 xl:w-4/5" :searchInfo="searchInfo">
       <template #toolbar>
-        <a-button type="primary" @click="handleCreate">新增账号</a-button>
+        <a-button type="primary" @click="handleCreate"> {{ t('sys.user.addAccount') }}</a-button>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
@@ -11,18 +11,27 @@
             :actions="[
               {
                 icon: 'clarity:info-standard-line',
-                tooltip: '查看用户详情',
+                tooltip: t('sys.user.viewUserDetails'),
                 onClick: handleView.bind(null, record),
               },
               {
                 icon: 'clarity:note-edit-line',
-                tooltip: '编辑用户资料',
+                tooltip: t('sys.user.editUserProfile'),
                 onClick: handleEdit.bind(null, record),
               },
               {
-                icon: 'ant-design:delete-outlined',
+                icon: 'ant-design:sync',
+                tooltip: t('sys.user.resetUserPassword'),
+                popConfirm: {
+                  title: t('sys.user.confirmPasswordReset') + '?',
+                  placement: 'left',
+                  confirm: handleResetPassword.bind(null, record),
+                },
+              },
+              {
+                icon: 'ant-design:user-delete',
                 color: 'error',
-                tooltip: '删除此账号',
+                tooltip: t('sys.user.deleteUserAccount') + '?',
                 popConfirm: {
                   title: t('common.deleteConfirm'),
                   placement: 'left',
@@ -40,7 +49,7 @@
 <script lang="ts">
   import { defineComponent, reactive } from 'vue';
   import { BasicTable, useTable, TableAction } from '/@/components/Table';
-  import { getUserList, deleteUser } from '/@/api/sys/user';
+  import { getUserList, deleteUser, resetPassword } from '/@/api/sys/user';
   import { PageWrapper } from '/@/components/Page';
   import DeptTree from './DeptTree.vue';
 
@@ -48,7 +57,6 @@
   import AccountModal from './AccountModal.vue';
 
   import { columns, searchFormSchema } from './account.data';
-  import { useGo } from '/@/hooks/web/usePage';
   import { useI18n } from 'vue-i18n';
   import { useMessage } from "@/hooks/web/useMessage";
 
@@ -58,7 +66,6 @@
     setup() {
       const { t } = useI18n();
       const { createMessage } = useMessage();
-      const go = useGo();
       const [registerModal, { openModal }] = useModal();
       const searchInfo = reactive<Recordable>({});
       const [registerTable, { reload }] = useTable({
@@ -79,7 +86,7 @@
         },
         actionColumn: {
           width: 120,
-          title: '操作',
+          title: t('common.action'),
           dataIndex: 'action',
         },
       });
@@ -96,6 +103,10 @@
       }
 
       function handleEdit(record: Recordable) {
+        if (record.username === 'admin') {
+          createMessage.warn(t('common.notAllowEditAdminData'));
+          return;
+        }
         openModal(true, {
           record,
           isUpdate: true,
@@ -111,6 +122,14 @@
         if (result.code === 'A0003') {
           await reload();
         }
+      }
+
+      async function handleResetPassword(record: Recordable) {
+        if (record.username === 'admin') {
+          createMessage.warn(t('common.notAllowResetAdmin'));
+          return;
+        }
+        await resetPassword(record.id);
       }
 
       function handleSuccess() {
@@ -132,6 +151,7 @@
         handleSuccess,
         handleSelect,
         handleView,
+        handleResetPassword,
         searchInfo,
       };
     },

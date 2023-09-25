@@ -4,7 +4,7 @@ import {
     GetUserInfoModel,
     LoginReq,
     LoginResp,
-    mobileLoginReq,
+    mobileLoginReq, queryUserListReq,
     registerReq,
     updatePasswordReq,
     updateUserInfoReq,
@@ -27,6 +27,7 @@ enum Api {
   UpdateUser = '/user/update',
   AddOrUpdateUser = '/user/addOrUpdate',
   DeleteUser = '/user/delete',
+  ResetPassword = '/user/resetPassword',
 }
 
 /**
@@ -106,7 +107,7 @@ export function getUserInfo() {
   );
 }
 
-export function getUserList(params: updatePasswordReq, mode: ErrorMessageMode = 'notice') {
+export function getUserList(params: queryUserListReq, mode: ErrorMessageMode = 'notice') {
   return defHttp.post<BaseDataResp<GetUserInfoModel>>(
     {url: Api.List, params},
     {
@@ -136,9 +137,15 @@ export function updateStatus(params: { id: any; status: number }, mode: ErrorMes
   )
 }
 
-export function addOrUpdateUser(params: addOrUpdateUserReq, mode: ErrorMessageMode = 'notice') {
+export function addOrUpdateUser(params: addOrUpdateUserReq) {
     return defHttp.post<BaseResp>(
         {url: Api.AddOrUpdateUser, params},
+    )
+}
+
+export function deleteUser(ids: string[] , mode: ErrorMessageMode = 'notice') {
+    return defHttp.post<BaseResp>(
+        { url: `${Api.DeleteUser}?ids=${ids}`},
         {
             errorMessageMode: mode,
             successMessageMode: mode,
@@ -146,9 +153,9 @@ export function addOrUpdateUser(params: addOrUpdateUserReq, mode: ErrorMessageMo
     )
 }
 
-export function deleteUser(ids: string[] , mode: ErrorMessageMode = 'notice') {
+export function resetPassword(id: string, mode: ErrorMessageMode = 'notice') {
     return defHttp.post<BaseResp>(
-        { url: `${Api.DeleteUser}?ids=${ids}`},
+        { url: `${Api.ResetPassword}?id=${id}`},
         {
             errorMessageMode: mode,
             successMessageMode: mode,

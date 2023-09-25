@@ -41,7 +41,7 @@ export const columns: BasicColumn[] = [
         onChange(checked, _) {
           const {createMessage} = useMessage();
           if (record.id == 1) {
-            createMessage.warn('提示');
+            createMessage.warn(t('common.notice'));
             return;
           }
           record.pendingStatus = true;
@@ -89,6 +89,10 @@ export const searchFormSchema: FormSchema[] = [
   },
 ];
 
+function isNotExist({ values }) {
+  return !Boolean(values.id)
+}
+
 export const accountFormSchema: FormSchema[] = [
   {
     field: 'id',
@@ -100,17 +104,27 @@ export const accountFormSchema: FormSchema[] = [
     field: 'username',
     label: t('sys.login.userName'),
     component: 'Input',
-    helpMessage: ['这里需要异步验证', '不能输入带有admin的用户名'],
+    // 注意最好使用异步验证
+    helpMessage: ['不能输入带有admin的用户名'],
     rules: [
       {
         required: true,
         message: '请输入用户名',
       },
     ],
+    ifShow: isNotExist
+  },
+  {
+    field: 'password',
+    label: t('sys.login.password'),
+    component: 'InputPassword',
+    required: false,
+    helpMessage: ['如果不填写，则默认密码为123456'],
+    ifShow: isNotExist
   },
   {
     field: 'deptId',
-    label: '所属部门',
+    label: t('sys.user.department'),
     component: 'ApiMultipleTreeSelect',
     required: true,
     componentProps: {
@@ -120,19 +134,6 @@ export const accountFormSchema: FormSchema[] = [
       valueField: 'id',
     },
   },
-  // {
-  //   field: 'deptId',
-  //   label: '所属部门',
-  //   component: 'TreeSelect',
-  //   required: true,
-  //   componentProps: {
-  //     fieldNames:{
-  //       label: 'deptName',
-  //       key: 'id',
-  //       value: 'id',
-  //     }
-  //   },
-  // },
   {
     field: 'roleId',
     label: t('sys.user.roleName'),
@@ -165,7 +166,7 @@ export const accountFormSchema: FormSchema[] = [
   },
   {
     field: 'remark',
-    label: '备注',
+    label: t('sys.user.remake'),
     component: 'InputTextArea',
   },
 ];
