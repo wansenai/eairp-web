@@ -105,6 +105,17 @@ export default {
     userList: '用户列表',
     name: '昵称',
     status: '用户状态',
-    roleName: '角色'
+    roleName: '角色',
+    department: '所属部门',
+    remake: '备注',
+    addAccount: '新增账号',
+    editAccount: '编辑账号',
+
+    // 用户数据表格操作
+    viewUserDetails: '查看用户详情',
+    editUserProfile: '编辑用户资料',
+    resetUserPassword: '重置密码',
+    confirmPasswordReset: '确定重置密码为123456吗',
+    deleteUserAccount: '删除账号'
   }
 };

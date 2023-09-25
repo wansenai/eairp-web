@@ -111,6 +111,17 @@ export default {
     userList: 'User Table',
     name: 'Nick Name',
     status: 'Status',
-    roleName: 'Role Name'
+    roleName: 'Role Name',
+    department: 'Department',
+    remake: 'Remark',
+    addAccount: 'Add Account',
+    editAccount: 'Edit Account',
+
+    // user table list action
+    viewUserDetails: 'View User Details',
+    editUserProfile: 'Edit User Profile',
+    resetUserPassword: 'Reset User Password',
+    confirmPasswordReset: 'Are you sure to reset the password to 123456',
+    deleteUserAccount: 'Delete User Account'
   }
 };
