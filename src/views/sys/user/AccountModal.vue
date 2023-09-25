@@ -11,12 +11,14 @@ import {accountFormSchema} from './account.data';
 import {getDeptList} from '/@/api/sys/dept';
 import {addOrUpdateUser} from '/@/api/sys/user';
 import {addOrUpdateUserReq} from '@/api/sys/model/userModel'
+import {useI18n} from "vue-i18n";
 
 export default defineComponent({
   name: 'AccountModal',
   components: {BasicModal, BasicForm},
   emits: ['success', 'register'],
   setup(_, {emit}) {
+    const { t } = useI18n();
     const isUpdate = ref(true);
     const rowId = ref('');
 
@@ -42,6 +44,7 @@ export default defineComponent({
         });
       }
 
+
       const treeData = (await getDeptList()).data
       updateSchema([
         {
@@ -51,7 +54,9 @@ export default defineComponent({
       ]);
     });
 
-    const getTitle = computed(() => (!unref(isUpdate) ? '新增账号' : '编辑账号'));
+    const getTitle = computed(() => (!unref(isUpdate) ? t('sys.user.addAccount') : t('sys.user.editAccount')));
+    const showPassword = getTitle.value;
+    console.info(showPassword)
 
     async function handleSubmit() {
       try {
@@ -61,6 +66,7 @@ export default defineComponent({
         const userObject: addOrUpdateUserReq = {
           id: values.id !== null ? values.id : '',
           username: values.username,
+          password: values.password,
           name: values.name,
           email: values.email,
           phoneNumber: values.phoneNumber,
@@ -69,16 +75,17 @@ export default defineComponent({
           remake: values.remake,
         }
         console.info(userObject)
-        await addOrUpdateUser(userObject)
-
-        closeModal();
-        emit('success', {isUpdate: unref(isUpdate), values: {...values, id: rowId.value}});
+        const result = await addOrUpdateUser(userObject)
+        if(result.code === 'A0002' || result.code === 'A0014') {
+          closeModal();
+          emit('success', {isUpdate: unref(isUpdate), values: {...values, id: rowId.value}});
+        }
       } finally {
         setModalProps({confirmLoading: false});
       }
     }
 
-    return {registerModal, registerForm, getTitle, handleSubmit};
+    return {registerModal, registerForm, getTitle, handleSubmit, showPassword};
   },
 });
 </script>
