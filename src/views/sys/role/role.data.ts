@@ -24,6 +24,15 @@ export const columns: BasicColumn[] = [
         title: '价格屏蔽',
         dataIndex: 'priceLimit',
         width: 120,
+        customRender: ({record}) => {
+            if(record.priceLimit === 1) {
+                return '屏蔽采购价'
+            } else if(record.priceLimit === 2) {
+                return '屏蔽零售价'
+            } else if(record.priceLimit === 3) {
+                return '屏蔽销售价'
+            }
+        }
     },
     {
         title: '状态',
@@ -104,8 +113,8 @@ export const formSchema: FormSchema[] = [
         defaultValue: '0',
         componentProps: {
             options: [
-                { label: '启用', value: '1' },
-                { label: '停用', value: '0' },
+                { label: '启用', value: '0' },
+                { label: '停用', value: '1' },
             ],
         },
     },
@@ -115,7 +124,7 @@ export const formSchema: FormSchema[] = [
         component: 'InputTextArea',
     },
     {
-        label: ' ',
+        label: '菜单',
         field: 'menu',
         slot: 'menu',
         component: 'Input',
