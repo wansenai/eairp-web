@@ -21,6 +21,11 @@ export interface registerReq {
   sms: number;
 }
 
+export interface queryUserListReq {
+  username: string;
+  name: string;
+}
+
 export interface updatePasswordReq {
   username: string;
   password: string;

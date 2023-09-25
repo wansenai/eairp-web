@@ -4,7 +4,7 @@ import {
     GetUserInfoModel,
     LoginReq,
     LoginResp,
-    mobileLoginReq,
+    mobileLoginReq, queryUserListReq,
     registerReq,
     updatePasswordReq,
     updateUserInfoReq,
@@ -107,7 +107,7 @@ export function getUserInfo() {
   );
 }
 
-export function getUserList(params: updatePasswordReq, mode: ErrorMessageMode = 'notice') {
+export function getUserList(params: queryUserListReq, mode: ErrorMessageMode = 'notice') {
   return defHttp.post<BaseDataResp<GetUserInfoModel>>(
     {url: Api.List, params},
     {
