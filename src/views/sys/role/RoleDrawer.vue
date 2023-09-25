@@ -29,6 +29,8 @@ import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
 import { BasicTree, TreeItem } from '/@/components/Tree';
 
 import { getMenuList } from '/@/api/sys/menu';
+import {array2tree} from "@axolo/tree-array";
+import {AppRouteRecordRaw} from "@/router/types";
 
 const emit = defineEmits(['success', 'register']);
 const isUpdate = ref(true);
@@ -46,7 +48,10 @@ const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (
   setDrawerProps({ confirmLoading: false });
   // 需要在setFieldsValue之前先填充treeData，否则Tree组件可能会报key not exist警告
   if (unref(treeData).length === 0) {
-    treeData.value = (await getMenuList()) as any as TreeItem[];
+    const menus = await getMenuList();
+    const menuTree = array2tree(menus.data.data);
+    console.info(menuTree)
+    treeData.value = (menuTree) as unknown as TreeItem[];
   }
   isUpdate.value = !!data?.isUpdate;
 
