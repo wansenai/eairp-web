@@ -41,6 +41,7 @@ export interface updateUserInfoReq {
 export interface addOrUpdateUserReq {
   id: number | string;
   username: string;
+  password: string;
   name: string;
   email: string;
   phoneNumber: string;
