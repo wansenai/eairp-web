@@ -15,8 +15,12 @@ export default {
   redo: '刷新',
   back: '返回',
 
+  notice: '提示',
+
   light: '亮色主题',
   dark: '黑暗主题',
+
+  action: '操作',
 
   successful: '成功',
   failed: '失败',
@@ -26,5 +30,7 @@ export default {
   deleteConfirm: '确认删除',
   createTime: '创建时间',
   updateTime: '修改时间',
-  notAllowDeleteAdminData: '禁止删除管理员数据'
+  notAllowEditAdminData: '禁止编辑管理员数据',
+  notAllowDeleteAdminData: '禁止删除管理员数据',
+  notAllowResetAdmin: '禁止重置管理员密码'
 };
