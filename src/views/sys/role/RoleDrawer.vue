@@ -7,34 +7,20 @@
       width="500px"
       @ok="handleSubmit"
   >
-    <BasicForm @register="registerForm">
-      <template #menu="{ model, field }">
-        <BasicTree
-            v-model:value="model[field]"
-            :treeData="treeData"
-            :fieldNames="{ title: 'deptName', key: 'id' }"
-            checkable
-            toolbar
-            title="菜单分配"
-        />
-      </template>
-    </BasicForm>
+    <BasicForm @register="registerForm" />
   </BasicDrawer>
 </template>
 <script lang="ts" setup>
 import { ref, computed, unref } from 'vue';
-import { BasicForm, useForm } from '/@/components/Form/index';
 import { formSchema } from './role.data';
 import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
-import { BasicTree, TreeItem } from '/@/components/Tree';
-
-import { getMenuList } from '/@/api/sys/menu';
-import {array2tree} from "@axolo/tree-array";
-import {AppRouteRecordRaw} from "@/router/types";
-
+import {useForm} from "@/components/Form";
+import BasicForm from "@/components/Form/src/BasicForm.vue";
+import { AddOrUpdateRole } from '/@/api/sys/role'
+import {addOrUpdateRoleInfoReq} from "@/api/sys/model/roleModel";
 const emit = defineEmits(['success', 'register']);
 const isUpdate = ref(true);
-const treeData = ref<TreeItem[]>([]);
+const rowId = ref('');
 
 const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
   labelWidth: 90,
@@ -44,21 +30,16 @@ const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
 });
 
 const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
-  resetFields();
   setDrawerProps({ confirmLoading: false });
-  // 需要在setFieldsValue之前先填充treeData，否则Tree组件可能会报key not exist警告
-  if (unref(treeData).length === 0) {
-    const menus = await getMenuList();
-    const menuTree = array2tree(menus.data.data);
-    console.info(menuTree)
-    treeData.value = (menuTree) as unknown as TreeItem[];
-  }
   isUpdate.value = !!data?.isUpdate;
-
+  console.info(data.record)
   if (unref(isUpdate)) {
+    rowId.value = data.record.id;
     setFieldsValue({
       ...data.record,
     });
+  } else {
+    resetFields();
   }
 });
 
@@ -67,11 +48,21 @@ const getTitle = computed(() => (!unref(isUpdate) ? '新增角色' : '编辑角�
 async function handleSubmit() {
   try {
     const values = await validate();
-    setDrawerProps({ confirmLoading: true });
-    // TODO custom api
-    console.log(values);
-    closeDrawer();
-    emit('success');
+
+    const saveOrUpdateRoleObject: addOrUpdateRoleInfoReq = {
+      id: values.id !== null ? values.id : undefined,
+      roleName: values.roleName,
+      type: values.type,
+      priceLimit: values.priceLimit,
+      status:  values.status,
+      description: values.description
+    }
+    const result = await AddOrUpdateRole(saveOrUpdateRoleObject)
+    if(result.code === 'A0004' || result.code === 'A0006') {
+      closeDrawer();
+      emit('success', {isUpdate: unref(isUpdate), values: {...values, id: rowId.value}});
+      setDrawerProps({ confirmLoading: true });
+    }
   } finally {
     setDrawerProps({ confirmLoading: false });
   }

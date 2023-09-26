@@ -19,3 +19,12 @@ export interface queryRoleListReq {
     roleName: string;
     status: number;
 }
+
+export interface addOrUpdateRoleInfoReq {
+    id: string | undefined
+    roleName: string,
+    type: string,
+    priceLimit: number,
+    status: number,
+    description: string,
+}
