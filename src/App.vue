@@ -1,25 +1,44 @@
 <template>
-  <ConfigProvider :locale="getAntdLocale" :theme="isDark ? darkTheme : {}">
-    <AppProvider>
-      <RouterView />
-    </AppProvider>
-  </ConfigProvider>
+  <a-config-provider :locale="locale">
+    <div id="app">
+      <router-view/>
+    </div>
+  </a-config-provider>
 </template>
+<script>
+  import zhCN from 'ant-design-vue/lib/locale-provider/zh_CN'
+  import enquireScreen from '@/utils/device'
 
-<script lang="ts" setup>
-import { ConfigProvider } from 'ant-design-vue';
-import { AppProvider } from '@/components/Application';
-import { useTitle } from '@/hooks/web/useTitle';
-import { useLocale } from '@/locales/useLocale';
+  export default {
+    data () {
+      return {
+        locale: zhCN,
+      }
+    },
+    created () {
+      let that = this
+      enquireScreen(deviceType => {
+        // tablet
+        if (deviceType === 0) {
+          that.$store.commit('TOGGLE_DEVICE', 'mobile')
+          that.$store.dispatch('setSidebar', false)
+        }
+        // mobile
+        else if (deviceType === 1) {
+          that.$store.commit('TOGGLE_DEVICE', 'mobile')
+          that.$store.dispatch('setSidebar', false)
+        }
+        else {
+          that.$store.commit('TOGGLE_DEVICE', 'desktop')
+          that.$store.dispatch('setSidebar', true)
+        }
 
-import 'dayjs/locale/zh-cn';
-import { useDarkModeTheme } from '@/hooks/setting/useDarkModeTheme';
-
-// support Multi-language
-const { getAntdLocale } = useLocale();
-
-const { isDark, darkTheme } = useDarkModeTheme();
-
-// Listening to page changes and dynamically changing site titles
-useTitle();
+      })
+    }
+  }
 </script>
+<style>
+  #app {
+    height: 100%;
+  }
+</style>
