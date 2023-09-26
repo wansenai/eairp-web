@@ -3,9 +3,6 @@ import { useI18n } from '/@/hooks/web/useI18n';
 import { h } from 'vue';
 import { Switch } from 'ant-design-vue';
 import { setRoleStatus } from '/@/api/sys/role';
-import { useMessage } from '/@/hooks/web/useMessage';
-import {useI18n} from "@/hooks/web/useI18n";
-import {updateStatus} from "@/api/sys/user";
 
 const { t } = useI18n();
 
@@ -85,8 +82,8 @@ export const searchFormSchema: FormSchema[] = [
         component: 'Select',
         componentProps: {
             options: [
-                { label: '启用', value: '0' },
-                { label: '停用', value: '1' },
+                { label: '启用', value: 0 },
+                { label: '停用', value: 1 },
             ],
         },
         colProps: { span: 8 },
@@ -95,38 +92,56 @@ export const searchFormSchema: FormSchema[] = [
 
 export const formSchema: FormSchema[] = [
     {
+        field: 'id',
+        label: '角色id',
+        show: false,
+        component: 'Input',
+    },
+    {
         field: 'roleName',
         label: '角色名称',
         required: true,
         component: 'Input',
     },
     {
-        field: 'roleValue',
-        label: '角色值',
+        field: 'type',
+        label: '类型',
         required: true,
-        component: 'Input',
+        component: 'Select',
+        componentProps: {
+            options: [
+                { label: '查看全部数据', value: '全部数据' },
+                { label: '查看个人数据', value: '个人数据' },
+            ],
+        },
+    },
+    {
+        field: 'priceLimit',
+        label: '价格屏蔽',
+        component: 'Select',
+        componentProps: {
+            options: [
+                { label: '屏蔽采购价', value: 1, key: 1},
+                { label: '屏蔽零售价', value: 2, key: 2 },
+                { label: '屏蔽销售价', value: 3, key: 3 },
+            ],
+        },
     },
     {
         field: 'status',
         label: '状态',
         component: 'RadioButtonGroup',
-        defaultValue: '0',
+        defaultValue: 0,
         componentProps: {
             options: [
-                { label: '启用', value: '0' },
-                { label: '停用', value: '1' },
+                { label: '启用', value: 0 },
+                { label: '停用', value: 1 },
             ],
         },
     },
     {
         label: '备注',
-        field: 'remark',
+        field: 'description',
         component: 'InputTextArea',
-    },
-    {
-        label: '菜单',
-        field: 'menu',
-        slot: 'menu',
-        component: 'Input',
     },
 ];

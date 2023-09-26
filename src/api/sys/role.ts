@@ -1,12 +1,14 @@
 import {ErrorMessageMode} from "#/axios";
 import {defHttp} from "@/utils/http/axios";
 import {BaseDataResp, BaseResp} from "@/api/model/baseModel";
-import {GetRoleInfoModel, queryRoleListReq} from "@/api/sys/model/roleModel";
+import {addOrUpdateRoleInfoReq, GetRoleInfoModel, queryRoleListReq} from "@/api/sys/model/roleModel";
 
 enum Api {
     List = '/sysRole/list',
     PageList = '/sysRole/PageList',
-    UpdateStatus = '/sysRole/updateStatus'
+    UpdateStatus = '/sysRole/updateStatus',
+    AddOrUpdateRole = '/sysRole/addOrUpdateRole',
+    DeleteRole = '/sysRole/deleteRole',
 }
 
 export function getRoleList(mode: ErrorMessageMode = 'notice') {
@@ -36,5 +38,25 @@ export function setRoleStatus(id: string, status: number, mode: ErrorMessageMode
             errorMessageMode: mode,
             successMessageMode: mode,
         },
+    )
+}
+
+export function AddOrUpdateRole(params: addOrUpdateRoleInfoReq, mode: ErrorMessageMode = 'notice'){
+    return defHttp.post<BaseResp>(
+        {url: Api.AddOrUpdateRole, params: params},
+        {
+            errorMessageMode: mode,
+            successMessageMode: mode,
+        }
+    )
+}
+
+export function deleteRole(id: string, mode: ErrorMessageMode = 'notice') {
+    return defHttp.post<BaseResp>(
+        {url: `${Api.DeleteRole}?id=${id}`},
+        {
+            errorMessageMode: mode,
+            successMessageMode: mode,
+        }
     )
 }

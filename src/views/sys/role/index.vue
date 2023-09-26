@@ -33,7 +33,7 @@
 import { defineComponent } from 'vue';
 
 import { BasicTable, useTable, TableAction } from '/@/components/Table';
-import { getPageList } from '/@/api/sys/role';
+import {deleteRole, getPageList} from '/@/api/sys/role';
 
 import { useDrawer } from '/@/components/Drawer';
 import RoleDrawer from './RoleDrawer.vue';
@@ -80,8 +80,12 @@ export default defineComponent({
       });
     }
 
-    function handleDelete(record: Recordable) {
+    async function handleDelete(record: Recordable) {
       console.log(record);
+      const result = await deleteRole(record.id);
+      if (result.code === 'A0007') {
+        await reload();
+      }
     }
 
     function handleSuccess() {
