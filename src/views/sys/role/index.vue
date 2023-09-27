@@ -34,16 +34,18 @@ import { defineComponent } from 'vue';
 
 import { BasicTable, useTable, TableAction } from '/@/components/Table';
 import {deleteRole, getPageList} from '/@/api/sys/role';
-
 import { useDrawer } from '/@/components/Drawer';
 import RoleDrawer from './RoleDrawer.vue';
-
+import { useI18n } from 'vue-i18n';
 import { columns, searchFormSchema } from './role.data';
+import {useMessage} from "@/hooks/web/useMessage";
 
 export default defineComponent({
   name: 'RoleManagement',
   components: { BasicTable, RoleDrawer, TableAction },
   setup() {
+    const { t } = useI18n();
+    const { createMessage } = useMessage();
     const [registerDrawer, { openDrawer }] = useDrawer();
     const [registerTable, { reload }] = useTable({
       title: '角色列表',
@@ -74,6 +76,10 @@ export default defineComponent({
     }
 
     function handleEdit(record: Recordable) {
+      if (record.roleName === '管理员') {
+        createMessage.warn(t('common.notAllowDeleteAdminData'));
+        return;
+      }
       openDrawer(true, {
         record,
         isUpdate: true,
@@ -81,7 +87,10 @@ export default defineComponent({
     }
 
     async function handleDelete(record: Recordable) {
-      console.log(record);
+      if (record.roleName === '管理员') {
+        createMessage.warn(t('common.notAllowDeleteAdminData'));
+        return;
+      }
       const result = await deleteRole(record.id);
       if (result.code === 'A0007') {
         await reload();
