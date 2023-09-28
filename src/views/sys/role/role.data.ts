@@ -146,3 +146,18 @@ export const formSchema: FormSchema[] = [
         component: 'InputTextArea',
     },
 ];
+
+export const roleSchema: FormSchema[] = [
+    {
+        field: 'id',
+        label: '角色id',
+        show: false,
+        component: 'Input',
+    },
+    {
+        label: ' ',
+        field: 'menuIds',
+        slot: 'menu',
+        component: 'Input',
+    },
+]
