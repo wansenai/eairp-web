@@ -28,3 +28,8 @@ export interface addOrUpdateRoleInfoReq {
     status: number,
     description: string,
 }
+
+export interface addOrUpdateRolePermissionReq {
+    id: string | undefined,
+    menuIds: number[]
+}
