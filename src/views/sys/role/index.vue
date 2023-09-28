@@ -13,6 +13,10 @@
                 onClick: handleEdit.bind(null, record),
               },
               {
+                icon: 'ant-design:setting',
+                onClick: handleRole.bind(null, record),
+              },
+              {
                 icon: 'ant-design:delete-outlined',
                 color: 'error',
                 popConfirm: {
@@ -27,6 +31,7 @@
       </template>
     </BasicTable>
     <RoleDrawer @register="registerDrawer" @success="handleSuccess" />
+    <RolePermissionModal @register="registerModal" @success="handleSuccess" />
   </div>
 </template>
 <script lang="ts">
@@ -39,14 +44,17 @@ import RoleDrawer from './RoleDrawer.vue';
 import { useI18n } from 'vue-i18n';
 import { columns, searchFormSchema } from './role.data';
 import {useMessage} from "@/hooks/web/useMessage";
+import RolePermissionModal from "@/views/sys/role/RolePermissionModal.vue";
+import {useModal} from "@/components/Modal";
 
 export default defineComponent({
   name: 'RoleManagement',
-  components: { BasicTable, RoleDrawer, TableAction },
+  components: {RolePermissionModal, BasicTable, RoleDrawer, TableAction },
   setup() {
     const { t } = useI18n();
     const { createMessage } = useMessage();
     const [registerDrawer, { openDrawer }] = useDrawer();
+    const [registerModal, { openModal }] = useModal();
     const [registerTable, { reload }] = useTable({
       title: '角色列表',
       api: getPageList,
@@ -86,6 +94,12 @@ export default defineComponent({
       });
     }
 
+    function handleRole(record: Recordable) {
+      console.info(record)
+      openModal(true, {
+      })
+    }
+
     async function handleDelete(record: Recordable) {
       if (record.roleName === '管理员') {
         createMessage.warn(t('common.notAllowDeleteAdminData'));
@@ -104,10 +118,12 @@ export default defineComponent({
     return {
       registerTable,
       registerDrawer,
+      registerModal,
       handleCreate,
       handleEdit,
       handleDelete,
       handleSuccess,
+      handleRole,
     };
   },
 });

@@ -10,7 +10,7 @@ export const columns: BasicColumn[] = [
     {
         title: '角色名称',
         dataIndex: 'roleName',
-        width: 200,
+        width: 150,
     },
     {
         title: '类型',
@@ -66,6 +66,7 @@ export const columns: BasicColumn[] = [
     {
         title: '备注',
         dataIndex: 'description',
+        width: 180,
     },
 ];
 
