@@ -22,7 +22,9 @@
   import { BasicModal, useModalInner } from '@/components/Modal';
   import { getMenuList } from '@/api/sys/menu';
   import { roleSchema } from './role.data';
+  import { rolePermission } from '@/api/sys/role';
   import {array2tree} from "@axolo/tree-array";
+  import {addOrUpdateRolePermissionReq} from "@/api/sys/model/roleModel";
 
   const treeData = ref<TreeItem[]>([]);
 
@@ -47,7 +49,13 @@
     setModalProps({ confirmLoading: true });
     try {
       const values = await validate();
-      console.log(values);
+      const object: addOrUpdateRolePermissionReq = {
+        id: values.id !== null ? values.id : undefined,
+        menuIds: values.menuIds
+      }
+      console.info(object)
+      await rolePermission(object);
+
 
     } finally {
       closeModal();

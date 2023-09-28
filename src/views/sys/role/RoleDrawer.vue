@@ -16,7 +16,7 @@ import { formSchema } from './role.data';
 import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
 import {useForm} from "@/components/Form";
 import BasicForm from "@/components/Form/src/BasicForm.vue";
-import { AddOrUpdateRole } from '/@/api/sys/role'
+import { addOrUpdateRole } from '/@/api/sys/role'
 import {addOrUpdateRoleInfoReq} from "@/api/sys/model/roleModel";
 const emit = defineEmits(['success', 'register']);
 const isUpdate = ref(true);
@@ -57,7 +57,7 @@ async function handleSubmit() {
       status:  values.status,
       description: values.description
     }
-    const result = await AddOrUpdateRole(saveOrUpdateRoleObject)
+    const result = await addOrUpdateRole(saveOrUpdateRoleObject)
     if(result.code === 'A0004' || result.code === 'A0006') {
       closeDrawer();
       emit('success', {isUpdate: unref(isUpdate), values: {...values, id: rowId.value}});
