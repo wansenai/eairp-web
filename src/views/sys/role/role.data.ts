@@ -10,7 +10,7 @@ export const columns: BasicColumn[] = [
     {
         title: '角色名称',
         dataIndex: 'roleName',
-        width: 200,
+        width: 150,
     },
     {
         title: '类型',
@@ -66,6 +66,7 @@ export const columns: BasicColumn[] = [
     {
         title: '备注',
         dataIndex: 'description',
+        width: 180,
     },
 ];
 
@@ -145,3 +146,18 @@ export const formSchema: FormSchema[] = [
         component: 'InputTextArea',
     },
 ];
+
+export const roleSchema: FormSchema[] = [
+    {
+        field: 'id',
+        label: '角色id',
+        show: false,
+        component: 'Input',
+    },
+    {
+        label: ' ',
+        field: 'menuIds',
+        slot: 'menu',
+        component: 'Input',
+    },
+]
