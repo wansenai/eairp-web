@@ -95,8 +95,8 @@ export default defineComponent({
     }
 
     function handleRole(record: Recordable) {
-      console.info(record)
       openModal(true, {
+        record
       })
     }
 

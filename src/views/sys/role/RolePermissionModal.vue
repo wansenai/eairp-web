@@ -1,53 +1,57 @@
 <template>
-  <BasicForm @register="registerModal" @ok="handleSubmit">
-    <template #menu="{ model, field }">
-      <BasicTree
+  <BasicModal @register="registerModal" @ok="handleSubmit">
+    <BasicForm @register="registerForm">
+      <template #menu="{ model, field }">
+        <BasicTree
           v-model:value="model[field]"
           :treeData="treeData"
-          :fieldNames="{ title: 'menuName', key: 'id' }"
+          :fieldNames="{ title: 'meta.title', key: 'id' }"
           checkable
           toolbar
           title="菜单分配"
-      />
-    </template>
-  </BasicForm>
+          v-if="treeData.length > 0"
+        />
+      </template>
+    </BasicForm>
+  </BasicModal>
 </template>
-<script lang="ts">
-  import { ref, defineComponent } from 'vue';
+<script lang="ts" setup>
+  import { ref, unref } from 'vue';
   import { BasicTree, TreeItem } from '/@/components/Tree';
   import { BasicForm, useForm } from '/@/components/Form/index';
-  import {BasicModal, useModalInner} from "@/components/Modal";
-  import {getMenuList} from "@/api/sys/menu";
-  import {unref} from "vue/dist/vue";
+  import { BasicModal, useModalInner } from '@/components/Modal';
+  import { getMenuList } from '@/api/sys/menu';
+  import { roleSchema } from './role.data';
+  import {array2tree} from "@axolo/tree-array";
+
   const treeData = ref<TreeItem[]>([]);
-  export default defineComponent({
-    name: 'RolePermissionModal',
-    components: {BasicModal, BasicForm},
-    emits: ['success', 'register'],
-    setup(_, {emit}) {
-     const [registerModal, {setModalProps, closeModal}] = useModalInner(async (data) => {
-       setModalProps({confirmLoading: false});
-       const treeData = (await getMenuList()).data
-       console.info(treeData)
-     });
 
-     async function handleSubmit() {
-       setModalProps({confirmLoading: true});
-       try {
+  const [registerForm, {setFieldsValue, validate}] = useForm({
+    labelWidth: 90,
+    baseColProps: { span: 24 },
+    schemas: roleSchema,
+    showActionButtonGroup: false,
+  });
 
-       } finally {
-         emit('success');
-         closeModal();
-         setModalProps({confirmLoading: false});
-       }
-     }
+  const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
+    setModalProps({ confirmLoading: false });
+    if (unref(treeData).length === 0) {
+      const menus = await getMenuList();
+      const menuTree = array2tree(menus.data.data);
+      treeData.value = menuTree as any as TreeItem[];
+    }
+    setFieldsValue({...data.record});
+  });
 
-      return {registerModal, treeData, handleSubmit };
-   },
-  })
+  async function handleSubmit() {
+    setModalProps({ confirmLoading: true });
+    try {
+      const values = await validate();
+      console.log(values);
 
+    } finally {
+      closeModal();
+      setModalProps({ confirmLoading: false });
+    }
+  }
 </script>
-
-<style scoped>
-
-</style>
