@@ -8,7 +8,7 @@ import {defineComponent, ref, computed, unref} from 'vue';
 import {BasicModal, useModalInner} from '/@/components/Modal';
 import {BasicForm, useForm} from '/@/components/Form/index';
 import {accountFormSchema} from './account.data';
-import {getDeptList} from '/@/api/sys/dept';
+import {getUserBindDept} from '/@/api/sys/dept';
 import {addOrUpdateUser} from '/@/api/sys/user';
 import {addOrUpdateUserReq} from '@/api/sys/model/userModel'
 import {useI18n} from "vue-i18n";
@@ -45,7 +45,7 @@ export default defineComponent({
       }
 
 
-      const treeData = (await getDeptList()).data
+      const treeData = (await getUserBindDept()).data
       updateSchema([
         {
           field: 'deptName',
