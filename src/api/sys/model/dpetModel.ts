@@ -17,7 +17,15 @@ export interface GetDeptInfoModel {
     parentId: string;
     // 排序
     sort: number;
-  }
+}
 
-
-export type DeptListGetResultModel = BasicFetchResult<DeptListItem>;
+export interface addOrUpdateDeptReq {
+    id: number | string;
+    deptName: string;
+    parentId: number;
+    deptNumber: string;
+    leader: string;
+    status: number;
+    remark: string;
+    sort: string;
+}
