@@ -1,8 +1,7 @@
 import {BasicFetchResult} from "@/api/model/baseModel";
 
 export interface DeptListItem {
-    organizationName: string;
-    leader: string;
+    deptName: string;
 }
 
 export interface GetDeptInfoModel {
