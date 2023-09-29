@@ -36,6 +36,7 @@ import {getDeptList} from '/@/api/sys/dept'
 import {useModal} from '/@/components/Modal'
 import DeptModal from './DeptModal.vue';
 import {columns, searchFormSchema} from './dept.data';
+import { deleteDept } from "@/api/sys/dept";
 
 export default defineComponent({
   name: 'DeptManagement',
@@ -79,8 +80,11 @@ export default defineComponent({
       });
     }
 
-    function handleDelete(record: Recordable) {
-      console.log(record);
+    async function handleDelete(record: Recordable) {
+      const result = await deleteDept(record.id);
+      if (result.code === 'A0011') {
+        await reload();
+      }
     }
 
     function handleSuccess() {
