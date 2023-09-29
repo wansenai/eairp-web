@@ -4,7 +4,7 @@ import { h } from 'vue';
 import { Switch } from 'ant-design-vue';
 import { useMessage } from '/@/hooks/web/useMessage';
 import { updateStatus } from "@/api/sys/user";
-import {getDeptList, getUserBindDept} from "@/api/sys/dept";
+import {getDeptList} from "@/api/sys/dept";
 import { getRoleList } from "@/api/sys/role";
 
 const { t } = useI18n();
