@@ -7,8 +7,15 @@ import { defHttp } from '/@/utils/http/axios';
 import {BaseDataResp} from "@/api/model/baseModel";
 
 enum Api {
-    DeptList = '/dept/userDeptRel',
+    DeptList = '/dept/list',
+    UserBindDept = '/dept/userBindDept',
 }
 
-export const getDeptList = (params?: DeptListItem) =>
-    defHttp.get<BaseDataResp<GetDeptInfoModel>>({ url: Api.DeptList, params });
+
+export function getDeptList(params?: DeptListItem) {
+    return defHttp.get<BaseDataResp<GetDeptInfoModel>>({url: Api.DeptList, params})
+}
+
+export function getUserBindDept(params?: DeptListItem) {
+    return defHttp.get<BaseDataResp<GetDeptInfoModel>>({url: Api.UserBindDept})
+}
