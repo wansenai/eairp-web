@@ -81,7 +81,7 @@ export const formSchema: FormSchema[] = [
             resultField: 'data',
             labelField: 'deptName',
             valueField: 'id',
-            childrenField: 'children',
+            childrenKeyField: 'children',
         },
     },
     {
