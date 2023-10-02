@@ -26,7 +26,12 @@
 </div>
 <br />
 
+## System screenshot (only part)
 ![](images/login-page-en.png)
+![](images/home-page-zh.png)
+![](images/user-manage-zh.png)
+![](images/add-menu-zh.png)
+![](images/role-permission-zh.png)
 
 [English](README.md) | [简体中文](./README-zh_CN.md)
 
