@@ -28,7 +28,7 @@ async function createAppConfigPlugin({
     name: PLUGIN_NAME,
     async configResolved(_config) {
       let appTitle = _config?.env?.VITE_GLOB_APP_TITLE ?? '';
-      appTitle = appTitle.replace(/\s/g, '_');
+      appTitle = appTitle.replace(/\s/g, '_').replace(/-/g, '_');
       publicPath = _config.base;
       source = await getConfigSource(appTitle);
     },
@@ -36,7 +36,7 @@ async function createAppConfigPlugin({
       publicPath = publicPath.endsWith('/') ? publicPath : `${publicPath}/`;
 
       const appConfigSrc = `${
-        publicPath || '/'
+          publicPath || '/'
       }${GLOBAL_CONFIG_FILE_NAME}?v=${version}-${createContentHash(source)}}`;
 
       return {
@@ -62,7 +62,7 @@ async function createAppConfigPlugin({
         console.log(colors.cyan(`✨configuration file is build successfully!`));
       } catch (error) {
         console.log(
-          colors.red('configuration file configuration file failed to package:\n' + error),
+            colors.red('configuration file configuration file failed to package:\n' + error),
         );
       }
     },
