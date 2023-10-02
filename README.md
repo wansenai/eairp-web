@@ -26,6 +26,28 @@
 </div>
 <br />
 
+## Project
+
+### Online preview
+- [erp-cloud-v2.0.0](https://erp2.wansen.cloud/) - **v2.0.0**
+- [erp-cloud-v1.0.1](https://erp.wansen.cloud/) - v1.0.1
+
+### Repository code
+- [wansen-erp](https://github.com/wansenai/wansen-erp) - **Current version v2**
+- [wansen-erp-core](https://github.com/wansenai/wansen-erp-core) - **Current ERP API**
+- [wansen-erp-v1.0.1](https://github.com/wansenai/wansen-erp/tree/v1.0.1) - Before version v1
+- [wansen-erp-core-v1.0.1](https://github.com/wansenai/wansen-erp-core/tree/v1.0.1) - Before ERP API v1
+
+## Browser support
+
+The `Chrome 80+` browser is recommended for local development
+
+Support modern browsers, not IE
+
+| [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt=" Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>IE | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt=" Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Safari |
+| :-: | :-: | :-: | :-: | :-: |
+| not support | last 2 versions | last 2 versions | last 2 versions | last 2 versions |
+
 ## System screenshot (only part)
 ![](images/login-page-en.png)
 ![](images/home-page-zh.png)
@@ -35,29 +57,31 @@
 
 [English](README.md) | [简体中文](./README-zh_CN.md)
 
-## Project setup
+## Install and use
+
+- Get the project code
+
+```bash
+git clone https://github.com/wansenai/wansen-erp.git
 ```
-npm install -g pnpm
+
+- Installation dependencies
+
+```bash
+cd wansen-erp
 
 pnpm install
+
 ```
 
-### Compiles and hot-reloads for development
-```
-npm run serve
+- run
+
+```bash
+pnpm serve
 ```
 
-### Compiles and minifies for production
-```
+- build
+
+```bash
 pnpm build
-
-pnpm preview
 ```
-
-### view dist 
-```
-pnpm preview:dist
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
