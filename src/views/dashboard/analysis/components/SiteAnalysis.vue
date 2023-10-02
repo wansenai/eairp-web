@@ -24,7 +24,7 @@
   const tabListTitle = [
     {
       key: 'tab1',
-      tab: '流量趋势',
+      tab: '店铺/仓库流量 趋势',
     },
     {
       key: 'tab2',
