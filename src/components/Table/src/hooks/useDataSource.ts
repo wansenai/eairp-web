@@ -310,11 +310,19 @@ export function useDataSource(
       const result  = await api(params);
       const res = result.data;
       if (isTreeTable) {
-        const tree = array2tree(res.data);
-        rawDataSourceRef.value = tree;
-        isArrayResult = Array.isArray(tree);
-        resultItems = isArrayResult ? tree : get(tree, listField);
-        resultTotal = isArrayResult ? tree.length : get(tree, totalField);
+        if(res.data){
+          const tree = array2tree(res.data);
+          rawDataSourceRef.value = tree;
+          isArrayResult = Array.isArray(tree);
+          resultItems = isArrayResult ? tree : get(tree, listField);
+          resultTotal = isArrayResult ? tree.length : get(tree, totalField);
+        }else {
+          const tree = array2tree(res);
+          rawDataSourceRef.value = array2tree(res);
+          isArrayResult = Array.isArray(tree);
+          resultItems = isArrayResult ? tree : get(tree, listField);
+          resultTotal = isArrayResult ? tree.length : get(tree, totalField);
+        }
       } else {
         rawDataSourceRef.value = res;
         isArrayResult = Array.isArray(res);
