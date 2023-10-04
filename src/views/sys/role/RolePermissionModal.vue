@@ -27,7 +27,7 @@
   import {addOrUpdateRolePermissionReq} from "@/api/sys/model/roleModel";
 
   const treeData = ref<TreeItem[]>([]);
-
+  const emit = defineEmits(['success', 'register']);
   const [registerForm, {setFieldsValue, validate}] = useForm({
     labelWidth: 90,
     baseColProps: { span: 24 },
@@ -54,9 +54,10 @@
         menuIds: values.menuIds
       }
       console.info(object)
-      await rolePermission(object);
-
-
+      const result =  await rolePermission(object);
+      if(result.code === 'A0008') {
+        emit('success');
+      }
     } finally {
       closeModal();
       setModalProps({ confirmLoading: false });
