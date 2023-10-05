@@ -27,28 +27,29 @@
         </template>
       </template>
     </BasicTable>
-    <CategoryDrawer @register="registerDrawer" @success="handleSuccess"/>
+    <CategoryModal @register="registerModal" @success="handleSuccess" />
   </div>
 </template>
 
 <script lang="ts">
 import {defineComponent, nextTick} from 'vue';
 import {BasicForm} from "@/components/Form";
-import {BasicModal} from "@/components/Modal";
+import {BasicModal, useModal} from "@/components/Modal";
 import {BasicTree,} from "@/components/Tree";
-import CategoryModal from "@/views/product/category/CategoryDrawer.vue";
+import CategoryModal from "@/views/product/category/CategoryModal.vue";
 import {BasicTable, TableAction, useTable} from "@/components/Table";
 import {getCategoryList} from "@/api/product/productCategory";
 import {columns} from "@/views/product/category/category.data";
-import {useDrawer} from "@/components/Drawer";
-import CategoryDrawer from "@/views/product/category/CategoryDrawer.vue";
 import MenuDrawer from "@/views/sys/menu/MenuDrawer.vue";
+import AccountModal from "@/views/sys/user/AccountModal.vue";
 
 export default defineComponent({
   name: 'ProductCategory',
-  components: {MenuDrawer, CategoryDrawer, BasicTable, TableAction, BasicTree, BasicModal, CategoryModal, BasicForm},
+  components: {
+    AccountModal,
+    MenuDrawer, BasicTable, TableAction, BasicTree, BasicModal, CategoryModal, BasicForm},
   setup() {
-    const [registerDrawer, { openDrawer }] = useDrawer();
+    const [registerModal, { openModal }] = useModal();
     const [registerTable, { reload, expandAll }] = useTable({
       title: '产品分类列表',
       api: getCategoryList,
@@ -81,7 +82,7 @@ export default defineComponent({
     }
 
     async function handleEdit(record: Recordable) {
-      openDrawer(true, {
+      openModal(true, {
         record,
         isUpdate: true,
       });
@@ -91,7 +92,7 @@ export default defineComponent({
     }
 
     async function handleCreate() {
-      openDrawer(true, {
+      openModal(true, {
         isUpdate: false,
       });
     }
@@ -101,7 +102,7 @@ export default defineComponent({
     }
 
     return {
-      registerDrawer,
+      registerModal,
       registerTable,
       handleEdit,
       handleDelete,

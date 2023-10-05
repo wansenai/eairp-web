@@ -55,7 +55,6 @@ export default defineComponent({
 
     const getTitle = computed(() => (!unref(isUpdate) ? t('sys.user.addAccount') : t('sys.user.editAccount')));
     const showPassword = getTitle.value;
-    console.info(showPassword)
 
     async function handleSubmit() {
       try {
