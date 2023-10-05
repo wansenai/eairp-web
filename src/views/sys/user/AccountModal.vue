@@ -42,16 +42,15 @@ export default defineComponent({
         setFieldsValue({
           ...data.record,
         });
+
+        const treeData = (await getUserBindDept()).data
+        updateSchema([
+          {
+            field: 'deptName',
+            componentProps: {treeData},
+          },
+        ]);
       }
-
-
-      const treeData = (await getUserBindDept()).data
-      updateSchema([
-        {
-          field: 'deptName',
-          componentProps: {treeData},
-        },
-      ]);
     });
 
     const getTitle = computed(() => (!unref(isUpdate) ? t('sys.user.addAccount') : t('sys.user.editAccount')));
