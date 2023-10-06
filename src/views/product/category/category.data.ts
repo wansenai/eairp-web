@@ -40,6 +40,7 @@ export const CategorySchema: FormSchema[] = [
         field: 'categoryName',
         label: '分类名称',
         component: 'Input',
+        required: true,
     },
     {
         field: 'parentId',
@@ -51,5 +52,25 @@ export const CategorySchema: FormSchema[] = [
             labelField: 'categoryName',
             valueField: 'id',
         },
+    },
+    {
+        label: '分类级别',
+        field: 'categoryLevel',
+        component: 'InputNumber',
+    },
+    {
+        label: '序列号',
+        field: 'serialNumber',
+        component: 'Input',
+    },
+    {
+        label: '排序',
+        field: 'sort',
+        component: 'InputNumber',
+    },
+    {
+        label: '备注',
+        field: 'remark',
+        component: 'InputTextArea',
     },
 ]
