@@ -28,6 +28,29 @@
 
 ## Project
 
+### Quick Start
+
+You can directly use the Docker pull image for quick startup. Here are the commands to pull the front-end image
+
+### Pull images
+```shell
+docker pull wansenai/erp:latest
+```
+
+### Run Server
+Please note the `API_BASE_URL` parameter, this is the address mapped by the back-end interface.
+```shell
+docker run --name erp -d -p 3000:80 -e API_BASE_URL=http://localhost:9998/erp-api wansenai/erp:latest
+```
+If you want to deploy the API using Docker, you can also pull the API image
+```shell
+docker pull wansenai/erp-core:latest
+```
+And run API services
+```shell
+docker run --name erp-core -d -p 9998:8088 wansenai/erp-core:latest 
+```
+
 ### Online preview
 - [erp-cloud-v2.0.0](https://erp2.wansen.cloud/) - **v2.0.0**
 - [erp-cloud-v1.0.1](https://erp.wansen.cloud/) - v1.0.1

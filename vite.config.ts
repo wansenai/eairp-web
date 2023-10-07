@@ -18,7 +18,7 @@ export default defineApplicationConfig({
       port: 3000,
       proxy: {
         '/erp-api': {
-          target: 'http://localhost:9999',
+          target: 'http://localhost:8088',
           changeOrigin: true,
           ws: true,
           // rewrite: (path) => path.replace(/^\/api/, ''),

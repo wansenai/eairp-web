@@ -21,6 +21,7 @@
     "build:analyze": "cross-env NODE_OPTIONS=--max-old-space-size=8192 pnpm vite build --mode analyze",
     "build:no-cache": "pnpm store prune && npm run build",
     "build:test": "cross-env NODE_OPTIONS=--max-old-space-size=8192 pnpm vite build --mode test",
+    "build:docker": "vite build --mode docker",
     "commit": "czg",
     "dev": "pnpm vite",
     "preinstall": "npx only-allow pnpm",
