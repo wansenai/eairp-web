@@ -12,7 +12,7 @@ import {BasicForm, useForm} from '/@/components/Form/index';
 import {CategorySchema} from "@/views/product/category/category.data";
 import {AddOrUpdateProductCategoryReq} from "@/api/product/model/productCategoryModel";
 import {addOrUpdateCategory} from "@/api/product/productCategory";
-
+import {getCategoryList} from "@/api/product/productCategory";
 
 export default defineComponent({
   name: 'CategoryModal',
@@ -23,7 +23,7 @@ export default defineComponent({
     const isUpdate = ref(true);
     const getTitle = computed(() => (!unref(isUpdate) ? '新增产品分类' : '编辑产品分类'));
 
-    const [registerForm, {setFieldsValue, resetFields, validate}] = useForm({
+    const [registerForm, {setFieldsValue, updateSchema, resetFields, validate}] = useForm({
       labelWidth: 100,
       baseColProps: {span: 24},
       schemas: CategorySchema,
@@ -44,7 +44,13 @@ export default defineComponent({
           ...data.record,
         });
       }
-
+      const treeData = (await getCategoryList()).data
+      updateSchema([
+        {
+          field: 'categoryName',
+          componentProps: {treeData},
+        },
+      ]);
     });
 
     async function handleSubmit() {

@@ -38,7 +38,7 @@ import {BasicModal, useModal} from "@/components/Modal";
 import {BasicTree,} from "@/components/Tree";
 import CategoryModal from "@/views/product/category/CategoryModal.vue";
 import {BasicTable, TableAction, useTable} from "@/components/Table";
-import {getCategoryList} from "@/api/product/productCategory";
+import {getCategoryList, deleteCategory} from "@/api/product/productCategory";
 import {columns} from "@/views/product/category/category.data";
 import MenuDrawer from "@/views/sys/menu/MenuDrawer.vue";
 import AccountModal from "@/views/sys/user/AccountModal.vue";
@@ -89,6 +89,10 @@ export default defineComponent({
     }
 
     async function handleDelete(record: Recordable) {
+      const result = await deleteCategory(record.id);
+      if (result.code === 'P0002') {
+        await reload();
+      }
     }
 
     async function handleCreate() {
