@@ -9,16 +9,12 @@ export const columns: BasicColumn[] = [
         align: 'left',
     },
     {
-        title: '父级分类id',
-        dataIndex: 'parentId',
+        title: '分类编号',
+        dataIndex: 'categoryNumber',
     },
     {
-        title: '分类级别',
-        dataIndex: 'categoryLevel',
-    },
-    {
-        title: '序列号',
-        dataIndex: 'serialNumber',
+        title: '上级分类',
+        dataIndex: 'parentName',
     },
     {
         title: '排序',
@@ -28,6 +24,10 @@ export const columns: BasicColumn[] = [
         title: '备注',
         dataIndex: 'remark',
     },
+    {
+        title: '创建时间',
+        dataIndex: 'createTime',
+    }
 ]
 export const CategorySchema: FormSchema[] = [
     {
@@ -43,6 +43,12 @@ export const CategorySchema: FormSchema[] = [
         required: true,
     },
     {
+        label: '分类编号',
+        field: 'categoryNumber',
+        component: 'Input',
+        required: true,
+    },
+    {
         field: 'parentId',
         label: '上级分类',
         component: 'ApiTreeSelect',
@@ -52,16 +58,6 @@ export const CategorySchema: FormSchema[] = [
             labelField: 'categoryName',
             valueField: 'id',
         },
-    },
-    {
-        label: '分类级别',
-        field: 'categoryLevel',
-        component: 'InputNumber',
-    },
-    {
-        label: '序列号',
-        field: 'serialNumber',
-        component: 'Input',
     },
     {
         label: '排序',

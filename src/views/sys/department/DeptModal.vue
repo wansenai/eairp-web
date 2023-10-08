@@ -20,7 +20,7 @@ export default defineComponent({
   setup(_, { emit }) {
     const isUpdate = ref(true);
 
-    const [registerForm, { resetFields, setFieldsValue, updateSchema, validate }] = useForm({
+    const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
       labelWidth: 100,
       baseColProps: { span: 24 },
       schemas: formSchema,
@@ -29,7 +29,7 @@ export default defineComponent({
 
     const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
       resetFields();
-      setModalProps({ confirmLoading: false });
+      setModalProps({ confirmLoading: false, destroyOnClose: true });
       isUpdate.value = !!data?.isUpdate;
 
       if (unref(isUpdate)) {
@@ -37,11 +37,6 @@ export default defineComponent({
           ...data.record,
         });
       }
-      const treeData = await getDeptList();
-      updateSchema({
-        field: 'parentDept',
-        componentProps: { treeData },
-      });
     });
 
     const getTitle = computed(() => (!unref(isUpdate) ? '新增部门' : '编辑部门'));

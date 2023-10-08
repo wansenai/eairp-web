@@ -6,7 +6,7 @@ import {AddOrUpdateProductCategoryReq, ProductCategoryResp} from "@/api/product/
 enum Api {
     List = '/product/category/list',
     addOrUpdate = '/product/category/addOrUpdate',
-    delete = '/product/category/delete',
+    deleteBatch = '/product/category/deleteBatch',
 }
 
 export function getCategoryList(mode: ErrorMessageMode = 'notice') {
@@ -32,11 +32,10 @@ export function addOrUpdateCategory(params: AddOrUpdateProductCategoryReq, mode:
     );
 }
 
-export function deleteCategory(id: number, mode: ErrorMessageMode = 'notice') {
+export function deleteCategory(ids: number[], mode: ErrorMessageMode = 'notice') {
     return defHttp.post<BaseDataResp<string>>(
         {
-            url: `${Api.delete}?id=${id}`,
-            params: {id},
+            url: `${Api.deleteBatch}?ids=${ids}`,
         },
         {
             errorMessageMode: mode,

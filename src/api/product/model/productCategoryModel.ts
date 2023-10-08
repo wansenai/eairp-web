@@ -1,19 +1,19 @@
 export interface ProductCategoryResp {
     id: number | string;
     parentId: number | string;
+    parentName: string;
     categoryName: string;
-    categoryLevel: string;
-    serialNumber: string;
+    categoryNumber: string;
     remark: string;
     sort: number;
+    createTime: string;
 }
 
 export interface AddOrUpdateProductCategoryReq {
     id: number | string;
     parentId: number | string;
     categoryName: string;
-    categoryLevel: number;
-    serialNumber: string;
+    categoryNumber: number;
     remark: string;
     sort: number;
 }

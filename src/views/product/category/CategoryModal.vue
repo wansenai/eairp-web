@@ -12,7 +12,6 @@ import {BasicForm, useForm} from '/@/components/Form/index';
 import {CategorySchema} from "@/views/product/category/category.data";
 import {AddOrUpdateProductCategoryReq} from "@/api/product/model/productCategoryModel";
 import {addOrUpdateCategory} from "@/api/product/productCategory";
-import {getCategoryList} from "@/api/product/productCategory";
 
 export default defineComponent({
   name: 'CategoryModal',
@@ -23,7 +22,7 @@ export default defineComponent({
     const isUpdate = ref(true);
     const getTitle = computed(() => (!unref(isUpdate) ? '新增产品分类' : '编辑产品分类'));
 
-    const [registerForm, {setFieldsValue, updateSchema, resetFields, validate}] = useForm({
+    const [registerForm, {setFieldsValue, resetFields, validate}] = useForm({
       labelWidth: 100,
       baseColProps: {span: 24},
       schemas: CategorySchema,
@@ -35,7 +34,7 @@ export default defineComponent({
 
     const [registerModal, {setModalProps, closeModal}] = useModalInner(async (data) => {
       resetFields();
-      setModalProps({confirmLoading: false});
+      setModalProps({confirmLoading: false, destroyOnClose: true});
       isUpdate.value = !!data?.isUpdate;
 
       if (unref(isUpdate)) {
@@ -44,38 +43,25 @@ export default defineComponent({
           ...data.record,
         });
       }
-      const treeData = (await getCategoryList()).data
-      updateSchema([
-        {
-          field: 'categoryName',
-          componentProps: {treeData},
-        },
-      ]);
     });
 
     async function handleSubmit() {
-      try {
-        const values = await validate();
-        setModalProps({confirmLoading: true});
-
-        const productCategoryObject: AddOrUpdateProductCategoryReq = {
-          id: values.id !== null ? values.id : null,
-          parentId: values.parentId !== null ? values.parentId : null,
-          categoryName: values.categoryName,
-          categoryLevel: values.categoryLevel,
-          serialNumber: values.serialNumber,
-          remark: values.remark,
-          sort: values.sort,
-        }
-        console.info(productCategoryObject)
-        const result = await addOrUpdateCategory(productCategoryObject)
-        if(result.code === 'P0000' || result.code === 'P0001') {
-          closeModal();
-          emit('success', {isUpdate: unref(isUpdate), values: {...values, id: rowId.value}});
-        }
-      } finally {
-        setModalProps({confirmLoading: false});
+      const values = await validate();
+      setModalProps({confirmLoading: true});
+      const productCategoryObject: AddOrUpdateProductCategoryReq = {
+        id: values.id !== null ? values.id : null,
+        parentId: values.parentId !== null ? values.parentId : null,
+        categoryName: values.categoryName,
+        categoryNumber: values.categoryNumber,
+        remark: values.remark,
+        sort: values.sort,
       }
+      const result = await addOrUpdateCategory(productCategoryObject)
+      if (result.code === 'P0000' || result.code === 'P0001') {
+        closeModal();
+        emit('success');
+      }
+      setModalProps({confirmLoading: false});
     }
 
     return {registerModal, registerForm, getTitle, handleSubmit};
