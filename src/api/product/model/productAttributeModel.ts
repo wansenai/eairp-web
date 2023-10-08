@@ -22,3 +22,7 @@ export interface AddOrUpdateProductAttributeReq {
     remark: string;
     sort: number;
 }
+
+export interface ProductAttributeListReq {
+    attributeName: string;
+}

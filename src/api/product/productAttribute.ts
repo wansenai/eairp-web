@@ -1,8 +1,7 @@
 import {defHttp} from '/@/utils/http/axios';
 import { ErrorMessageMode } from '/#/axios';
 import {BaseDataResp, BaseResp} from "@/api/model/baseModel";
-import {AddOrUpdateProductAttributeReq, ProductAttributeResp} from "@/api/product/model/productAttributeModel";
-import {ProductCategoryListReq} from "@/api/product/model/productCategoryModel";
+import {AddOrUpdateProductAttributeReq, ProductAttributeResp, ProductAttributeListReq} from "@/api/product/model/productAttributeModel";
 
 enum Api {
     List = '/product/attribute/list',
@@ -10,7 +9,7 @@ enum Api {
     deleteBatch = '/product/attribute/deleteBatch',
 }
 
-export function getAttributeList(params: ProductCategoryListReq ,mode: ErrorMessageMode = 'notice') {
+export function getAttributeList(params: ProductAttributeListReq ,mode: ErrorMessageMode = 'notice') {
     return defHttp.post<BaseDataResp<ProductAttributeResp>>(
         {
             url: Api.List,
