@@ -64,7 +64,7 @@ export default defineComponent({
       rowSelection: {
         type: 'checkbox',
       },
-      titleHelpMessage: '树形组件不能和序列号列同时存在',
+      titleHelpMessage: '产品分类列表可以添加多个产品分类和下级分类',
       pagination: false,
       striped: false,
       useSearchForm: false,

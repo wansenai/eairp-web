@@ -34,7 +34,7 @@ export default defineComponent({
 
     const [registerModal, {setModalProps, closeModal}] = useModalInner(async (data) => {
       resetFields();
-      setModalProps({confirmLoading: false, fetchData: true, destroyOnClose: true});
+      setModalProps({confirmLoading: false, destroyOnClose: true});
       isUpdate.value = !!data?.isUpdate;
 
       if (unref(isUpdate)) {
@@ -52,8 +52,7 @@ export default defineComponent({
         id: values.id !== null ? values.id : null,
         parentId: values.parentId !== null ? values.parentId : null,
         categoryName: values.categoryName,
-        categoryLevel: values.categoryLevel,
-        serialNumber: values.serialNumber,
+        categoryNumber: values.categoryNumber,
         remark: values.remark,
         sort: values.sort,
       }
