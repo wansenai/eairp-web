@@ -64,6 +64,7 @@ export default defineComponent({
         labelWidth: 120,
         schemas: searchFormSchema,
       },
+      titleHelpMessage: '角色列表可以给角色赋予不同的权限, 点击操作栏中的齿轮按钮',
       useSearchForm: true,
       showTableSetting: true,
       bordered: true,
