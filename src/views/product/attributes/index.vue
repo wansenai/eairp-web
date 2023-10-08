@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4">
+  <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
         <a-button type="primary" @click="handleCreate"> 新增产品属性</a-button>
@@ -27,8 +27,8 @@
         </template>
       </template>
     </BasicTable>
+    <AttributeModal @register="registerModal" @success="handleSuccess" />
   </div>
-  <AttributeModal @register="registerModal" @success="reload" />
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
@@ -40,6 +40,7 @@ import {useMessage} from "@/hooks/web/useMessage";
 import AttributeModal from "@/views/product/attributes/AttributeModal.vue";
 
 export default defineComponent({
+  name: 'ProductAttributes',
   components: {TableAction, AttributeModal, BasicTable },
   setup() {
     const [registerModal, {openModal}] = useModal();
@@ -47,17 +48,21 @@ export default defineComponent({
     const [registerTable, { reload, getSelectRows }] = useTable({
       title: '商品多属性列表',
       api: getAttributeList,
+      columns: columns,
       rowSelection: {
         type: 'checkbox',
       },
-      columns: columns,
       formConfig: {
         schemas: searchFormSchema,
         autoSubmitOnEnter: true,
       },
+      pagination: false,
+      striped: false,
       bordered: true,
+      showTableSetting: true,
       useSearchForm: true,
       rowKey: 'id',
+      canResize: false,
       actionColumn: {
         width: 80,
         title: '操作',
@@ -72,20 +77,20 @@ export default defineComponent({
         isUpdate: true,
       });
     }
-
+    function handleSuccess() {
+      reload();
+    }
     async function handleCreate() {
       openModal(true, {
         isUpdate: false,
       });
     }
-
     async function handleDelete(record: Recordable) {
       const result = await deleteBatchAttribute([record.id]);
       if (result.code === 'P0005') {
         await reload();
       }
     }
-
     async function handleBatchDelete() {
       const data = getSelectRows();
       if (data.length === 0) {
@@ -99,7 +104,7 @@ export default defineComponent({
       }
     }
 
-    return { registerTable, registerModal, handleCreate, handleEdit, handleDelete, handleBatchDelete, reload };
-  },
+    return { registerTable, registerModal, handleCreate, handleEdit, handleDelete, handleBatchDelete, handleSuccess };
+  }
 });
 </script>
