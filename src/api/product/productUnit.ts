@@ -5,8 +5,9 @@ import {AddOrUpdateProductUnitReq, ProductUnitResp, ProductUnitQueryReq} from "@
 
 enum Api {
     List = '/product/unit/list',
-    addOrUpdate = '/product/unit/addOrUpdate',
-    deleteBatch = '/product/unit/deleteBatch',
+    AddOrUpdate = '/product/unit/addOrUpdate',
+    DeleteBatch = '/product/unit/deleteBatch',
+    UpdateStatus = '/product/unit/updateUnitStatus',
 }
 
 export function getUnitList(params: ProductUnitQueryReq ,mode: ErrorMessageMode = 'notice') {
@@ -25,7 +26,7 @@ export function getUnitList(params: ProductUnitQueryReq ,mode: ErrorMessageMode 
 export function addOrUpdateUnit(params: AddOrUpdateProductUnitReq, mode: ErrorMessageMode = 'notice') {
     return defHttp.post<BaseResp>(
         {
-            url: Api.addOrUpdate,
+            url: Api.AddOrUpdate,
             params,
         },
         {
@@ -37,7 +38,19 @@ export function addOrUpdateUnit(params: AddOrUpdateProductUnitReq, mode: ErrorMe
 export function deleteBatchUnits(ids: number[], mode: ErrorMessageMode = 'notice') {
     return defHttp.delete<BaseResp>(
         {
-            url: `${Api.deleteBatch}?ids=${ids}`
+            url: `${Api.DeleteBatch}?ids=${ids}`
+        },
+        {
+            errorMessageMode: mode,
+        },
+    );
+}
+
+export function updateUnitStatus(params: {id: number, status: number}, mode: ErrorMessageMode = 'notice') {
+    return defHttp.post<BaseResp>(
+        {
+            url: Api.UpdateStatus,
+            params,
         },
         {
             errorMessageMode: mode,

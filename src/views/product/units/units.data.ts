@@ -3,35 +3,34 @@ import {BasicColumn} from "@/components/Table";
 import { h } from 'vue';
 import {Switch} from "ant-design-vue";
 import {useMessage} from "@/hooks/web/useMessage";
-import {updateStatus} from "@/api/sys/user";
 import {useI18n} from "@/hooks/web/useI18n";
-
+import {updateUnitStatus} from "@/api/product/productUnit";
 
 const { t } = useI18n();
 export const columns: BasicColumn[] = [
     {
         title: '计量单位',
         dataIndex: 'computeUnit',
-        width: 100,
+        width: 230,
     },
     {
         title: '基本单位',
         dataIndex: 'basicUnit',
-        width: 150,
+        width: 70,
     },
     {
         title: '副单位',
-        dataIndex: 'otherUnit',
-        width: 80,
+        dataIndex: 'otherComputeUnit',
+        width: 70,
     },
     {
         title: '副单位二',
-        dataIndex: 'otherUnitTwo',
+        dataIndex: 'otherComputeUnitTwo',
         width: 150,
     },
     {
         title: '副单位三',
-        dataIndex: 'otherUnitThree',
+        dataIndex: 'otherComputeUnitThree',
         width: 150,
     },
     {
@@ -55,7 +54,7 @@ export const columns: BasicColumn[] = [
                     }
                     record.pendingStatus = true;
                     const newStatus = checked ? 0 : 1;
-                    updateStatus({id: record.id, status: newStatus} )
+                    updateUnitStatus({id: record.id, status: newStatus} )
                         .then(() => {
                             record.status = newStatus;
                         })
@@ -97,7 +96,6 @@ export const formSchema: FormSchema[] = [
     },
     {
         label: '副单位',
-        helpMessage: '多个属性值用|隔开',
         field: 'otherUnit',
         component: 'Input',
         required: true,
@@ -124,7 +122,7 @@ export const formSchema: FormSchema[] = [
         component: 'Input',
     },
     {
-        label: '副单位二比例',
+        label: '副单位三比例',
         field: 'ratioThree',
         component: 'Input',
     }
