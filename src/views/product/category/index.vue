@@ -33,22 +33,17 @@
 
 <script lang="ts">
 import {defineComponent, nextTick} from 'vue';
-import {BasicForm} from "@/components/Form";
-import {BasicModal, useModal} from "@/components/Modal";
-import {BasicTree,} from "@/components/Tree";
+import {useModal} from "@/components/Modal";
 import CategoryModal from "@/views/product/category/CategoryModal.vue";
 import {BasicTable, TableAction, useTable} from "@/components/Table";
 import {getCategoryList, deleteCategory} from "@/api/product/productCategory";
 import {columns} from "@/views/product/category/category.data";
-import MenuDrawer from "@/views/sys/menu/MenuDrawer.vue";
-import AccountModal from "@/views/sys/user/AccountModal.vue";
 import {useMessage} from "@/hooks/web/useMessage";
 
 export default defineComponent({
   name: 'ProductCategory',
   components: {
-    AccountModal,
-    MenuDrawer, BasicTable, TableAction, BasicTree, BasicModal, CategoryModal, BasicForm
+    BasicTable, TableAction, CategoryModal,
   },
   setup() {
     const { createMessage } = useMessage();
