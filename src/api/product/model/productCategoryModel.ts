@@ -17,3 +17,7 @@ export interface AddOrUpdateProductCategoryReq {
     remark: string;
     sort: number;
 }
+
+export interface ProductCategoryListReq {
+    categoryName: string;
+}
