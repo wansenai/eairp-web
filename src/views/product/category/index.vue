@@ -2,8 +2,8 @@
   <div>
     <BasicTable @register="registerTable" @fetch-success="onFetchSuccess">
       <template #toolbar>
-        <a-button type="primary" @click="handleCreate"> 新增产品分类 </a-button>
-        <a-button type="primary" @click="handleBatchDelete"> 批量删除产品分类 </a-button>
+        <a-button type="primary" @click="handleCreate"> 新增产品分类</a-button>
+        <a-button type="primary" @click="handleBatchDelete"> 批量删除产品分类</a-button>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
@@ -27,7 +27,7 @@
         </template>
       </template>
     </BasicTable>
-    <CategoryModal @register="registerModal" @success="handleSuccess" />
+    <CategoryModal @register="registerModal" @success="handleSuccess"/>
   </div>
 </template>
 
@@ -42,15 +42,18 @@ import {getCategoryList, deleteCategory} from "@/api/product/productCategory";
 import {columns} from "@/views/product/category/category.data";
 import MenuDrawer from "@/views/sys/menu/MenuDrawer.vue";
 import AccountModal from "@/views/sys/user/AccountModal.vue";
+import {useMessage} from "@/hooks/web/useMessage";
 
 export default defineComponent({
   name: 'ProductCategory',
   components: {
     AccountModal,
-    MenuDrawer, BasicTable, TableAction, BasicTree, BasicModal, CategoryModal, BasicForm},
+    MenuDrawer, BasicTable, TableAction, BasicTree, BasicModal, CategoryModal, BasicForm
+  },
   setup() {
-    const [registerModal, { openModal }] = useModal();
-    const [registerTable, { reload, expandAll }] = useTable({
+    const { createMessage } = useMessage();
+    const [registerModal, {openModal}] = useModal();
+    const [registerTable, {reload, expandAll, getSelectRows}] = useTable({
       title: '产品分类列表',
       api: getCategoryList,
       columns,
@@ -58,6 +61,10 @@ export default defineComponent({
         labelWidth: 120,
       },
       isTreeTable: true,
+      rowSelection: {
+        type: 'checkbox',
+      },
+      titleHelpMessage: '树形组件不能和序列号列同时存在',
       pagination: false,
       striped: false,
       useSearchForm: false,
@@ -89,7 +96,7 @@ export default defineComponent({
     }
 
     async function handleDelete(record: Recordable) {
-      const result = await deleteCategory(record.id);
+      const result = await deleteCategory([record.id]);
       if (result.code === 'P0002') {
         await reload();
       }
@@ -102,7 +109,17 @@ export default defineComponent({
     }
 
     async function handleBatchDelete() {
-
+      // 通过getSelectRowKeys获取勾选的复选框，如果没有勾选复选框，就提示选择一条数据
+      const data = getSelectRows();
+      if (data.length === 0) {
+        createMessage.warn('请选择一条数据');
+        return;
+      }
+      const ids = data.map((item) => item.id);
+      const result = await deleteCategory(ids);
+      if (result.code === 'P0002') {
+        await reload();
+      }
     }
 
     return {
