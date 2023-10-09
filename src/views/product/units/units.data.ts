@@ -93,37 +93,81 @@ export const formSchema: FormSchema[] = [
         field: 'basicUnit',
         component: 'Input',
         required: true,
+        componentProps: {
+            placeholder: '请输入基本单位(小单位)',
+        },
     },
     {
         label: '副单位',
         field: 'otherUnit',
         component: 'Input',
         required: true,
+        componentProps: {
+            placeholder: '请输入副单位(大单位)',
+        },
+        colProps: {
+            span: 13,
+        },
     },
     {
-        label: '副单位比例',
+        label: '=',
         field: 'ratio',
-        component: 'Input',
-        required: true,
+        component: 'InputNumber',
+        labelWidth: 10,
+        componentProps: {
+            addonAfter: '基本单位',
+            placeholder: '请输入比例',
+        },
+        colProps: {
+            span: 11,
+        },
     },
     {
         label: '副单位二',
         field: 'otherUnitTwo',
         component: 'Input',
+        componentProps: {
+            placeholder: '请输入副单位2(大单位)',
+        },
+        colProps: {
+            span: 13,
+        },
     },
     {
-        label: '副单位二比例',
+        label: '=',
         field: 'ratioTwo',
+        labelWidth: 10,
+        componentProps: {
+            addonAfter: '基本单位',
+            placeholder: '请输入比例2',
+        },
         component: 'Input',
+        colProps: {
+            span: 11,
+        }
     },
     {
         label: '副单位三',
         field: 'otherUnitThree',
         component: 'Input',
+        componentProps: {
+            placeholder: '请输入副单位2(大单位)',
+        },
+        colProps: {
+            span: 13,
+        },
     },
     {
-        label: '副单位三比例',
+        label: '=',
+        labelWidth: 10,
         field: 'ratioThree',
+        componentProps: {
+            addonAfter: '基本单位',
+            placeholder: '请输入比例3',
+        },
         component: 'Input',
+        colProps: {
+            span: 11,
+        }
     }
 ]
