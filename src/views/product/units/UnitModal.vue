@@ -11,6 +11,7 @@ import {BasicForm, useForm} from '/@/components/Form/index';
 import {formSchema} from "@/views/product/units/units.data";
 import {AddOrUpdateProductUnitReq} from "@/api/product/model/productUnitModal";
 import {addOrUpdateUnit} from "@/api/product/productUnit";
+import {useMessage} from "@/hooks/web/useMessage";
 
 export default defineComponent({
   name: 'UnitModal',
@@ -20,7 +21,7 @@ export default defineComponent({
     const rowId = ref('');
     const isUpdate = ref(true);
     const getTitle = computed(() => (!unref(isUpdate) ? '新增商品计量单位' : '编辑商品计量单位'));
-
+    const { createMessage } = useMessage();
     const [registerForm, {setFieldsValue, resetFields, validate}] = useForm({
       labelWidth: 100,
       baseColProps: {span: 24},
@@ -33,7 +34,12 @@ export default defineComponent({
 
     const [registerModal, {setModalProps, closeModal}] = useModalInner(async (data) => {
       resetFields();
-      setModalProps({confirmLoading: false, destroyOnClose: true});
+      setModalProps({
+        confirmLoading: false,
+        // 解决重新打开modal数据不渲染
+        destroyOnClose: true,
+        width: 600,
+      });
       isUpdate.value = !!data?.isUpdate;
 
       if (unref(isUpdate)) {
@@ -47,6 +53,13 @@ export default defineComponent({
     async function handleSubmit() {
       const values = await validate();
       setModalProps({confirmLoading: true});
+
+      if (!values.ratio) {
+        setModalProps({confirmLoading: false,});
+        createMessage.warn('抱歉，副单位的比例不能为空值');
+        return;
+      }
+
       const productUnit: AddOrUpdateProductUnitReq = {
         id : values.id == null ? null : values.id,
         basicUnit: values.basicUnit,
