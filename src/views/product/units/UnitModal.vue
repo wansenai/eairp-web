@@ -9,7 +9,7 @@ import {defineComponent, ref, computed, unref} from 'vue';
 import {BasicModal, useModalInner} from '/@/components/Modal';
 import {BasicForm, useForm} from '/@/components/Form/index';
 import {formSchema} from "@/views/product/units/units.data";
-import {AddOrUpdateProductUnitReq} from "@/api/product/model/productUnitModal";
+import {AddOrUpdateProductUnitReq} from "@/api/product/model/productUnitModel";
 import {addOrUpdateUnit} from "@/api/product/productUnit";
 import {useMessage} from "@/hooks/web/useMessage";
 

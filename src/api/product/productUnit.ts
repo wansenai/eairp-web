@@ -1,7 +1,7 @@
 import {defHttp} from '/@/utils/http/axios';
 import { ErrorMessageMode } from '/#/axios';
 import {BaseDataResp, BaseResp} from "@/api/model/baseModel";
-import {AddOrUpdateProductUnitReq, ProductUnitResp, ProductUnitQueryReq} from "@/api/product/model/productUnitModal";
+import {AddOrUpdateProductUnitReq, ProductUnitResp, ProductUnitQueryReq} from "@/api/product/model/productUnitModel";
 
 enum Api {
     List = '/product/unit/list',
