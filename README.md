@@ -4,7 +4,7 @@
   </a> -->
 </p>
 <h1 align="center">
-  <a href="#" target="_blank">WanSen ERP</a>
+  <a href="#" target="_blank">EAIRP Web</a>
 </h1>
 <div align="center">
   <!-- nodejs build status-->
