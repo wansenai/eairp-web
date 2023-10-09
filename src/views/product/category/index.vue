@@ -60,7 +60,9 @@ export default defineComponent({
         type: 'checkbox',
       },
       titleHelpMessage: '产品分类列表可以添加多个产品分类和下级分类',
+      // 产品分类不开启分页和行选中
       pagination: false,
+      clickToRowSelect: false,
       striped: false,
       useSearchForm: false,
       showTableSetting: true,
