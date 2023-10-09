@@ -23,8 +23,6 @@
 
 <div align="center">
    <strong>Next generation artificial intelligent ERP system.</strong>
-    <br>
-    Great products come from polishing them over and over again
 </div>
 <br />
 
