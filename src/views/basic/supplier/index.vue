@@ -1,9 +1,12 @@
 <template>
-  <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
         <a-button type="primary" @click="handleCreate"> 新增</a-button>
         <a-button type="primary" @click="handleBatchDelete"> 批量删除</a-button>
+        <a-button type="primary" @click=""> 启用</a-button>
+        <a-button type="primary" @click=""> 禁用</a-button>
+        <a-button type="primary" @click=""> 导入</a-button>
+        <a-button type="primary" @click=""> 导出</a-button>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
@@ -27,27 +30,26 @@
         </template>
       </template>
     </BasicTable>
-    <UnitModal @register="registerModal" @success="handleSuccess" />
-  </div>
 </template>
+
 <script lang="ts">
-import { defineComponent } from 'vue';
-import {BasicTable, TableAction, useTable} from '/@/components/Table';
-import {columns, searchFormSchema} from "@/views/product/units/units.data";
-import {getUnitList, deleteBatchUnits} from "@/api/product/productUnit";
+
+import {defineComponent} from "vue";
+import {BasicTable, TableAction, useTable} from "@/components/Table";
 import {useModal} from "@/components/Modal";
 import {useMessage} from "@/hooks/web/useMessage";
-import UnitModal from "@/views/product/units/UnitModal.vue";
-
+import {getSupplierList} from "@/api/basic/supplier";
+import {columns, searchFormSchema} from "@/views/basic/supplier/supplier.data";
 export default defineComponent({
-  name: 'ProductUnits',
-  components: {TableAction, UnitModal, BasicTable },
+  name: 'Supplier',
+  components: {TableAction, BasicTable},
   setup() {
     const [registerModal, {openModal}] = useModal();
     const { createMessage } = useMessage();
     const [registerTable, { reload, getSelectRows }] = useTable({
-      title: '商品计量单位列表',
-      api: getUnitList,
+      title: '供应商列表',
+      api: getSupplierList,
+      rowKey: 'id',
       columns: columns,
       rowSelection: {
         type: 'checkbox',
@@ -56,13 +58,10 @@ export default defineComponent({
         schemas: searchFormSchema,
         autoSubmitOnEnter: true,
       },
-      striped: false,
-      clickToRowSelect: false,
-      bordered: true,
-      showTableSetting: true,
       useSearchForm: true,
-      rowKey: 'id',
-      canResize: false,
+      showTableSetting: true,
+      bordered: true,
+      showIndexColumn: true,
       actionColumn: {
         width: 80,
         title: '操作',
@@ -71,40 +70,27 @@ export default defineComponent({
       },
     });
 
-    async function handleEdit(record: Recordable) {
-      openModal(true, {
-        record,
-        isUpdate: true,
-      });
-    }
-    function handleSuccess() {
-      reload();
-    }
     async function handleCreate() {
-      openModal(true, {
-        isUpdate: false,
-      });
-    }
-    async function handleDelete(record: Recordable) {
-      const result = await deleteBatchUnits([record.id]);
-      if (result.code === 'P0008') {
-        await reload();
-      }
-    }
-    async function handleBatchDelete() {
-      const data = getSelectRows();
-      if (data.length === 0) {
-        createMessage.warn('请选择一条数据');
-        return;
-      }
-      const ids = data.map((item) => item.id);
-      const result = await deleteBatchUnits(ids);
-      if (result.code === 'P0008') {
-        await reload();
-      }
+
     }
 
-    return { registerTable, registerModal, handleCreate, handleEdit, handleDelete, handleBatchDelete, handleSuccess };
+    async function handleBatchDelete() {
+
+    }
+
+    async function handleEdit() {
+
+    }
+
+    async function handleDelete() {
+
+    }
+
+    async function handleSuccess() {
+      reload();
+    }
+
+    return { registerTable, registerModal, handleCreate, handleDelete, handleBatchDelete, handleEdit, handleSuccess }
   }
-});
+})
 </script>
