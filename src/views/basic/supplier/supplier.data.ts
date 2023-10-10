@@ -50,7 +50,7 @@ export const columns: BasicColumn[] = [
                     }
                     record.pendingStatus = true;
                     const newStatus = checked ? 0 : 1;
-                    updateSupplierStatus({id: record.id, status: newStatus} )
+                    updateSupplierStatus({ids: [record.id], status: newStatus} )
                         .then(() => {
                             record.status = newStatus;
                         })
@@ -72,7 +72,7 @@ export const columns: BasicColumn[] = [
         width: 90,
     },
     {
-        title: '税率',
+        title: '税率(%)',
         dataIndex: 'taxRate',
         width: 80,
     },
@@ -91,20 +91,217 @@ export const columns: BasicColumn[] = [
 export const searchFormSchema: FormSchema[] = [
     {
         label: '名称',
-        field: 'computeUnit',
+        field: 'supplierName',
         component: 'Input',
-        colProps: { span: 8 },
+        colProps: { span: 5 },
     },
     {
         label: '联系电话',
-        field: 'computeUnit',
+        field: 'contactNumber',
         component: 'Input',
-        colProps: { span: 8 },
+        colProps: { span: 5 },
     },
     {
+        field: '[startDate, endDate]',
         label: '时间',
-        field: 'computeUnit',
+        component: 'RangePicker',
+        componentProps: {
+          format: 'YYYY/MM/DD',
+          placeholder: ['开始日期', '结束日期'],
+        },
+        colProps: { span: 7 },
+    },
+]
+
+export const formSchema: FormSchema[] = [
+    {
+        label: '名称',
+        field: 'supplierName',
+        helpMessage: '供应商的名字, 也可以是个人',
         component: 'Input',
-        colProps: { span: 8 },
+        colProps: {
+            span: 11,
+        },
+        required: true,
+    },
+    {
+        label: '联系人',
+        field: 'contact',
+        component: 'Input',
+        colProps: {
+            span: 11,
+        },
+        required: true,
+    },
+    {
+        label: '手机号码',
+        field: 'phoneNumber',
+        component: 'Input',
+        colProps: {
+            span: 11,
+        },
+        required: true,
+    },
+    {
+        label: '联系电话',
+        helpMessage: '座机号码 (010/021之类)',
+        field: 'contactNumber',
+        component: 'Input',
+        colProps: {
+            span: 11,
+        },
+    },
+    {
+        label: '电子邮箱',
+        field: 'email',
+        component: 'Input',
+        colProps: {
+            span: 11,
+        },
+    },
+    {
+        label: '传真',
+        field: 'fax',
+        component: 'Input',
+        colProps: {
+            span: 11,
+        },
+    },
+    {
+        label: '地址',
+        field: 'address',
+        component: 'InputTextArea',
+        colProps: {
+            span: 11,
+        },
+    },
+    {
+        label: '备注',
+        field: 'remark',
+        component: 'InputTextArea',
+        colProps: {
+            span: 11,
+        },
+    },
+    {
+        field: '',
+        component: 'Divider',
+        label: '应收账款信息',
+        helpMessage: '每个季度的收款信息，会累计本年总收款数据',
+        colProps: {
+          span: 22,
+        },
+    },
+    {
+        label: '一季度收款',
+        field: 'firstQuarterAccountReceivable',
+        component: 'InputNumber',
+        colProps: {
+            span: 11,
+        },
+    },
+    {
+        label: '二季度收款',
+        field: 'secondQuarterAccountReceivable',
+        component: 'InputNumber',
+        colProps: {
+            span: 11,
+        },
+    },
+    {
+        label: '三季度收款',
+        field: 'thirdQuarterAccountReceivable',
+        component: 'InputNumber',
+        colProps: {
+            span: 11,
+        },
+    },
+    {
+        label: '四季度收款',
+        field: 'fourthQuarterAccountReceivable',
+        component: 'InputNumber',
+        colProps: {
+            span: 11,
+        },
+    },
+    {
+        field: '',
+        component: 'Divider',
+        label: '应付账款信息',
+        colProps: {
+          span: 22,
+        },
+    },
+    {
+        label: '一季度付款',
+        field: 'firstQuarterAccountPayment',
+        component: 'InputNumber',
+        colProps: {
+            span: 11,
+        },
+    },
+    {
+        label: '二季度付款',
+        field: 'secondQuarterAccountPayment',
+        component: 'InputNumber',
+        colProps: {
+            span: 11,
+        },
+    },
+    {
+        label: '三季度付款',
+        field: 'thirdQuarterAccountPayment',
+        component: 'InputNumber',
+        colProps: {
+            span: 11,
+        },
+    },
+    {
+        label: '四季度付款',
+        field: 'fourthQuarterAccountPayment',
+        component: 'InputNumber',
+        colProps: {
+            span: 11,
+        },
+    },
+    {
+        field: '',
+        component: 'Divider',
+        label: '账户信息',
+        colProps: {
+          span: 22,
+        },
+    },
+    {
+        label: '纳税人识别号',
+        field: 'taxNumber',
+        component: 'Input',
+        colProps: {
+            span: 11,
+        },
+    },
+    {
+        label: '税率(%)',
+        field: 'taxRate',
+        component: 'InputNumber',
+        colProps: {
+            span: 11,
+        },
+    },
+    {
+        label: '开户行',
+        field: 'bankName',
+        component: 'Input',
+        colProps: {
+            span: 11,
+        },
+    },
+    {
+        label: '银行账号',
+        field: 'accountNumber',
+        component: 'InputNumber',
+        colProps: {
+            span: 11,
+        },
     }
 ]

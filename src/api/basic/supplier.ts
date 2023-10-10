@@ -14,6 +14,7 @@ enum API {
     AddSupplier = '/basic/supplier/add',
     UpdateSupplier = '/basic/supplier/update',
     DeleteBatch = '/basic/supplier/deleteBatch',
+    UpdateStatus = '/basic/supplier/updateStatus',
 }
 
 export function getSupplierList(params: QuerySupplierReq, mode: ErrorMessageMode = 'notice') {
@@ -53,10 +54,10 @@ export function updateSupplier(params: UpdateSupplierReq, mode: ErrorMessageMode
     );
 }
 
-export function updateSupplierStatus(params: { id: number|string, status: number }, mode: ErrorMessageMode = 'notice') {
+export function updateSupplierStatus(params: { ids: number[], status: number }, mode: ErrorMessageMode = 'notice') {
     return defHttp.post<BaseResp>(
         {
-            url: API.UpdateSupplier,
+            url: API.UpdateStatus,
             params,
         },
         {
