@@ -34,21 +34,21 @@ You can directly use the Docker pull image for quick startup. Here are the comma
 
 ### Pull images
 ```shell
-docker pull wansenai/erp:latest
+docker pull wansenai/eairp-web:latest
 ```
 
 ### Run Server
 Please note the `API_BASE_URL` parameter, this is the address mapped by the back-end interface.
 ```shell
-docker run --name erp -d -p 3000:80 -e API_BASE_URL=http://localhost:9998/erp-api wansenai/erp:latest
+docker run --name eairp-web -d -p 3000:80 -e API_BASE_URL=http://localhost:9998/erp-api wansenai/eairp-web:latest
 ```
 If you want to deploy the API using Docker, you can also pull the API image
 ```shell
-docker pull wansenai/erp-core:latest
+docker pull wansenai/eairp:latest
 ```
 And run API services
 ```shell
-docker run --name erp-core -d -p 9998:8088 wansenai/erp-core:latest 
+docker run --name erp-core -d -p 9998:8088 wansenai/eairp:latest 
 ```
 
 ### Online preview
