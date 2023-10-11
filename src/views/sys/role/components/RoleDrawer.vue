@@ -12,7 +12,7 @@
 </template>
 <script lang="ts" setup>
 import { ref, computed, unref } from 'vue';
-import { formSchema } from './role.data';
+import { formSchema } from '@/views/sys/role/role.data';
 import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
 import {useForm} from "@/components/Form";
 import BasicForm from "@/components/Form/src/BasicForm.vue";

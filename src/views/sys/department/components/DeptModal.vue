@@ -8,9 +8,9 @@
 import { defineComponent, ref, computed, unref } from 'vue';
 import { BasicModal, useModalInner } from '/@/components/Modal';
 import { BasicForm, useForm } from '/@/components/Form/index';
-import { formSchema } from './dept.data';
+import { formSchema } from '@/views/sys/department/dept.data';
 
-import { getDeptList, addOrUpdateDept } from '/@/api/sys/dept';
+import { addOrUpdateDept } from '@/api/sys/dept';
 import {addOrUpdateDeptReq} from "@/api/sys/model/dpetModel";
 
 export default defineComponent({

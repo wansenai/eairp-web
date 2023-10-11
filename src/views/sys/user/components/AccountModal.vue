@@ -7,7 +7,7 @@
 import {defineComponent, ref, computed, unref} from 'vue';
 import {BasicModal, useModalInner} from '/@/components/Modal';
 import {BasicForm, useForm} from '/@/components/Form/index';
-import {accountFormSchema} from './account.data';
+import {accountFormSchema} from '@/views/sys/user/account.data';
 import {getUserBindDept} from '/@/api/sys/dept';
 import {addOrUpdateUser} from '/@/api/sys/user';
 import {addOrUpdateUserReq} from '@/api/sys/model/userModel'

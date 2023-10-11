@@ -21,7 +21,7 @@
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { BasicModal, useModalInner } from '@/components/Modal';
   import { getMenuList } from '@/api/sys/menu';
-  import { roleSchema } from './role.data';
+  import { roleSchema } from '@/views/sys/role/role.data';
   import { rolePermission } from '@/api/sys/role';
   import {array2tree} from "@axolo/tree-array";
   import {addOrUpdateRolePermissionReq} from "@/api/sys/model/roleModel";

@@ -37,7 +37,7 @@ import {columns, searchFormSchema} from "@/views/product/attributes/attributes.d
 import {getAttributeList, deleteBatchAttribute} from "@/api/product/productAttribute";
 import {useModal} from "@/components/Modal";
 import {useMessage} from "@/hooks/web/useMessage";
-import AttributeModal from "@/views/product/attributes/AttributeModal.vue";
+import AttributeModal from "@/views/product/attributes/components/AttributeModal.vue";
 
 export default defineComponent({
   name: 'ProductAttributes',

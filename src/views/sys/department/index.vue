@@ -34,8 +34,8 @@ import {defineComponent} from "vue";
 import {BasicTable, useTable, TableAction} from '/@/components/Table';
 import {getDeptList} from '/@/api/sys/dept'
 import {useModal} from '/@/components/Modal'
-import DeptModal from './DeptModal.vue';
-import {columns, searchFormSchema} from './dept.data';
+import DeptModal from '@/views/sys/department/components/DeptModal.vue';
+import {columns, searchFormSchema} from '@/views/sys/department/dept.data';
 import { deleteDept } from "@/api/sys/dept";
 
 export default defineComponent({

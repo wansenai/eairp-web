@@ -40,11 +40,11 @@ import { defineComponent } from 'vue';
 import { BasicTable, useTable, TableAction } from '/@/components/Table';
 import {deleteRole, getPageList} from '/@/api/sys/role';
 import { useDrawer } from '/@/components/Drawer';
-import RoleDrawer from './RoleDrawer.vue';
+import RoleDrawer from '@/views/sys/role/components/RoleDrawer.vue';
 import { useI18n } from 'vue-i18n';
-import { columns, searchFormSchema } from './role.data';
+import { columns, searchFormSchema } from '@/views/sys/role/role.data';
 import {useMessage} from "@/hooks/web/useMessage";
-import RolePermissionModal from "@/views/sys/role/RolePermissionModal.vue";
+import RolePermissionModal from "@/views/sys/role/components/RolePermissionModal.vue";
 import {useModal} from "@/components/Modal";
 
 export default defineComponent({

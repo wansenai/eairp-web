@@ -34,7 +34,7 @@
 <script lang="ts">
 import {defineComponent, nextTick} from 'vue';
 import {useModal} from "@/components/Modal";
-import CategoryModal from "@/views/product/category/CategoryModal.vue";
+import CategoryModal from "@/views/product/category/components/CategoryModal.vue";
 import {BasicTable, TableAction, useTable} from "@/components/Table";
 import {getCategoryList, deleteCategory} from "@/api/product/productCategory";
 import {columns} from "@/views/product/category/category.data";
