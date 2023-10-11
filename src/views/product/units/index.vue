@@ -37,7 +37,7 @@ import {columns, searchFormSchema} from "@/views/product/units/units.data";
 import {getUnitList, deleteBatchUnits} from "@/api/product/productUnit";
 import {useModal} from "@/components/Modal";
 import {useMessage} from "@/hooks/web/useMessage";
-import UnitModal from "@/views/product/units/UnitModal.vue";
+import UnitModal from "@/views/product/units/components/UnitModal.vue";
 
 export default defineComponent({
   name: 'ProductUnits',

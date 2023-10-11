@@ -51,14 +51,13 @@
   import { BasicTable, useTable, TableAction } from '/@/components/Table';
   import { getUserList, deleteUser, resetPassword } from '/@/api/sys/user';
   import { PageWrapper } from '/@/components/Page';
-  import DeptTree from './DeptTree.vue';
-
   import { useModal } from '/@/components/Modal';
-  import AccountModal from './AccountModal.vue';
-
-  import { columns, searchFormSchema } from './account.data';
+  import { columns, searchFormSchema } from '@/views/sys/user/account.data';
   import { useI18n } from 'vue-i18n';
   import { useMessage } from "@/hooks/web/useMessage";
+
+  import AccountModal from '@/views/sys/user/components/AccountModal.vue';
+  import DeptTree from '@/views/sys/user/components/DeptTree.vue';
 
   export default defineComponent({
     name: 'AccountManagement',
