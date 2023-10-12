@@ -6,7 +6,7 @@
         <a-button type="primary" @click="handleBatchDelete"> 批量删除</a-button>
         <a-button type="primary" @click="handleOnStatus(0)"> 批量启用</a-button>
         <a-button type="primary" @click="handleOnStatus(1)"> 批量禁用</a-button>
-        <a-button type="primary" @click=""> 导入</a-button>
+        <a-button type="primary" @click="handleImport"> 导入</a-button>
         <a-button type="primary" @click=""> 导出</a-button>
       </template>
       <template #bodyCell="{ column, record }">
@@ -32,11 +32,14 @@
       </template>
     </BasicTable>
     <SupplierModal @register="registerModal" @success="handleSuccess" />
+    <ImportFileModal ref="importModalRef" @cancel="handleCancel"/>
   </div>
 </template>
-<script lang="ts">
+<div>
+</div>
 
-import {defineComponent} from "vue";
+<script lang="ts">
+import {defineComponent, ref} from "vue";
 import {BasicTable, TableAction, useTable} from "@/components/Table";
 import {useModal} from "@/components/Modal";
 import {useMessage} from "@/hooks/web/useMessage";
@@ -44,12 +47,15 @@ import {getSupplierList} from "@/api/basic/supplier";
 import {columns, searchFormSchema} from "@/views/basic/supplier/supplier.data";
 import {deleteBatchSuppliers, updateSupplierStatus} from "@/api/basic/supplier";
 import SupplierModal from "@/views/basic/supplier/components/SupplierModal.vue";
+import ImportFileModal from '@/components/Tools/ImportFileModal.vue';
+
 export default defineComponent({
   name: 'Supplier',
-  components: {TableAction, BasicTable, SupplierModal},
+  components: {TableAction, BasicTable, SupplierModal, ImportFileModal },
   setup() {
     const [registerModal, {openModal}] = useModal();
     const { createMessage } = useMessage();
+    const importModalRef = ref(null);
     const [registerTable, { reload, getSelectRows }] = useTable({
       title: '供应商列表',
       api: getSupplierList,
@@ -126,7 +132,30 @@ export default defineComponent({
       }
     }
 
-    return { registerTable, registerModal, handleCreate, handleDelete, handleBatchDelete, handleEdit, handleSuccess, handleOnStatus }
+    async function handleCancel() {
+      reload();
+    }
+
+    function handleImport() {
+      const templateUrl  = 'https://wansen-1317413588.cos.ap-shanghai.myqcloud.com/%E4%BE%9B%E5%BA%94%E5%95%86%E6%A8%A1%E6%9D%BF.xlsx'
+      const templateName  = '供应商Excel模板[下载]'
+      importModalRef.value.initModal(templateUrl, templateName);
+      importModalRef.value.title = "供应商导入";
+    }
+
+    return {
+      registerTable,
+      registerModal,
+      handleCreate,
+      handleDelete,
+      handleBatchDelete,
+      handleEdit,
+      handleSuccess,
+      handleOnStatus,
+      handleImport,
+      importModalRef,
+      handleCancel
+    }
   }
 })
 </script>

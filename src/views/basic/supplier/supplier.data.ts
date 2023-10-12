@@ -4,7 +4,7 @@ import { h } from 'vue';
 import {Switch} from "ant-design-vue";
 import {useMessage} from "@/hooks/web/useMessage";
 import {useI18n} from "@/hooks/web/useI18n";
-import {updateSupplier, updateSupplierStatus} from "@/api/basic/supplier";
+import {updateSupplierStatus} from "@/api/basic/supplier";
 
 const { t } = useI18n();
 
@@ -20,8 +20,8 @@ export const columns: BasicColumn[] = [
         width: 80,
     },
     {
-        title: '联系电话',
-        dataIndex: 'contactNumber',
+        title: '手机号',
+        dataIndex: 'phoneNumber',
         width: 120,
     },
     {
