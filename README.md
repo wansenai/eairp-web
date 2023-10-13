@@ -48,7 +48,7 @@ docker pull wansenai/eairp:latest
 ```
 And run API services
 ```shell
-docker run --name erp-core -d -p 9998:8088 wansenai/eairp:latest 
+docker run --name eairp -d -p 9998:8088 wansenai/eairp:latest 
 ```
 
 ### Online preview
