@@ -7,7 +7,7 @@
         <a-button type="primary" @click="handleOnStatus(0)"> 批量启用</a-button>
         <a-button type="primary" @click="handleOnStatus(1)"> 批量禁用</a-button>
         <a-button type="primary" @click="handleImport"> 导入</a-button>
-        <a-button type="primary" @click=""> 导出</a-button>
+        <a-button type="primary" @click="handleExport"> 导出</a-button>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
@@ -48,11 +48,14 @@ import {columns, searchFormSchema} from "@/views/basic/supplier/supplier.data";
 import {deleteBatchSuppliers, updateSupplierStatus} from "@/api/basic/supplier";
 import SupplierModal from "@/views/basic/supplier/components/SupplierModal.vue";
 import ImportFileModal from '@/components/Tools/ImportFileModal.vue';
+import { exportXlsx } from '@/api/basic/common';
 
 export default defineComponent({
   name: 'Supplier',
   components: {TableAction, BasicTable, SupplierModal, ImportFileModal },
   setup() {
+    const currentTime = ref(null);
+    const timestamp = ref(null);
     const [registerModal, {openModal}] = useModal();
     const { createMessage } = useMessage();
     const importModalRef = ref(null);
@@ -143,6 +146,35 @@ export default defineComponent({
       importModalRef.value.title = "供应商导入";
     }
 
+    const getCurrentTime = () => {
+      const date = new Date();
+      currentTime.value = date.toLocaleString();
+      timestamp.value = getTimestamp(date);
+    };
+
+    const getTimestamp = (date) => {
+      return (
+          date.getFullYear() * 10000000000 +
+          (date.getMonth() + 1) * 100000000 +
+          date.getDate() * 1000000 +
+          date.getHours() * 10000 +
+          date.getMinutes() * 100 +
+          date.getSeconds()
+      ).toString();
+    };
+
+
+    async function handleExport() {
+      const file = await exportXlsx("供应商列表")
+      const blob = new Blob([file]);
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      const timestamp = getTimestamp(new Date());
+      link.download = "供应商数据" + timestamp + ".xlsx"; // 这里替换成你想要保存的文件名
+      link.target = "_blank";
+      link.click();
+    }
+
     return {
       registerTable,
       registerModal,
@@ -153,8 +185,11 @@ export default defineComponent({
       handleSuccess,
       handleOnStatus,
       handleImport,
+      handleExport,
       importModalRef,
-      handleCancel
+      handleCancel,
+      currentTime,
+      timestamp,
     }
   }
 })
