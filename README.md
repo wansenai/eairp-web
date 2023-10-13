@@ -39,8 +39,9 @@ docker pull wansenai/eairp-web:latest
 
 ### Run Server
 Please note the `API_BASE_URL` parameter, this is the address mapped by the back-end interface.
+If you are deploying on your server, modify the localhost address here to your server IP.
 ```shell
-docker run --name eairp-web -d -p 3000:80 -e API_BASE_URL=http://localhost:9998/erp-api wansenai/eairp-web:latest
+docker run --name eairp-web -d -p 3000:80 -e API_BASE_URL=http://localhost:8080/erp-api wansenai/eairp-web:latest
 ```
 If you want to deploy the API using Docker, you can also pull the API image
 ```shell
