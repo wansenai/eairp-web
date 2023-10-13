@@ -4,14 +4,14 @@ import { h } from 'vue';
 import {Switch} from "ant-design-vue";
 import {useMessage} from "@/hooks/web/useMessage";
 import {useI18n} from "@/hooks/web/useI18n";
-import {updateSupplierStatus} from "@/api/basic/supplier";
+import {updateCustomerStatus} from "@/api/basic/customer";
 
 const { t } = useI18n();
 
 export const columns: BasicColumn[] = [
     {
-        title: '名称',
-        dataIndex: 'supplierName',
+        title: '客户名称',
+        dataIndex: 'customerName',
         width: 180,
     },
     {
@@ -50,7 +50,7 @@ export const columns: BasicColumn[] = [
                     }
                     record.pendingStatus = true;
                     const newStatus = checked ? 0 : 1;
-                    updateSupplierStatus({ids: [record.id], status: newStatus} )
+                    updateCustomerStatus([record.id], newStatus )
                         .then(() => {
                             record.status = newStatus;
                         })
@@ -62,8 +62,8 @@ export const columns: BasicColumn[] = [
         }
     },
     {
-        title: '累计应付账款',
-        dataIndex: 'totalAccountPayment',
+        title: '累计应收账款',
+        dataIndex: 'totalAccountReceivable',
         width: 90,
     },
     {
@@ -85,14 +85,14 @@ export const columns: BasicColumn[] = [
 
 export const searchFormSchema: FormSchema[] = [
     {
-        label: '名称',
-        field: 'supplierName',
+        label: '客户名称',
+        field: 'customerName',
         component: 'Input',
         colProps: { span: 5 },
     },
     {
-        label: '联系电话',
-        field: 'contactNumber',
+        label: '手机号码',
+        field: 'phoneNumber',
         component: 'Input',
         colProps: { span: 5 },
     },
@@ -101,8 +101,8 @@ export const searchFormSchema: FormSchema[] = [
         label: '时间',
         component: 'RangePicker',
         componentProps: {
-          format: 'YYYY/MM/DD',
-          placeholder: ['开始日期', '结束日期'],
+            format: 'YYYY/MM/DD',
+            placeholder: ['开始日期', '结束日期'],
         },
         colProps: { span: 7 },
     },
@@ -110,9 +110,9 @@ export const searchFormSchema: FormSchema[] = [
 
 export const formSchema: FormSchema[] = [
     {
-        label: '名称',
-        field: 'supplierName',
-        helpMessage: '供应商的名字, 也可以是个人',
+        label: '客户名称',
+        field: 'customerName',
+        helpMessage: '可以是个人，如果是个人可以不用填写联系人',
         component: 'Input',
         colProps: {
             span: 11,
@@ -126,7 +126,6 @@ export const formSchema: FormSchema[] = [
         colProps: {
             span: 11,
         },
-        required: true,
     },
     {
         label: '手机号码',
@@ -136,15 +135,6 @@ export const formSchema: FormSchema[] = [
             span: 11,
         },
         required: true,
-    },
-    {
-        label: '联系电话',
-        helpMessage: '座机号码 (010/021之类)',
-        field: 'contactNumber',
-        component: 'Input',
-        colProps: {
-            span: 11,
-        },
     },
     {
         label: '电子邮箱',
@@ -181,38 +171,38 @@ export const formSchema: FormSchema[] = [
     {
         field: '',
         component: 'Divider',
-        label: '应付账款信息',
+        label: '应收账款信息',
         colProps: {
-          span: 22,
+            span: 22,
         },
     },
     {
-        label: '一季度付款',
-        field: 'firstQuarterAccountPayment',
+        label: '一季度收款',
+        field: 'firstQuarterAccountReceivable',
         component: 'InputNumber',
         colProps: {
             span: 11,
         },
     },
     {
-        label: '二季度付款',
-        field: 'secondQuarterAccountPayment',
+        label: '二季度收款',
+        field: 'secondQuarterAccountReceivable',
         component: 'InputNumber',
         colProps: {
             span: 11,
         },
     },
     {
-        label: '三季度付款',
-        field: 'thirdQuarterAccountPayment',
+        label: '三季度收款',
+        field: 'thirdQuarterAccountReceivable',
         component: 'InputNumber',
         colProps: {
             span: 11,
         },
     },
     {
-        label: '四季度付款',
-        field: 'fourthQuarterAccountPayment',
+        label: '四季度收款',
+        field: 'fourthQuarterAccountReceivable',
         component: 'InputNumber',
         colProps: {
             span: 11,
@@ -223,7 +213,7 @@ export const formSchema: FormSchema[] = [
         component: 'Divider',
         label: '账户信息',
         colProps: {
-          span: 22,
+            span: 22,
         },
     },
     {

@@ -8,18 +8,18 @@
 import {defineComponent, ref, computed, unref} from 'vue';
 import {BasicModal, useModalInner} from '/@/components/Modal';
 import {BasicForm, useForm} from '/@/components/Form/index';
-import {formSchema} from '@/views/basic/supplier/supplier.data';
-import { AddSupplierReq, UpdateSupplierReq } from '@/api/basic/model/supplierModel';
-import { addSupplier, updateSupplier } from '@/api/basic/supplier';
+import {formSchema} from '@/views/basic/customer/customer.data';
+import { AddOrUpdateCustomerReq } from '@/api/basic/model/customerModel';
+import { addOrUpdateCustomer } from '@/api/basic/customer';
 
-export default defineComponent({ 
-  name: 'SupplierModal',
+export default defineComponent({
+  name: 'CustomerModal',
   components: {BasicModal, BasicForm},
   emits: ['success', 'register'],
   setup(_, {emit}) {
     const rowId = ref('');
     const isUpdate = ref(true);
-    const getTitle = computed(() => (!unref(isUpdate) ? '新增供应商' : '编辑供应商'));
+    const getTitle = computed(() => (!unref(isUpdate) ? '新增客户' : '编辑客户信息'));
 
     const [registerForm, {setFieldsValue, resetFields, validate}] = useForm({
       labelWidth: 100,
@@ -49,28 +49,27 @@ export default defineComponent({
       setModalProps({confirmLoading: true});
 
       if (unref(isUpdate)) {
-        const updateSupplierObject: UpdateSupplierReq = {
-           id: rowId.value,
-            ...values,
+        const updateCustomerObject: AddOrUpdateCustomerReq = {
+          id: rowId.value,
+          ...values,
         }
-        const result = await updateSupplier(updateSupplierObject)
-        if (result.code === 'S0002') {
+        const result = await addOrUpdateCustomer(updateCustomerObject)
+        if (result.code === 'U0002') {
           closeModal();
           emit('success');
         }
       } else {
-        const addSupplierObject: AddSupplierReq = {
-          supplierName: values.supplierName,
+        const addCustomerObject: AddOrUpdateCustomerReq = {
+          customerName: values.customerName,
           contact: values.contact,
-          contactNumber: values.contactNumber,
           phoneNumber: values.phoneNumber,
           address: values.address,
           email: values.email,
           status: values.status,
-          firstQuarterAccountPayment: values.firstQuarterAccountPayment,
-          secondQuarterAccountPayment: values.secondQuarterAccountPayment,
-          thirdQuarterAccountPayment: values.thirdQuarterAccountPayment,
-          fourthQuarterAccountPayment: values.fourthQuarterAccountPayment,
+          firstQuarterAccountReceivable: values.firstQuarterAccountReceivable,
+          secondQuarterAccountReceivable: values.secondQuarterAccountReceivable,
+          thirdQuarterAccountReceivable: values.thirdQuarterAccountReceivable,
+          fourthQuarterAccountReceivable: values.fourthQuarterAccountReceivable,
           fax: values.fax,
           taxNumber: values.taxNumber,
           bankName: values.bankName,
@@ -80,8 +79,8 @@ export default defineComponent({
           remark: values.remark,
         }
 
-        const result = await addSupplier(addSupplierObject)
-        if (result.code === 'S0001') {
+        const result = await addOrUpdateCustomer(addCustomerObject)
+        if (result.code === 'U0001') {
           closeModal();
           emit('success');
         }
