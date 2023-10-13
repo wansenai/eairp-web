@@ -62,11 +62,6 @@ export const columns: BasicColumn[] = [
         }
     },
     {
-        title: '累计应收账款',
-        dataIndex: 'totalAccountReceivable',
-        width: 90,
-    },
-    {
         title: '累计应付账款',
         dataIndex: 'totalAccountPayment',
         width: 90,
@@ -179,47 +174,6 @@ export const formSchema: FormSchema[] = [
         label: '备注',
         field: 'remark',
         component: 'InputTextArea',
-        colProps: {
-            span: 11,
-        },
-    },
-    {
-        field: '',
-        component: 'Divider',
-        label: '应收账款信息',
-        helpMessage: '每个季度的收款信息，会累计本年总收款数据',
-        colProps: {
-          span: 22,
-        },
-    },
-    {
-        label: '一季度收款',
-        field: 'firstQuarterAccountReceivable',
-        component: 'InputNumber',
-        colProps: {
-            span: 11,
-        },
-    },
-    {
-        label: '二季度收款',
-        field: 'secondQuarterAccountReceivable',
-        component: 'InputNumber',
-        colProps: {
-            span: 11,
-        },
-    },
-    {
-        label: '三季度收款',
-        field: 'thirdQuarterAccountReceivable',
-        component: 'InputNumber',
-        colProps: {
-            span: 11,
-        },
-    },
-    {
-        label: '四季度收款',
-        field: 'fourthQuarterAccountReceivable',
-        component: 'InputNumber',
         colProps: {
             span: 11,
         },
