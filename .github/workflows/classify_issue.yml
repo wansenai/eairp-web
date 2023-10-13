@@ -1,0 +1,29 @@
+name: Classify Issue
+
+on:
+  issues:
+    types:
+      - opened
+
+jobs:
+  classify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Classify Issue
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.WANSEN_AI_TOKEN }}
+          script: |
+            const issue = context.payload.issue;
+            const labelsToAdd = ['status: waiting-for-triage']; 
+           
+            await github.issues.addLabels({
+              owner: 'wansenai',
+              repo: 'eairp-web',
+              issue_number: issue.number,
+              labels: labelsToAdd
+            });
