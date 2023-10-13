@@ -45,7 +45,7 @@ import {useModal} from "@/components/Modal";
 import {useMessage} from "@/hooks/web/useMessage";
 import {columns, searchFormSchema} from "@/views/basic/customer/customer.data";
 import {getCustomerList, deleteBatchCustomer, updateCustomerStatus} from "@/api/basic/customer";
-import CustomerModal from "@/views/basic/customer/components/customerModal.vue";
+import CustomerModal from "@/views/basic/customer/components/CustomerModal.vue";
 import ImportFileModal from '@/components/Tools/ImportFileModal.vue';
 import { exportXlsx } from '@/api/basic/common';
 
