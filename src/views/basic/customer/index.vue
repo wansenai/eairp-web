@@ -139,10 +139,10 @@ export default defineComponent({
     }
 
     function handleImport() {
-      const templateUrl  = 'https://wansen-1317413588.cos.ap-shanghai.myqcloud.com/%E5%AE%A2%E6%88%B7%E4%BF%A1%E6%81%AF%E6%A8%A1%E6%9D%BF.xls'
+      const templateUrl  = 'https://wansen-1317413588.cos.ap-shanghai.myqcloud.com/%E5%AE%A2%E6%88%B7%E4%BF%A1%E6%81%AF%E6%A8%A1%E6%9D%BF.xlsx'
       const templateName  = '客户信息Excel模板[下载]'
       importModalRef.value.initModal(templateUrl, templateName);
-      importModalRef.value.title = "供应商导入";
+      importModalRef.value.title = "客户数据导入";
     }
 
     const getTimestamp = (date) => {
