@@ -31,7 +31,7 @@ export function uploadXlsx(params: UploadFileParams, mode: ErrorMessageMode = 'n
 }
 
 export function exportXlsx(type: string, mode: ErrorMessageMode = 'notice') {
-    return defHttp.get<BaseDataResp<any>>(
+    return defHttp.get<BaseDataResp<Blob>>(
         {
             url: `${Api.ExportXlsx}?type=${type}`,
             responseType: "blob"

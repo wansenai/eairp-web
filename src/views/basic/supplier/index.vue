@@ -166,13 +166,14 @@ export default defineComponent({
 
     async function handleExport() {
       const file = await exportXlsx("供应商列表")
-      const blob = new Blob([file]);
+      const blob = new Blob([file], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
       const timestamp = getTimestamp(new Date());
       link.download = "供应商数据" + timestamp + ".xlsx"; // 这里替换成你想要保存的文件名
       link.target = "_blank";
       link.click();
+      URL.revokeObjectURL(link.href);
     }
 
     return {
