@@ -1,8 +1,8 @@
 // github repo url
-export const GITHUB_URL = 'https://github.com/wansenai/wansen-erp-ui';
+export const GITHUB_URL = 'https://github.com/wansenai/eairp-web';
 
-// vue-vben-admin-next-doc
-export const DOC_URL = 'https://github.com/wansenai/wansen-erp-ui';
+// doc
+export const DOC_URL = 'https://github.com/wansenai/eairp-web';
 
 // site url
-export const SITE_URL = 'https://github.com/wansenai/wansen-erp-ui';
+export const SITE_URL = 'https://github.com/wansenai/eairp-web';
