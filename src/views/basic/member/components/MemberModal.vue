@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, unref, defineEmits } from 'vue';
+import { ref, computed, unref} from 'vue';
 import { BasicModal, useModalInner } from '/@/components/Modal';
 import { BasicForm, useForm } from '/@/components/Form/index';
 import { formSchema } from '@/views/basic/member/member.data';
