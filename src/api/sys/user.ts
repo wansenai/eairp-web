@@ -24,6 +24,7 @@ enum Api {
   GetPermCode = '/user/perm',
   TestRetry = '/testRetry',
   List = '/user/list',
+  ListAll = '/user/listAll',
   UpdateUser = '/user/update',
   AddOrUpdateUser = '/user/addOrUpdate',
   DeleteUser = '/user/delete',
@@ -115,6 +116,16 @@ export function getUserList(params: queryUserListReq, mode: ErrorMessageMode = '
       successMessageMode: mode,
     },
   );
+}
+
+export function getTenantUserList(mode: ErrorMessageMode = 'notice') {
+    return defHttp.get<BaseDataResp<GetUserInfoModel>>(
+        {url: Api.ListAll},
+        {
+        errorMessageMode: mode,
+        successMessageMode: mode,
+        },
+    );
 }
 
 export function updateUser(params: updateUserInfoReq, mode: ErrorMessageMode = 'notice') {

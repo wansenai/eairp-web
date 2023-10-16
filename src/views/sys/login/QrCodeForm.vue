@@ -22,7 +22,7 @@
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useLoginState, LoginStateEnum } from './useLogin';
 
-  const qrCodeUrl = 'https://vben.vvbin.cn/login';
+  const qrCodeUrl = 'https://erp.wansen.cloud';
 
   const { t } = useI18n();
   const { handleBackLogin, getLoginState } = useLoginState();
