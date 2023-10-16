@@ -27,6 +27,11 @@
             ]"
           />
         </template>
+        <template v-else-if="column.key === 'isDefault'">
+          <Tag :color="record.isDefault === 1 ? 'green' : 'red'">
+            {{ record.isDefault === 1 ? '是' : '否' }}
+          </Tag>
+        </template>
       </template>
     </BasicTable>
     <WarehouseModal @register="registerModal" @success="handleSuccess" />
@@ -43,10 +48,11 @@ import {useMessage} from "@/hooks/web/useMessage";
 import {columns, searchFormSchema} from "@/views/basic/warehouse/warehouse.data";
 import {getWarehouseList, deleteBatchWarehouse, updateWarehouseStatus} from "@/api/basic/warehouse";
 import WarehouseModal from "@/views/basic/warehouse/components/WarehouseModal.vue";
+import {Tag} from "ant-design-vue";
 
 export default defineComponent({
   name: 'warehouse',
-  components: {TableAction, BasicTable, WarehouseModal },
+  components: {Tag, TableAction, BasicTable, WarehouseModal },
   setup() {
     const [registerModal, {openModal}] = useModal();
     const { createMessage } = useMessage();

@@ -32,7 +32,7 @@ export const columns: BasicColumn[] = [
     },
     {
         title: '负责人',
-        dataIndex: 'warehouseManager',
+        dataIndex: 'warehouseManagerName',
         width: 90,
     },
     {
@@ -68,8 +68,8 @@ export const columns: BasicColumn[] = [
         }
     },
     {
-        title: '备注',
-        dataIndex: 'remark',
+        title: '默认仓库',
+        dataIndex: 'isDefault',
         width: 80,
     },
     {
@@ -124,6 +124,7 @@ export const formSchema: FormSchema[] = [
     {
         label: '默认仓库',
         field: 'isDefault',
+        helpMessage: '只允许有一个默认仓库，如果选择是，之前的默认仓库将会变成非默认仓库',
         component: 'RadioGroup',
         defaultValue: 0,
         componentProps: {
