@@ -27,6 +27,7 @@
 <br />
 
 ## Project
+[English](README.md) | [简体中文](./README-zh_CN.md)
 
 ### Quick Start
 
@@ -53,14 +54,17 @@ docker run --name eairp -d -p 9998:8088 wansenai/eairp:latest
 ```
 
 ### Online preview
-- [erp-cloud-v2.0.0](https://erp2.wansen.cloud/) - **v2.0.0**
-- [erp-cloud-v1.0.1](https://erp.wansen.cloud/) - v1.0.1
+- [eairp preview / 在线预览](https://erp.wansen.cloud/)
+- test account (测试账号): wansen
+- test password (测试密码): 123456
+- Some functional modules are being developed and improved, please refer to our [to-do list](https://github.com/wansenai/eairp-web/issues/41). It's not easy to generate electricity with love.
+- If this project is helpful to you, please click on Star. Thank you.
+
+  一些功能模块正在开发和改进中, 请参阅我们的[开发计划](https://github.com/wansenai/eairp-web/issues/42), 用爱发电很不容易, 如果这个项目对你有帮助, 请点击Star非常感谢.
 
 ### Repository code
-- [wansen-erp](https://github.com/wansenai/wansen-erp) - **Current version v2**
-- [wansen-erp-core](https://github.com/wansenai/wansen-erp-core) - **Current ERP API**
-- [wansen-erp-v1.0.1](https://github.com/wansenai/wansen-erp/tree/v1.0.1) - Before version v1
-- [wansen-erp-core-v1.0.1](https://github.com/wansenai/wansen-erp-core/tree/v1.0.1) - Before ERP API v1
+- [wansen-erp](https://github.com/wansenai/wansen-erp) - **Current version**
+- [wansen-erp-core](https://github.com/wansenai/wansen-erp-core) - **Current API version**
 
 ## Browser support
 
@@ -78,8 +82,6 @@ Support modern browsers, not IE
 ![](images/user-manage-zh.png)
 ![](images/add-menu-zh.png)
 ![](images/role-permission-zh.png)
-
-[English](README.md) | [简体中文](./README-zh_CN.md)
 
 ## Install and use
 
