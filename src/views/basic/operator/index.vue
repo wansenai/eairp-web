@@ -45,7 +45,7 @@ import {getOperatorList, deleteBatchOperator, updateOperatorStatus} from "@/api/
 import OperatorModal from "@/views/basic/operator/components/OperatorModal.vue";
 
 export default defineComponent({
-  name: 'financialAccount',
+  name: 'Operator',
   components: {TableAction, BasicTable, OperatorModal },
   setup() {
     const [registerModal, {openModal}] = useModal();
