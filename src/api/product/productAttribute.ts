@@ -7,6 +7,7 @@ enum Api {
     List = '/product/attribute/list',
     addOrUpdate = '/product/attribute/addOrUpdate',
     deleteBatch = '/product/attribute/deleteBatch',
+    GetAttributeById = '/product/attribute/getValuesById',
 }
 
 export function getAttributeList(params: ProductAttributeListReq ,mode: ErrorMessageMode = 'notice') {
@@ -38,6 +39,17 @@ export function deleteBatchAttribute(ids: number[], mode: ErrorMessageMode = 'no
     return defHttp.delete<BaseResp>(
         {
             url: `${Api.deleteBatch}?ids=${ids}`
+        },
+        {
+            errorMessageMode: mode,
+        },
+    );
+}
+
+export function getAttributeById(id: number, mode: ErrorMessageMode = 'notice') {
+    return defHttp.get<BaseDataResp<ProductAttributeResp>>(
+        {
+            url: `${Api.GetAttributeById}?id=${id}`
         },
         {
             errorMessageMode: mode,
