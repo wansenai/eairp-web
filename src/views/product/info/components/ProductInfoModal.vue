@@ -57,25 +57,25 @@
                                 showSearch
                                 optionFilterProp="children"
                                 :dropdownMatchSelectWidth="false">
-                        <template #dropdownRender="{ menu }">
-                          <v-nodes :vnodes="menu" />
-                          <a-divider style="margin: 4px 0;" />
-                          <div style="padding: 4px 8px; cursor: pointer;"
-                               @mousedown="e => e.preventDefault()"
-                               @click="addUnit">
-                            <a-icon type="plus" />
-                            新增计量单位
-                          </div>
-                        </template>
-                        <a-select-option v-for="(item, index) in unitList"
+<!--                        <template v-slot:dropdownRender="props" >-->
+<!--                          <v-nodes :vnodes="props.menu" />-->
+<!--                          <a-divider style="margin: 4px 0;" />-->
+<!--                          <div style="padding: 4px 8px; cursor: pointer;"-->
+<!--                               @mousedown="e => e.preventDefault()"-->
+<!--                               @click="addUnit">-->
+<!--                            <a-icon type="plus" />-->
+<!--                            新增计量单位-->
+<!--                          </div>-->
+<!--                        </template>-->
+                        <a-select-option v-for="(item, index) in unitList.value"
                                          :key="index"
                                          :value="item.id">
-                          {{ item.name }}
+                          {{ item.computeUnit }}
                         </a-select-option>
                       </a-select>
                     </a-col>
                     <a-col :lg="9" :md="9" :sm="24" style="padding:0px; text-align:center">
-                      <a-checkbox v-model="unitChecked" @change="unitOnChange">多单位</a-checkbox>
+                      <a-checkbox @change="unitOnChange">多单位</a-checkbox>
                     </a-col>
                   </a-row>
                 </a-form-item>
@@ -109,7 +109,7 @@
                              data-step="8" data-title="类别"
                              data-intro="类别需要在【商品类别】页面进行录入，录入之后在此处进行调用">
                   <a-tree-select style="width:100%" :dropdownStyle="{maxHeight:'200px',overflow:'auto'}" allow-clear
-                                 :treeData="categoryTree" v-decorator="[ 'categoryId' ]" placeholder="请选择类别">
+                                 :treeData="categoryTree.value" v-decorator="[ 'categoryId' ]" placeholder="请选择类别">
                   </a-tree-select>
                 </a-form-item>
               </a-col>
@@ -154,9 +154,9 @@
                     <a-tag class="tag-info" v-if="!manySkuStatus">需要先录入单位才能激活</a-tag>
                     <a-select mode="multiple" v-decorator="[ 'manySku' ]" showSearch optionFilterProp="children"
                               placeholder="请选择多属性（可多选）" @change="onManySkuChange" v-show="manySkuStatus">
-                      <a-select-option v-for="(item,index) in materialAttributeList" :key="index" :value="item.value"
+                      <a-select-option v-for="(item,index) in productAttributeList.value" :key="index" :value="item.id"
                                        :disabled="item.disabled">
-                        {{ item.name }}
+                        {{ item.attributeName }}
                       </a-select-option>
                     </a-select>
                   </a-tooltip>
@@ -169,8 +169,8 @@
                              :wrapperCol="{xs: { span: 24 },sm: { span: 20 }}" :label="skuOneTitle">
                   <a-select mode="multiple" v-decorator="[ 'skuOne' ]" showSearch optionFilterProp="children"
                             placeholder="请选择（可多选）" @select="onSkuChange" @deselect="onSkuOneDeSelect">
-                    <a-select-option v-for="(item,index) in skuOneList" :key="index" :value="item.value">
-                      {{ item.name }}
+                    <a-select-option v-for="(item,index) in skuOneList.value" :key="index" :value="item.value">
+                      {{ item.value }}
                     </a-select-option>
                   </a-select>
                 </a-form-item>
@@ -180,8 +180,8 @@
                              :wrapperCol="{xs: { span: 24 },sm: { span: 20 }}" :label="skuTwoTitle">
                   <a-select mode="multiple" v-decorator="[ 'skuTwo' ]" showSearch optionFilterProp="children"
                             placeholder="请选择（可多选）" @select="onSkuChange" @deselect="onSkuTwoDeSelect">
-                    <a-select-option v-for="(item,index) in skuTwoList" :key="index" :value="item.value">
-                      {{ item.name }}
+                    <a-select-option v-for="(item,index) in skuTwoList.value" :key="index" :value="item.value">
+                      {{ item.value }}
                     </a-select-option>
                   </a-select>
                 </a-form-item>
@@ -191,8 +191,8 @@
                              :wrapperCol="{xs: { span: 24 },sm: { span: 20 }}" :label="skuThreeTitle">
                   <a-select mode="multiple" v-decorator="[ 'skuThree' ]" showSearch optionFilterProp="children"
                             placeholder="请选择（可多选）" @select="onSkuChange" @deselect="onSkuThreeDeSelect">
-                    <a-select-option v-for="(item,index) in skuThreeList" :key="index" :value="item.value">
-                      {{ item.name }}
+                    <a-select-option v-for="(item,index) in skuThreeList.value" :key="index" :value="item.value">
+                      {{ item.value }}
                     </a-select-option>
                   </a-select>
                 </a-form-item>
@@ -311,7 +311,7 @@
 </template>
 
 <script lang="ts">
-import {ref, reactive} from 'vue';
+import {ref, reactive, onMounted, watch } from 'vue';
 import {
   Modal,
   Upload,
@@ -329,6 +329,13 @@ import {
 import {cloneDeep} from 'lodash-es';
 import { PlusOutlined } from '@ant-design/icons-vue';
 import type { UploadProps, } from 'ant-design-vue';
+import {getUnitList} from "/@/api/product/productUnit"
+import {ProductCategoryResp} from '/@/api/product/model/productCategoryModel'
+import {getCategoryList} from "/@/api/product/productCategory"
+import {ProductUnitQueryReq} from "/@/api/product/model/productUnitModel"
+import {DefaultOptionType} from "ant-design-vue/es/vc-tree-select/TreeSelect";
+import {ProductAttributeListReq} from "@/api/product/model/productAttributeModel"
+import {getAttributeList , getAttributeById} from "@/api/product/productAttribute"
 
 export default {
   name: 'ProductInfoModal',
@@ -354,7 +361,7 @@ export default {
   },
   setup(_, context) {
     const confirmLoading = ref(false);
-    const unit = ref();
+    const unit = ref('');
     const title = ref('新增商品信息');
     const open = ref(false);
     const prefixNo = ref('material');
@@ -380,6 +387,12 @@ export default {
       }
     };
 
+    onMounted(() => {
+      // 在组件初始化加载时调用请求接口的方法
+      // loadUnitListData();
+      // loadCategoryTreeData();
+    });
+
     const model = ref({});
 
     const labelCol = reactive({
@@ -394,7 +407,7 @@ export default {
     const skuOneList = reactive([])
     const skuTwoList = reactive([])
     const skuThreeList = reactive([])
-    const materialAttributeList = reactive([])
+    const productAttributeList = reactive([])
     const categoryTree = reactive([])
     const validatorRules = reactive({
       name: {
@@ -506,11 +519,25 @@ export default {
 
     function openModal() {
       open.value = true
+      // init data
+      loadUnitListData();
+      loadCategoryTreeData();
+      loadAttributeTreeData();
     }
 
-    function unitOnChange() {
-
+    function unitOnChange(event) {
+      const isChecked = event.target.checked;
+      if (isChecked) {
+        unitStatus.value = true;
+        manyUnitStatus.value = false;
+        unitChecked.value = true
+      } else {
+        unitStatus.value = false;
+        manyUnitStatus.value = true;
+        unitChecked.value = false
+      }
     }
+
     function onlyUnitOnChange(e) {
       if (e.target.value) {
         // 单位有填写了之后则显示多属性的文本框
@@ -531,14 +558,59 @@ export default {
     }
 
     const onValueChange = (record, dataIndex, value) => {
-      console.log('Value changed:', record, dataIndex, value);
       if (!editableData[record.key]) {
         editableData[record.key] = {};
       }
       editableData[record.key][dataIndex] = value;
-      console.log('Editable data:', editableData);
     };
 
+
+    async function loadUnitListData() {
+      const unitObject : ProductUnitQueryReq = {
+        page: 1,
+        pageSize: 1000,
+      }
+      const unitListResult = await getUnitList(unitObject)
+      if(unitListResult) {
+        unitList.value = unitListResult.data.records
+      }
+    }
+
+    function buildTree(flatData: ProductCategoryResp[], parentId: string | null): DefaultOptionType[] {
+      const tree: DefaultOptionType[] = [];
+      for (const item of flatData) {
+        if (item.parentId === parentId) {
+          const children = buildTree(flatData, item.id);
+          const defaultOption: DefaultOptionType = {
+            value: item.id,
+            title: item.categoryName,
+            label: item.categoryName,
+            key: item.id,
+            children: children.length > 0 ? children : undefined,
+          };
+          tree.push(defaultOption);
+        }
+      }
+      return tree;
+    }
+    async function loadCategoryTreeData() {
+      const categoryTreeResult = await getCategoryList()
+      if(categoryTreeResult) {
+        const flatData = categoryTreeResult.data;
+        categoryTree.value = buildTree(flatData, null);
+      }
+    }
+
+    async function loadAttributeTreeData() {
+      const attributeObject : ProductAttributeListReq = {
+        page: 1,
+        pageSize: 1000,
+      }
+      const attributeListResult = await getAttributeList(attributeObject)
+      if(attributeListResult) {
+        productAttributeList.value = attributeListResult.data.records
+      }
+    }
 
     //修改商品明细中的价格触发计算
     function changeDecimalByValue(row) {
@@ -566,30 +638,145 @@ export default {
     }
 
     function onSkuChange() {
-      let skuOneData = this.form.getFieldValue('skuOne')
-      let skuTwoData = this.form.getFieldValue('skuTwo')
-      let skuThreeData = this.form.getFieldValue('skuThree')
-      this.autoSkuList(skuOneData, skuTwoData, skuThreeData)
+      const skuOneData = form.skuOne;
+      const skuTwoData = form.skuTwo;
+      const skuThreeData = form.skuThree;
+      autoSkuList(skuOneData.value, skuTwoData.value, skuThreeData.value)
     }
 
     function onSkuOneDeSelect(value) {
-
+      const skuOneData = form.skuOne;
+      const skuTwoData = form.skuTwo;
+      const skuThreeData = form.skuThree;
+      console.info(skuOneData.value)
+      removeByVal(skuOneData.value, value);
+      autoSkuList(skuOneData.value, skuTwoData.value, skuThreeData.value);
     }
 
     function onSkuTwoDeSelect(value) {
-      let skuOneData = this.form.getFieldValue('skuOne')
-      let skuTwoData = this.form.getFieldValue('skuTwo')
-      let skuThreeData = this.form.getFieldValue('skuThree')
-      //  removeByVal(skuTwoData, value)
-      this.autoSkuList(skuOneData, skuTwoData, skuThreeData)
+      const skuOneData = form.skuOne;
+      const skuTwoData = form.skuTwo;
+      const skuThreeData = form.skuThree;
+      console.info(skuTwoData.value)
+      removeByVal(skuTwoData.value, value);
+      autoSkuList(skuOneData.value, skuTwoData.value, skuThreeData.value);
     }
 
     function onSkuThreeDeSelect(value) {
+      const skuOneData = form.skuOne;
+      const skuTwoData = form.skuTwo;
+      const skuThreeData = form.skuThree;
 
+      removeByVal(skuThreeData.value, value);
+      autoSkuList(skuOneData.value, skuTwoData.value, skuThreeData.value);
     }
 
-    function onManySkuChange(value) {
+    watch(manySkuSelected, (value) => {
+      // 控制多属性下拉框中选择项的状态
+      // 1.如果value < 3 则将所有的多属性下拉框中的选项都设置为可选，但是可以取消勾选 2.如果value >= 3 则将所有的多属性下拉框中的选项都设置为不可选
+      if (value < 3) {
+        for (let i = 0; i < productAttributeList.value.length; i++) {
+          productAttributeList.value[i].disabled = false
+        }
+      } else {
+        for (let i = 0; i < productAttributeList.value.length; i++) {
+          productAttributeList.value[i].disabled = true
+        }
+      }
 
+
+    });
+
+    async function onManySkuChange(value) {
+      manySkuSelected.value = value.length;
+
+      if (value.length >= 1) {
+        let skuOneId = value[0];
+        const res = await getAttributeById(skuOneId);
+        if (res) {
+          skuOneList.value = res;
+          skuOneTitle.value = res[0].name;
+        }
+      } else {
+        skuOneTitle.value = "";
+        skuOneList.value = [];
+      }
+
+      if (value.length >= 2) {
+        let skuTwoId = value[1];
+        const res = await getAttributeById(skuTwoId);
+        if (res) {
+          skuTwoList.value = res;
+          skuTwoTitle.value = res[0].name;
+        }
+      } else {
+        skuTwoTitle.value = "";
+        skuTwoList.value = [];
+      }
+
+      if (value.length >= 3) {
+        let skuThreeId = value[2];
+        const res = await getAttributeById(skuThreeId);
+        if (res) {
+          skuThreeList.value = res;
+          skuThreeTitle.value = res[0].name;
+        }
+      } else {
+        skuThreeTitle.value = "";
+        skuThreeList.value = [];
+      }
+    }
+
+    function removeByVal(arrylist, val) {
+      for(var i = 0; i < arrylist .length; i++) {
+        if(arrylist [i] == val) {
+          arrylist .splice(i, 1);
+          break;
+        }
+      }
+    }
+
+    function autoSkuList(skuOneData, skuTwoData, skuThreeData) {
+      const unit = form.skuOne.value;
+      const skuArr = [];
+
+      if (form.skuOne.value) {
+        skuArr.push(skuOneData.value);
+      }
+      if (form.skuTwo.value) {
+        skuArr.push(skuTwoData.value);
+      }
+      if (form.skuThree.value) {
+        skuArr.push(skuThreeData.value);
+      }
+
+      const skuArrOne = skuArr[0];
+      const skuArrTwo = skuArr[1];
+      const skuArrThree = skuArr[2];
+      const count = (form.skuOne.value ? 1 : 0) + (form.skuTwo.value ? 1 : 0) + (form.skuThree.value ? 1 : 0);
+      const barCodeSku = [];
+
+      if (count === 1) {
+        const skuArrOnly = skuArrOne || skuArrTwo || skuArrThree;
+
+        for (let i = 0; i < skuArrOnly.length; i++) {
+          barCodeSku.push(skuArrOnly[i]);
+        }
+      } else if (count === 2) {
+        for (let i = 0; i < skuArrOne.length; i++) {
+          for (let j = 0; j < skuArrTwo.length; j++) {
+            barCodeSku.push(skuArrOne[i] + '/' + skuArrTwo[j]);
+          }
+        }
+      } else if (count === 3) {
+        for (let i = 0; i < skuArrOne.length; i++) {
+          for (let j = 0; j < skuArrTwo.length; j++) {
+            for (let k = 0; k < skuArrThree.length; k++) {
+              barCodeSku.push(skuArrOne[i] + '/' + skuArrTwo[j] + '/' + skuArrThree[k]);
+            }
+          }
+        }
+      }
     }
 
     function batchSetStock(type) {
@@ -602,6 +789,9 @@ export default {
     const addRow = () => {
       const newRow = { key: Date.now() }; // Create a new row with a unique key
       editableData[newRow.key] = cloneDeep(newRow); // Add the new row to editableData
+      if (unit) {
+        newRow.unit = unit
+      }
       meTable.dataSource.push(newRow);
       edit(newRow.key);
     };
@@ -684,7 +874,7 @@ export default {
       skuOneList,
       skuTwoList,
       skuThreeList,
-      materialAttributeList,
+      productAttributeList,
       addUnit,
       unitOnChange,
       onlyUnitOnChange,
@@ -704,7 +894,7 @@ export default {
       rowSelection,
       meTable,
       productInfo,
-      fileList
+      fileList,
     };
   },
 }
