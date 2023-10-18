@@ -7,6 +7,7 @@ export interface ProductCategoryResp {
     remark: string;
     sort: number;
     createTime: string;
+    children?: ProductCategoryResp[];
 }
 
 export interface AddOrUpdateProductCategoryReq {
