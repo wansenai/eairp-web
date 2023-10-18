@@ -24,7 +24,7 @@
               <a-col :md="6" :sm="24">
                 <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="规格" data-step="2" data-title="规格"
                              data-intro="规格不必填，比如：10克">
-                  <a-input placeholder="请输入规格" v-decorator.trim="[ 'standard', validatorRules.standard ]"/>
+                  <a-input placeholder="请输入规格" v-decorator:trim="[ 'standard', validatorRules.standard ]"/>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
@@ -34,35 +34,48 @@
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item :labelCol="{xs: { span: 24 },sm: { span: 4 }}"
-                             :wrapperCol="{xs: { span: 24 },sm: { span: 20 }}" label="单位"
-                             data-step="4" data-title="单位" data-intro="此处支持单个单位和多单位，勾选多单位就可以切换到多单位的下拉框，多单位需要先在【计量单位】页面进行录入。
-                  比如牛奶有瓶和箱两种单位，12瓶=1箱，这就构成了多单位，多单位中有个换算比例">
+                <a-form-item :labelCol="{ xs: { span: 24 }, sm: { span: 4 } }"
+                             :wrapperCol="{ xs: { span: 24 }, sm: { span: 20 } }"
+                             label="单位"
+                             :data-step="4"
+                             data-title="单位"
+                             :data-intro="`此处支持单个单位和多单位，勾选多单位就可以切换到多单位的下拉框，多单位需要先在【计量单位】页面进行录入。
+                  比如牛奶有瓶和箱两种单位，12瓶=1箱，这就构成了多单位，多单位中有个换算比例`">
                   <a-row class="form-row" :gutter="24">
                     <a-col :lg="15" :md="15" :sm="24" style="padding:0px 0px 0px 12px;">
-                      <a-input placeholder="输入单位" v-if="!unitChecked"
-                               v-decorator.trim="[ 'unit', validatorRules.unit ]" @change="onlyUnitOnChange"/>
-                      <a-select :value="unitList" placeholder="选择多单位"
-                                v-decorator="[ 'unitId', validatorRules.unitId ]" @change="manyUnitOnChange"
-                                showSearch optionFilterProp="children" v-if="unitChecked"
+                      <a-input v-if="!unitChecked"
+                               placeholder="输入单位"
+                               v-model.trim="unit"
+                               :rules="[validatorRules.unit]"
+                               @change="onlyUnitOnChange" />
+                      <a-select v-else
+                                :value="unitId"
+                                placeholder="选择多单位"
+                                v-model="unitId"
+                                :rules="[validatorRules.unitId]"
+                                @change="manyUnitOnChange"
+                                showSearch
+                                optionFilterProp="children"
                                 :dropdownMatchSelectWidth="false">
-                        <div slot="dropdownRender" slot-scope="menu">
-                          <v-nodes :vnodes="menu"/>
-                          <a-divider style="margin: 4px 0;"/>
+                        <template #dropdownRender="{ menu }">
+                          <v-nodes :vnodes="menu" />
+                          <a-divider style="margin: 4px 0;" />
                           <div style="padding: 4px 8px; cursor: pointer;"
-                               @mousedown="e => e.preventDefault()" @click="addUnit">
-                            <a-icon type="plus"/>
+                               @mousedown="e => e.preventDefault()"
+                               @click="addUnit">
+                            <a-icon type="plus" />
                             新增计量单位
                           </div>
-                        </div>
-                        <a-select-option v-for="(item,index) in unitList"
-                                         :key="index" :value="item.id">
+                        </template>
+                        <a-select-option v-for="(item, index) in unitList"
+                                         :key="index"
+                                         :value="item.id">
                           {{ item.name }}
                         </a-select-option>
                       </a-select>
                     </a-col>
                     <a-col :lg="9" :md="9" :sm="24" style="padding:0px; text-align:center">
-                      <a-checkbox :checked="unitChecked" @change="unitOnChange">多单位</a-checkbox>
+                      <a-checkbox v-model="unitChecked" @change="unitOnChange">多单位</a-checkbox>
                     </a-col>
                   </a-row>
                 </a-form-item>
@@ -199,10 +212,17 @@
                </span>
                 </div>
                 <div>
-                  <a-table :columns="columns" :dataSource="dataSource" bordered :row-selection="rowSelection" :scroll="{ x: '100%', y: 300 }">
+                  <a-table @change="onValueChange"
+                           :loading="meTable.loading"
+                           :columns="meTable.columns"
+                           :dataSource="meTable.dataSource"
+                           :dataSource.sync="meTable.dataSource"
+                           bordered
+                           :row-selection="rowSelection"
+                           :scroll="{ x: '100%', y: 300 }">
                     <template #bodyCell="{ column, text, record }">
                       <template v-if="editableData[record.key]">
-                        <a-input v-model:value="editableData[record.key][column.dataIndex]" :placeholder="`请输入${getColumnTitle(column)}`"/>
+                        <a-input v-model:value="editableData[record.key][column.key]" :placeholder="`请输入${getColumnTitle(column)}`"/>
                       </template>
                     </template>
                   </a-table>
@@ -217,37 +237,37 @@
             </a-row>
           </a-tab-pane>
           <a-tab-pane key="2" tab="扩展信息" forceRender>
-            <a-row v-if="mpShort.mfrs.enabled" class="form-row" :gutter="24">
+            <a-row  class="form-row" :gutter="24">
               <a-col :lg="6" :md="6" :sm="6">
-                <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" :label="mpShort.mfrs.name">
+                <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" :label="productInfo.mfrs">
                   <a-input v-decorator.trim="[ 'mfrs' ]"/>
                 </a-form-item>
               </a-col>
             </a-row>
-            <a-row v-if="mpShort.otherField1.enabled" class="form-row" :gutter="24">
+            <a-row  class="form-row" :gutter="24">
               <a-col :lg="6" :md="6" :sm="6">
-                <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" :label="mpShort.otherField1.name">
+                <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" :label="productInfo.otherField1">
                   <a-input v-decorator.trim="[ 'otherField1' ]"/>
                 </a-form-item>
               </a-col>
             </a-row>
-            <a-row v-if="mpShort.otherField2.enabled" class="form-row" :gutter="24">
+            <a-row  class="form-row" :gutter="24">
               <a-col :lg="6" :md="6" :sm="6">
-                <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" :label="mpShort.otherField2.name">
+                <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" :label="productInfo.otherField2">
                   <a-input v-decorator.trim="[ 'otherField2' ]"/>
                 </a-form-item>
               </a-col>
             </a-row>
-            <a-row v-if="mpShort.otherField3.enabled" class="form-row" :gutter="24">
+            <a-row  class="form-row" :gutter="24">
               <a-col :lg="6" :md="6" :sm="6">
-                <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" :label="mpShort.otherField3.name">
+                <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" :label="productInfo.otherField3">
                   <a-input v-decorator.trim="[ 'otherField3' ]"/>
                 </a-form-item>
               </a-col>
             </a-row>
           </a-tab-pane>
           <a-tab-pane key="3" tab="库存数量" forceRender>
-            <template #buttonAfter>
+            <template>
               <a-button style="margin: 0px 0px 8px 0px" @click="batchSetStock('initStock')">期初库存-批量</a-button>
               <a-button style="margin-left: 8px" @click="batchSetStock('lowSafeStock')">最低安全库存-批量</a-button>
               <a-button style="margin-left: 8px" @click="batchSetStock('highSafeStock')">最高安全库存-批量</a-button>
@@ -258,6 +278,17 @@
               <a-col :lg="18" :md="18" :sm="24">
                 <a-form-item :labelCol="{xs: { span: 24 },sm: { span: 3 }}"
                              :wrapperCol="{xs: { span: 24 },sm: { span: 20 }}" label="图片信息">
+                  <a-upload
+                      v-model:file-list="fileList"
+                      action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                      list-type="picture-card"
+                      @preview="handlePreview"
+                  >
+                    <div v-if="fileList.length < 8">
+                      <plus-outlined />
+                      <div style="margin-top: 8px">Upload</div>
+                    </div>
+                  </a-upload>
                 </a-form-item>
               </a-col>
               <a-col :lg="6" :md="6" :sm="24"></a-col>
@@ -296,6 +327,8 @@ import {
   TreeSelect, InputNumber, Checkbox, SelectOption, TabPane, Table,
 } from "ant-design-vue";
 import {cloneDeep} from 'lodash-es';
+import { PlusOutlined } from '@ant-design/icons-vue';
+import type { UploadProps, } from 'ant-design-vue';
 
 export default {
   name: 'ProductInfoModal',
@@ -321,6 +354,7 @@ export default {
   },
   setup(_, context) {
     const confirmLoading = ref(false);
+    const unit = ref();
     const title = ref('新增商品信息');
     const open = ref(false);
     const prefixNo = ref('material');
@@ -336,6 +370,15 @@ export default {
     const skuOneTitle = ref('属性1');
     const skuTwoTitle = ref('属性2');
     const skuThreeTitle = ref('属性3');
+
+    const form = {
+      skuOne: ref(null),
+      skuTwo: ref(null),
+      skuThree: ref(null),
+      getFieldValue(field) {
+        return form[field];
+      }
+    };
 
     const model = ref({});
 
@@ -381,11 +424,71 @@ export default {
         ]
       }
     })
-    const mpShort = reactive({
-      mfrs: {},
-      otherField1: {},
-      otherField2: {},
-      otherField3: {}
+    const meTable = reactive({
+      loading: false,
+      dataSource: [],
+      columns: [
+        {
+          title: '条码',
+          key: 'barCode',
+          type: 'input',
+          placeholder: '请输入${title}',
+          validateRules: [
+            { required: true, message: '${title}不能为空' },
+            { pattern: /^.{4,40}$/, message: '长度为4到40位' }
+          ]
+        },
+        {
+          title: '单位',
+          key: 'unit',
+          type: 'input',
+          placeholder: '请输入${title}',
+          validateRules: [{ required: true, message: '${title}不能为空' }]
+        },
+        {
+          title: '多属性',
+          key: 'sku',
+          type: 'input',
+          readonly: true,
+          placeholder: '请输入${title}'
+        },
+        {
+          title: '采购价',
+          key: 'purchasePrice',
+          type: 'inputNumber',
+          defaultValue: '',
+          placeholder: '请输入${title}'
+        },
+        {
+          title: '零售价',
+          key: 'retailPrice',
+          type: 'inputNumber',
+          defaultValue: '',
+          placeholder: '请输入${title}'
+        },
+        {
+          title: '销售价',
+          key: 'salesPrice',
+          type: 'inputNumber',
+          defaultValue: '',
+          placeholder: '请输入${title}'
+        },
+        {
+          title: '最低售价',
+          key: 'lowSalesPrice',
+          type: 'inputNumber',
+          defaultValue: '',
+          placeholder: '请输入${title}'
+        }
+      ]
+    });
+
+
+    const productInfo = reactive({
+      mfrs: '制造商',
+      otherField1: '自定义1',
+      otherField2: '自定义2',
+      otherField3: '自定义3'
     })
 
     function addUnit() {
@@ -408,9 +511,54 @@ export default {
     function unitOnChange() {
 
     }
+    function onlyUnitOnChange(e) {
+      if (e.target.value) {
+        // 单位有填写了之后则显示多属性的文本框
+        manySkuStatus.value = true;
+      } else {
+        manySkuStatus.value = false;
+      }
+      // 循环a-table行表格将e.target.value更新
+      const dataSource = meTable.dataSource
+      for (let i = 0; i < dataSource.length; i++) {
+        dataSource[i].unit = e.target.value
+      }
+      meTable.dataSource = dataSource
+      // 这里是将a-table的数据更新到editableData中 meTable.dataSource数据更新到editableData中
+      for (let i = 0; i < meTable.dataSource.length; i++) {
+        editableData[meTable.dataSource[i].key] = meTable.dataSource[i]
+      }
+    }
 
-    function onlyUnitOnChange() {
+    const onValueChange = (record, dataIndex, value) => {
+      console.log('Value changed:', record, dataIndex, value);
+      if (!editableData[record.key]) {
+        editableData[record.key] = {};
+      }
+      editableData[record.key][dataIndex] = value;
+      console.log('Editable data:', editableData);
+    };
 
+
+    //修改商品明细中的价格触发计算
+    function changeDecimalByValue(row) {
+      let unitArr = unitList
+      let basicUnit = '', otherUnit = '', ratio = 1, otherUnitTwo = '', ratioTwo = 1, otherUnitThree = '', ratioThree = 1
+      for (let i = 0; i < unitArr.length; i++) {
+        if(unitArr[i].id === this.form.getFieldValue('unitId')) {
+          basicUnit = unitArr[i].basicUnit
+          otherUnit = unitArr[i].otherUnit
+          ratio = unitArr[i].ratio
+          if(unitArr[i].otherUnitTwo) {
+            otherUnitTwo = unitArr[i].otherUnitTwo
+            ratioTwo = unitArr[i].ratioTwo
+          }
+          if(unitArr[i].otherUnitThree) {
+            otherUnitThree = unitArr[i].otherUnitThree
+            ratioThree = unitArr[i].ratioThree
+          }
+        }
+      }
     }
 
     function manyUnitOnChange() {
@@ -441,69 +589,20 @@ export default {
     }
 
     function onManySkuChange(value) {
-      this.manySkuSelected = value.length
+
     }
 
     function batchSetStock(type) {
 
     }
 
-    const columns = [
-      {
-        title: '条码',
-        dataIndex: 'barCode',
-      },
-      {
-        title: '单位',
-        dataIndex: 'unit',
-      },
-      {
-        title: '采购价',
-        dataIndex: 'purchasePrice',
-      },
-      {
-        title: '零售价',
-        dataIndex: 'retailPrice',
-      },
-      {
-        title: '销售价',
-        dataIndex: 'salesPrice',
-      },
-      {
-        title: '最低售价',
-        dataIndex: 'lowSalesPrice',
-      },
-    ];
 
-    const data = [
-      {
-        key: 0,
-        barCode: '1004',
-        unit: '',
-        purchasePrice: '',
-        retailPrice: '',
-        salesPrice: '',
-        lowSalesPrice: '',
-      }
-    ];
-    const dataSource = ref(data);
-    const editableData = reactive({
-      0: cloneDeep(data[0]) // 添加键为0的条目
-    });
-
+    const editableData = reactive({});
 
     const addRow = () => {
-      const newRow = {
-        key: (dataSource.value.length + 1),
-        barCode: '',
-        unit: '',
-        purchasePrice: '',
-        retailPrice: '',
-        salesPrice: '',
-        lowSalesPrice: '',
-      };
-      editableData[newRow.key] = cloneDeep(newRow); // 将新行添加到editableData
-      dataSource.value.push(newRow);
+      const newRow = { key: Date.now() }; // Create a new row with a unique key
+      editableData[newRow.key] = cloneDeep(newRow); // Add the new row to editableData
+      meTable.dataSource.push(newRow);
       edit(newRow.key);
     };
 
@@ -512,14 +611,14 @@ export default {
     };
 
     const deleteKey = (key) => {
-
-    }
+      delete editableData[key];
+    };
 
     const edit = (key) => {
       if (key === 0) {
-        editableData[0] = cloneDeep(dataSource.value.find(item => item.key === 0));
+        editableData[0] = cloneDeep(meTable.dataSource.find(item => item.key === 0));
       } else {
-        editableData[key] = cloneDeep(dataSource.value.find(item => item.key === key));
+        editableData[key] = cloneDeep(meTable.dataSource.find(item => item.key === key));
       }
     };
 
@@ -532,9 +631,32 @@ export default {
 
     function deleteRows() {
       const selectedKeys = rowSelection.value.selectedRowKeys;
-      dataSource.value = dataSource.value.filter(row => !selectedKeys.includes(row.key));
+      meTable.dataSource = meTable.dataSource.filter(row => !selectedKeys.includes(row.key));
       rowSelection.value.selectedRowKeys = [];
     }
+
+    function getBase64(file: File) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+      });
+    }
+
+    const previewVisible = ref(false);
+    const previewImage = ref('');
+    const previewTitle = ref('');
+    const fileList = ref<UploadProps['fileList']>([])
+
+    const handlePreview = async (file: UploadProps['fileList'][number]) => {
+      if (!file.url && !file.preview) {
+        file.preview = (await getBase64(file.originFileObj)) as string;
+      }
+      previewImage.value = file.url || file.preview;
+      previewVisible.value = true;
+      previewTitle.value = file.name || file.url.substring(file.url.lastIndexOf('/') + 1);
+    };
 
     return {
       confirmLoading,
@@ -573,16 +695,16 @@ export default {
       categoryTree,
       onManySkuChange,
       batchSetStock,
-      mpShort,
       model,
-      columns,
-      dataSource,
       addRow,
       editableData,
       getColumnTitle,
       deleteKey,
       deleteRows,
-      rowSelection
+      rowSelection,
+      meTable,
+      productInfo,
+      fileList
     };
   },
 }
@@ -597,5 +719,15 @@ export default {
   padding: 0px 11px;
   color: #bbb;
   background-color: #ffffff;
+}
+
+.ant-upload-select-picture-card i {
+  font-size: 32px;
+  color: #999;
+}
+
+.ant-upload-select-picture-card .ant-upload-text {
+  margin-top: 8px;
+  color: #666;
 }
 </style>
