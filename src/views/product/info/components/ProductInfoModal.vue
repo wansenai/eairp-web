@@ -336,6 +336,7 @@ import {getCategoryList} from "/@/api/product/productCategory"
 import {ProductUnitQueryReq} from "/@/api/product/model/productUnitModel"
 import {DefaultOptionType} from "ant-design-vue/es/vc-tree-select/TreeSelect";
 import {ProductAttributeListReq} from "@/api/product/model/productAttributeModel"
+import {getBarCode} from "@/api/product/product"
 import {getAttributeList, getAttributeById} from "@/api/product/productAttribute"
 
 export default {
@@ -532,7 +533,7 @@ export default {
         unitChecked.value = true
       } else {
         unitStatus.value = false;
-        manyUnitStatus.vaalue = true;
+        manyUnitStatus.value = true;
         unitChecked.value = false
       }
     }
@@ -697,7 +698,27 @@ export default {
       }
 
       skuArr.value = arr;
-      console.info(skuArr.value);
+      loadBarCode();
+    }
+
+    function loadBarCode(){
+      getBarCode().then(res => {
+        if (res && res.code==='00000') {
+          let maxBarCode = res.data
+          if (skuArr.value.length > 0) {
+            meTable.dataSource.splice(0); // 清空meTableData数组
+            for (let i = 0; i < skuArr.value.length; i++) {
+              let currentBarCode = maxBarCode + i
+              const newRowData = {key: i, unit: unit, barCode: currentBarCode, sku: skuArr.value[i]}
+              meTable.dataSource.push(newRowData);
+            }
+            meTable.dataSource.forEach(row => {
+              edit(row.key);
+            });
+            console.info(meTable.dataSource);
+          }
+        }
+      })
     }
 
     watch(manySkuSelected, (value) => {
@@ -783,10 +804,10 @@ export default {
     };
 
     const edit = (key) => {
-      if (key === 0) {
-        editableData[0] = cloneDeep(meTable.dataSource.find(item => item.key === 0));
-      } else {
-        editableData[key] = cloneDeep(meTable.dataSource.find(item => item.key === key));
+      const rowData = meTable.dataSource.find(item => item.key === key);
+      if (rowData) {
+        console.info("能不能修改key: " + key)
+        editableData[key] = cloneDeep(rowData);
       }
     };
 
