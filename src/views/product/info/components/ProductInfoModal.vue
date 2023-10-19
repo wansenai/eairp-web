@@ -11,26 +11,26 @@
       @cancel="handleCancel"
       style="top:20%;height: 95%;">
     <a-spin :spinning="confirmLoading">
-      <a-form :form="form">
+      <a-form>
         <a-tabs default-active-key="1" size="small">
           <a-tab-pane key="1" tab="基本信息" id="materialHeadModal" forceRender>
             <a-row class="form-row" :gutter="24">
               <a-col :md="6" :sm="24">
                 <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="名称" data-step="1" data-title="名称"
-                             data-intro="名称必填，可以重复">
-                  <a-input placeholder="请输入名称" v-decorator.trim="[ 'name', validatorRules.name ]"/>
+                             data-intro="名称必填，可以重复" rules="[{ required: true, message: '请输入名称' }]">
+                  <a-input v-model:value="productName" placeholder="请输入名称"/>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="规格" data-step="2" data-title="规格"
                              data-intro="规格不必填，比如：10克">
-                  <a-input placeholder="请输入规格" v-decorator:trim="[ 'standard', validatorRules.standard ]"/>
+                  <a-input v-model:value="productStandard" placeholder="请输入规格"/>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="型号" data-step="3" data-title="型号"
                              data-intro="型号是比规格更小的属性，比如：RX-01">
-                  <a-input placeholder="请输入型号" v-decorator.trim="[ 'model', validatorRules.model ]"/>
+                  <a-input placeholder="请输入型号"/>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
@@ -45,9 +45,9 @@
                     <a-col :lg="15" :md="15" :sm="24" style="padding:0px 0px 0px 12px;">
                       <a-input v-if="!unitChecked"
                                placeholder="输入单位"
-                               v-model.trim="unit"
+                               v-model:value="unit"
                                :rules="[validatorRules.unit]"
-                               @change="onlyUnitOnChange" />
+                               @change="onlyUnitOnChange"/>
                       <a-select v-else
                                 :value="unitId"
                                 placeholder="选择多单位"
@@ -57,16 +57,16 @@
                                 showSearch
                                 optionFilterProp="children"
                                 :dropdownMatchSelectWidth="false">
-<!--                        <template v-slot:dropdownRender="props" >-->
-<!--                          <v-nodes :vnodes="props.menu" />-->
-<!--                          <a-divider style="margin: 4px 0;" />-->
-<!--                          <div style="padding: 4px 8px; cursor: pointer;"-->
-<!--                               @mousedown="e => e.preventDefault()"-->
-<!--                               @click="addUnit">-->
-<!--                            <a-icon type="plus" />-->
-<!--                            新增计量单位-->
-<!--                          </div>-->
-<!--                        </template>-->
+                        <!--                        <template v-slot:dropdownRender="props" >-->
+                        <!--                          <v-nodes :vnodes="props.menu" />-->
+                        <!--                          <a-divider style="margin: 4px 0;" />-->
+                        <!--                          <div style="padding: 4px 8px; cursor: pointer;"-->
+                        <!--                               @mousedown="e => e.preventDefault()"-->
+                        <!--                               @click="addUnit">-->
+                        <!--                            <a-icon type="plus" />-->
+                        <!--                            新增计量单位-->
+                        <!--                          </div>-->
+                        <!--                        </template>-->
                         <a-select-option v-for="(item, index) in unitList.value"
                                          :key="index"
                                          :value="item.id">
@@ -167,8 +167,8 @@
               <a-col :md="12" :sm="24" v-if="manySkuSelected>=1">
                 <a-form-item :labelCol="{xs: { span: 24 },sm: { span: 4 }}"
                              :wrapperCol="{xs: { span: 24 },sm: { span: 20 }}" :label="skuOneTitle">
-                  <a-select mode="multiple" v-decorator="[ 'skuOne' ]" showSearch optionFilterProp="children"
-                            placeholder="请选择（可多选）" @select="onSkuChange" @deselect="onSkuOneDeSelect">
+                  <a-select mode="multiple" v-model="skuOne" showSearch
+                            placeholder="请选择（可多选）" @change="onSkuChange($event, skuOne)">
                     <a-select-option v-for="(item,index) in skuOneList.value" :key="index" :value="item.value">
                       {{ item.value }}
                     </a-select-option>
@@ -178,8 +178,8 @@
               <a-col :md="12" :sm="24" v-if="manySkuSelected>=2">
                 <a-form-item :labelCol="{xs: { span: 24 },sm: { span: 4 }}"
                              :wrapperCol="{xs: { span: 24 },sm: { span: 20 }}" :label="skuTwoTitle">
-                  <a-select mode="multiple" v-decorator="[ 'skuTwo' ]" showSearch optionFilterProp="children"
-                            placeholder="请选择（可多选）" @select="onSkuChange" @deselect="onSkuTwoDeSelect">
+                  <a-select mode="multiple" v-model="skuTwo" showSearch
+                            placeholder="请选择（可多选）" @change="onSkuChange($event, skuTwo)">
                     <a-select-option v-for="(item,index) in skuTwoList.value" :key="index" :value="item.value">
                       {{ item.value }}
                     </a-select-option>
@@ -189,8 +189,8 @@
               <a-col :md="12" :sm="24" v-if="manySkuSelected>=3">
                 <a-form-item :labelCol="{xs: { span: 24 },sm: { span: 4 }}"
                              :wrapperCol="{xs: { span: 24 },sm: { span: 20 }}" :label="skuThreeTitle">
-                  <a-select mode="multiple" v-decorator="[ 'skuThree' ]" showSearch optionFilterProp="children"
-                            placeholder="请选择（可多选）" @select="onSkuChange" @deselect="onSkuThreeDeSelect">
+                  <a-select mode="multiple" v-model="skuThree" showSearch
+                            placeholder="请选择（可多选）" @change="onSkuChange($event, skuThree)">
                     <a-select-option v-for="(item,index) in skuThreeList.value" :key="index" :value="item.value">
                       {{ item.value }}
                     </a-select-option>
@@ -199,34 +199,35 @@
               </a-col>
             </a-row>
             <div style="margin-top:8px;" id="productDetailModal">
-                <div style="margin-bottom: 16px">
-                  <a-button type="primary" @click="addRow">
-                    + 插入一行
-                  </a-button>
-                  <a-button style="margin-left: 8px" danger @click="deleteRows" type="primary"> 删除选中行</a-button>
-                  <a-button style="margin-left: 8px" @click="">采购价-批量</a-button>
-                  <a-button style="margin-left: 8px" @click="">零售价-批量</a-button>
-                  <a-button style="margin-left: 8px" @click="">销售价-批量</a-button>
-                  <a-button style="margin-left: 8px" @click="">最低售价-批量</a-button>
-                  <span style="margin-left: 8px">
+              <div style="margin-bottom: 16px">
+                <a-button type="primary" @click="addRow">
+                  + 插入一行
+                </a-button>
+                <a-button style="margin-left: 8px" danger @click="deleteRows" type="primary"> 删除选中行</a-button>
+                <a-button style="margin-left: 8px" @click="">采购价-批量</a-button>
+                <a-button style="margin-left: 8px" @click="">零售价-批量</a-button>
+                <a-button style="margin-left: 8px" @click="">销售价-批量</a-button>
+                <a-button style="margin-left: 8px" @click="">最低售价-批量</a-button>
+                <span style="margin-left: 8px">
                </span>
-                </div>
-                <div>
-                  <a-table @change="onValueChange"
-                           :loading="meTable.loading"
-                           :columns="meTable.columns"
-                           :dataSource="meTable.dataSource"
-                           :dataSource.sync="meTable.dataSource"
-                           bordered
-                           :row-selection="rowSelection"
-                           :scroll="{ x: '100%', y: 300 }">
-                    <template #bodyCell="{ column, text, record }">
-                      <template v-if="editableData[record.key]">
-                        <a-input v-model:value="editableData[record.key][column.key]" :placeholder="`请输入${getColumnTitle(column)}`"/>
-                      </template>
+              </div>
+              <div>
+                <a-table @change="onValueChange"
+                         :loading="meTable.loading"
+                         :columns="meTable.columns"
+                         :dataSource="meTable.dataSource"
+                         :dataSource.sync="meTable.dataSource"
+                         bordered
+                         :row-selection="rowSelection"
+                         :scroll="{ x: '100%', y: 300 }">
+                  <template #bodyCell="{ column, text, record }">
+                    <template v-if="editableData[record.key]">
+                      <a-input v-model:value="editableData[record.key][column.key]"
+                               :placeholder="`请输入${getColumnTitle(column)}`"/>
                     </template>
-                  </a-table>
-                </div>
+                  </template>
+                </a-table>
+              </div>
             </div>
             <a-row class="form-row" :gutter="24">
               <a-col :lg="24" :md="24" :sm="24">
@@ -237,28 +238,28 @@
             </a-row>
           </a-tab-pane>
           <a-tab-pane key="2" tab="扩展信息" forceRender>
-            <a-row  class="form-row" :gutter="24">
+            <a-row class="form-row" :gutter="24">
               <a-col :lg="6" :md="6" :sm="6">
                 <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" :label="productInfo.mfrs">
                   <a-input v-decorator.trim="[ 'mfrs' ]"/>
                 </a-form-item>
               </a-col>
             </a-row>
-            <a-row  class="form-row" :gutter="24">
+            <a-row class="form-row" :gutter="24">
               <a-col :lg="6" :md="6" :sm="6">
                 <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" :label="productInfo.otherField1">
                   <a-input v-decorator.trim="[ 'otherField1' ]"/>
                 </a-form-item>
               </a-col>
             </a-row>
-            <a-row  class="form-row" :gutter="24">
+            <a-row class="form-row" :gutter="24">
               <a-col :lg="6" :md="6" :sm="6">
                 <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" :label="productInfo.otherField2">
                   <a-input v-decorator.trim="[ 'otherField2' ]"/>
                 </a-form-item>
               </a-col>
             </a-row>
-            <a-row  class="form-row" :gutter="24">
+            <a-row class="form-row" :gutter="24">
               <a-col :lg="6" :md="6" :sm="6">
                 <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" :label="productInfo.otherField3">
                   <a-input v-decorator.trim="[ 'otherField3' ]"/>
@@ -285,7 +286,7 @@
                       @preview="handlePreview"
                   >
                     <div v-if="fileList.length < 8">
-                      <plus-outlined />
+                      <plus-outlined/>
                       <div style="margin-top: 8px">Upload</div>
                     </div>
                   </a-upload>
@@ -311,7 +312,7 @@
 </template>
 
 <script lang="ts">
-import {ref, reactive, onMounted, watch } from 'vue';
+import {ref, reactive, onMounted, watch, computed} from 'vue';
 import {
   Modal,
   Upload,
@@ -324,18 +325,18 @@ import {
   Tabs,
   Select,
   Tooltip,
-  TreeSelect, InputNumber, Checkbox, SelectOption, TabPane, Table,
+  TreeSelect, Input, InputNumber, Checkbox, SelectOption, TabPane, Table,
 } from "ant-design-vue";
 import {cloneDeep} from 'lodash-es';
-import { PlusOutlined } from '@ant-design/icons-vue';
-import type { UploadProps, } from 'ant-design-vue';
+import {PlusOutlined} from '@ant-design/icons-vue';
+import type {UploadProps,} from 'ant-design-vue';
 import {getUnitList} from "/@/api/product/productUnit"
 import {ProductCategoryResp} from '/@/api/product/model/productCategoryModel'
 import {getCategoryList} from "/@/api/product/productCategory"
 import {ProductUnitQueryReq} from "/@/api/product/model/productUnitModel"
 import {DefaultOptionType} from "ant-design-vue/es/vc-tree-select/TreeSelect";
 import {ProductAttributeListReq} from "@/api/product/model/productAttributeModel"
-import {getAttributeList , getAttributeById} from "@/api/product/productAttribute"
+import {getAttributeList, getAttributeById} from "@/api/product/productAttribute"
 
 export default {
   name: 'ProductInfoModal',
@@ -349,6 +350,7 @@ export default {
     'a-col': Col,
     'a-form': Form,
     'a-form-item': FormItem,
+    'a-input': Input,
     'a-input-number': InputNumber,
     'a-select': Select,
     'a-select-option': SelectOption,
@@ -360,11 +362,13 @@ export default {
     'a-table': Table,
   },
   setup(_, context) {
+    const productStandard = ref<String>('');
+    const productName = ref<String>('');
     const confirmLoading = ref(false);
     const unit = ref('');
     const title = ref('新增商品信息');
     const open = ref(false);
-    const prefixNo = ref('material');
+    const prefixNo = ref('product');
     const manySkuSelected = ref(0);
     const unitChecked = ref(false);
     const manyUnitStatus = ref(false);
@@ -378,14 +382,9 @@ export default {
     const skuTwoTitle = ref('属性2');
     const skuThreeTitle = ref('属性3');
 
-    const form = {
-      skuOne: ref(null),
-      skuTwo: ref(null),
-      skuThree: ref(null),
-      getFieldValue(field) {
-        return form[field];
-      }
-    };
+    const skuOne = reactive([]);
+    const skuTwo = reactive([]);
+    const skuThree = reactive([]);
 
     onMounted(() => {
       // 在组件初始化加载时调用请求接口的方法
@@ -447,8 +446,8 @@ export default {
           type: 'input',
           placeholder: '请输入${title}',
           validateRules: [
-            { required: true, message: '${title}不能为空' },
-            { pattern: /^.{4,40}$/, message: '长度为4到40位' }
+            {required: true, message: '${title}不能为空'},
+            {pattern: /^.{4,40}$/, message: '长度为4到40位'}
           ]
         },
         {
@@ -456,7 +455,7 @@ export default {
           key: 'unit',
           type: 'input',
           placeholder: '请输入${title}',
-          validateRules: [{ required: true, message: '${title}不能为空' }]
+          validateRules: [{required: true, message: '${title}不能为空'}]
         },
         {
           title: '多属性',
@@ -533,7 +532,7 @@ export default {
         unitChecked.value = true
       } else {
         unitStatus.value = false;
-        manyUnitStatus.value = true;
+        manyUnitStatus.vaalue = true;
         unitChecked.value = false
       }
     }
@@ -545,13 +544,11 @@ export default {
       } else {
         manySkuStatus.value = false;
       }
-      // 循环a-table行表格将e.target.value更新
       const dataSource = meTable.dataSource
       for (let i = 0; i < dataSource.length; i++) {
         dataSource[i].unit = e.target.value
       }
       meTable.dataSource = dataSource
-      // 这里是将a-table的数据更新到editableData中 meTable.dataSource数据更新到editableData中
       for (let i = 0; i < meTable.dataSource.length; i++) {
         editableData[meTable.dataSource[i].key] = meTable.dataSource[i]
       }
@@ -566,12 +563,12 @@ export default {
 
 
     async function loadUnitListData() {
-      const unitObject : ProductUnitQueryReq = {
+      const unitObject: ProductUnitQueryReq = {
         page: 1,
         pageSize: 1000,
       }
       const unitListResult = await getUnitList(unitObject)
-      if(unitListResult) {
+      if (unitListResult) {
         unitList.value = unitListResult.data.records
       }
     }
@@ -593,21 +590,22 @@ export default {
       }
       return tree;
     }
+
     async function loadCategoryTreeData() {
       const categoryTreeResult = await getCategoryList()
-      if(categoryTreeResult) {
+      if (categoryTreeResult) {
         const flatData = categoryTreeResult.data;
         categoryTree.value = buildTree(flatData, null);
       }
     }
 
     async function loadAttributeTreeData() {
-      const attributeObject : ProductAttributeListReq = {
+      const attributeObject: ProductAttributeListReq = {
         page: 1,
         pageSize: 1000,
       }
       const attributeListResult = await getAttributeList(attributeObject)
-      if(attributeListResult) {
+      if (attributeListResult) {
         productAttributeList.value = attributeListResult.data.records
       }
     }
@@ -615,17 +613,18 @@ export default {
     //修改商品明细中的价格触发计算
     function changeDecimalByValue(row) {
       let unitArr = unitList
-      let basicUnit = '', otherUnit = '', ratio = 1, otherUnitTwo = '', ratioTwo = 1, otherUnitThree = '', ratioThree = 1
+      let basicUnit = '', otherUnit = '', ratio = 1, otherUnitTwo = '', ratioTwo = 1, otherUnitThree = '',
+          ratioThree = 1
       for (let i = 0; i < unitArr.length; i++) {
-        if(unitArr[i].id === this.form.getFieldValue('unitId')) {
+        if (unitArr[i].id === this.form.getFieldValue('unitId')) {
           basicUnit = unitArr[i].basicUnit
           otherUnit = unitArr[i].otherUnit
           ratio = unitArr[i].ratio
-          if(unitArr[i].otherUnitTwo) {
+          if (unitArr[i].otherUnitTwo) {
             otherUnitTwo = unitArr[i].otherUnitTwo
             ratioTwo = unitArr[i].ratioTwo
           }
-          if(unitArr[i].otherUnitThree) {
+          if (unitArr[i].otherUnitThree) {
             otherUnitThree = unitArr[i].otherUnitThree
             ratioThree = unitArr[i].ratioThree
           }
@@ -637,38 +636,68 @@ export default {
 
     }
 
-    function onSkuChange() {
-      const skuOneData = form.skuOne;
-      const skuTwoData = form.skuTwo;
-      const skuThreeData = form.skuThree;
-      autoSkuList(skuOneData.value, skuTwoData.value, skuThreeData.value)
+    const skuOneData = ref([]);
+    const skuTwoData = ref([]);
+    const skuThreeData = ref([]);
+    const skuArr = ref([]);
+    function onSkuChange(value, array) {
+      if (array === skuOne) {
+        skuOneData.value = value
+      } else if (array === skuTwo) {
+        skuTwoData.value =value
+      } else if (array === skuThree) {
+        skuThreeData.value = value
+      }
+      autoSkuList();
     }
 
-    function onSkuOneDeSelect(value) {
-      const skuOneData = form.skuOne;
-      const skuTwoData = form.skuTwo;
-      const skuThreeData = form.skuThree;
-      console.info(skuOneData.value)
-      removeByVal(skuOneData.value, value);
-      autoSkuList(skuOneData.value, skuTwoData.value, skuThreeData.value);
+    function removeByVal(arrylist, val) {
+      for (var i = 0; i < arrylist.length; i++) {
+        if (arrylist[i] == val) {
+          arrylist.splice(i, 1);
+          break;
+        }
+      }
     }
+    function autoSkuList() {
+      let arr = [];
 
-    function onSkuTwoDeSelect(value) {
-      const skuOneData = form.skuOne;
-      const skuTwoData = form.skuTwo;
-      const skuThreeData = form.skuThree;
-      console.info(skuTwoData.value)
-      removeByVal(skuTwoData.value, value);
-      autoSkuList(skuOneData.value, skuTwoData.value, skuThreeData.value);
-    }
+      if (skuOneData.value.length > 0 && skuTwoData.value.length > 0 && skuThreeData.value.length > 0) {
+        for (let i = 0; i < skuOneData.value.length; i++) {
+          for (let j = 0; j < skuTwoData.value.length; j++) {
+            for (let k = 0; k < skuThreeData.value.length; k++) {
+              arr.push(skuOneData.value[i] + '/' + skuTwoData.value[j] + '/' + skuThreeData.value[k]);
+            }
+          }
+        }
+      } else if (skuOneData.value.length > 0 && skuTwoData.value.length > 0) {
+        for (let i = 0; i < skuOneData.value.length; i++) {
+          for (let j = 0; j < skuTwoData.value.length; j++) {
+            arr.push(skuOneData.value[i] + '/' + skuTwoData.value[j]);
+          }
+        }
+      } else if (skuOneData.value.length > 0 && skuThreeData.value.length > 0) {
+        for (let i = 0; i < skuOneData.value.length; i++) {
+          for (let k = 0; k < skuThreeData.value.length; k++) {
+            arr.push(skuOneData.value[i] + '/' + skuThreeData.value[k]);
+          }
+        }
+      } else if (skuTwoData.value.length > 0 && skuThreeData.value.length > 0) {
+        for (let j = 0; j < skuTwoData.value.length; j++) {
+          for (let k = 0; k < skuThreeData.value.length; k++) {
+            arr.push(skuTwoData.value[j] + '/' + skuThreeData.value[k]);
+          }
+        }
+      } else if (skuOneData.value.length > 0) {
+        arr = skuOneData.value;
+      } else if (skuTwoData.value.length > 0) {
+        arr = skuTwoData.value;
+      } else if (skuThreeData.value.length > 0) {
+        arr = skuThreeData.value;
+      }
 
-    function onSkuThreeDeSelect(value) {
-      const skuOneData = form.skuOne;
-      const skuTwoData = form.skuTwo;
-      const skuThreeData = form.skuThree;
-
-      removeByVal(skuThreeData.value, value);
-      autoSkuList(skuOneData.value, skuTwoData.value, skuThreeData.value);
+      skuArr.value = arr;
+      console.info(skuArr.value);
     }
 
     watch(manySkuSelected, (value) => {
@@ -727,57 +756,6 @@ export default {
       }
     }
 
-    function removeByVal(arrylist, val) {
-      for(var i = 0; i < arrylist .length; i++) {
-        if(arrylist [i] == val) {
-          arrylist .splice(i, 1);
-          break;
-        }
-      }
-    }
-
-    function autoSkuList(skuOneData, skuTwoData, skuThreeData) {
-      const unit = form.skuOne.value;
-      const skuArr = [];
-
-      if (form.skuOne.value) {
-        skuArr.push(skuOneData.value);
-      }
-      if (form.skuTwo.value) {
-        skuArr.push(skuTwoData.value);
-      }
-      if (form.skuThree.value) {
-        skuArr.push(skuThreeData.value);
-      }
-
-      const skuArrOne = skuArr[0];
-      const skuArrTwo = skuArr[1];
-      const skuArrThree = skuArr[2];
-      const count = (form.skuOne.value ? 1 : 0) + (form.skuTwo.value ? 1 : 0) + (form.skuThree.value ? 1 : 0);
-      const barCodeSku = [];
-
-      if (count === 1) {
-        const skuArrOnly = skuArrOne || skuArrTwo || skuArrThree;
-
-        for (let i = 0; i < skuArrOnly.length; i++) {
-          barCodeSku.push(skuArrOnly[i]);
-        }
-      } else if (count === 2) {
-        for (let i = 0; i < skuArrOne.length; i++) {
-          for (let j = 0; j < skuArrTwo.length; j++) {
-            barCodeSku.push(skuArrOne[i] + '/' + skuArrTwo[j]);
-          }
-        }
-      } else if (count === 3) {
-        for (let i = 0; i < skuArrOne.length; i++) {
-          for (let j = 0; j < skuArrTwo.length; j++) {
-            for (let k = 0; k < skuArrThree.length; k++) {
-              barCodeSku.push(skuArrOne[i] + '/' + skuArrTwo[j] + '/' + skuArrThree[k]);
-            }
-          }
-        }
-      }
-    }
 
     function batchSetStock(type) {
 
@@ -787,7 +765,7 @@ export default {
     const editableData = reactive({});
 
     const addRow = () => {
-      const newRow = { key: Date.now() }; // Create a new row with a unique key
+      const newRow = {key: Date.now()}; // Create a new row with a unique key
       editableData[newRow.key] = cloneDeep(newRow); // Add the new row to editableData
       if (unit) {
         newRow.unit = unit
@@ -848,6 +826,7 @@ export default {
       previewTitle.value = file.name || file.url.substring(file.url.lastIndexOf('/') + 1);
     };
 
+
     return {
       confirmLoading,
       openModal,
@@ -867,9 +846,6 @@ export default {
       switchDisabled,
       barCodeSwitch,
       onSkuChange,
-      onSkuOneDeSelect,
-      onSkuTwoDeSelect,
-      onSkuThreeDeSelect,
       unitList,
       skuOneList,
       skuTwoList,
@@ -895,6 +871,12 @@ export default {
       meTable,
       productInfo,
       fileList,
+      skuOne,
+      skuTwo,
+      skuThree,
+      productStandard,
+      productName,
+      unit,
     };
   },
 }
