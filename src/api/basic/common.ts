@@ -6,6 +6,7 @@ import {ContentTypeEnum} from "@/enums/httpEnum";
 enum Api {
     UploadXlsx = '/v2/common/upload/excel',
     ExportXlsx = '/v2/common/export/excel',
+    UploadOss = '/v2/common/uploadOss',
 }
 
 export interface UploadFileParams {
@@ -35,6 +36,23 @@ export function exportXlsx(type: string, mode: ErrorMessageMode = 'notice') {
         {
             url: `${Api.ExportXlsx}?type=${type}`,
             responseType: "blob"
+        },
+        {
+            errorMessageMode: mode,
+        },
+    );
+}
+
+export function uploadOss(params: UploadFileParams, mode: ErrorMessageMode = 'notice') {
+    return defHttp.post<BaseResp>(
+        {
+            url: Api.UploadOss,
+            params,
+            headers: {
+                'Content-type': ContentTypeEnum.FORM_DATA,
+                // @ts-ignore
+                ignoreCancelToken: true,
+            },
         },
         {
             errorMessageMode: mode,
