@@ -273,24 +273,24 @@
               <a-button style="margin-left: 8px" @click="batchSetStock('lowSafeStock')">最低安全库存-批量</a-button>
               <a-button style="margin-left: 8px" @click="batchSetStock('highSafeStock')">最高安全库存-批量</a-button>
             </a-row>
-              <a-row class="form-row" :gutter="24">
-                <a-table :loading="stock.loading"
-                         :columns="stock.columns"
-                         :dataSource="stock.dataSource"
-                         :rowNumber="true"
-                         bordered
-                         :scroll="{ x: '100%', y: 300 }">
-                  <template #bodyCell="{ column, text, record }">
-                    <template v-if="column.key === 'warehouseName'">
-                      <a-input v-model:value="editStockData[record.key][column.key]" disabled />
-                    </template>
-                    <template v-else-if="editStockData[record.key]">
-                      <a-input v-model:value="editStockData[record.key][column.key]"
-                               :placeholder="`请输入${getColumnTitle(column)}`" />
-                    </template>
+            <a-row class="form-row" :gutter="24">
+              <a-table :loading="stock.loading"
+                       :columns="stock.columns"
+                       :dataSource="stock.dataSource"
+                       :rowNumber="true"
+                       bordered
+                       :scroll="{ x: '100%', y: 300 }">
+                <template #bodyCell="{ column, text, record }">
+                  <template v-if="column.key === 'warehouseName'">
+                    <a-input v-model:value="editStockData[record.key][column.key]" disabled/>
                   </template>
-                </a-table>
-              </a-row>
+                  <template v-else-if="editStockData[record.key]">
+                    <a-input v-model:value="editStockData[record.key][column.key]"
+                             :placeholder="`请输入${getColumnTitle(column)}`"/>
+                  </template>
+                </template>
+              </a-table>
+            </a-row>
             <batch-set-stock-modal ref="stockModalForm" @ok="batchSetStokModalFormOk"></batch-set-stock-modal>
           </a-tab-pane>
           <a-tab-pane key="4" tab="图片信息" forceRender>
@@ -300,13 +300,17 @@
                              :wrapperCol="{xs: { span: 24 },sm: { span: 20 }}" label="图片信息">
                   <a-upload
                       v-model:file-list="fileList"
-                      action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                      :custom-request="uploadImage"
+                      :before-upload="beforeUpload"
                       list-type="picture-card"
+                      :max-count="4"
                       @preview="handlePreview"
+                      @change="handleChange"
+                      multiple
                   >
-                    <div v-if="fileList.length < 8">
+                    <div v-if="fileList.length < 4">
                       <plus-outlined/>
-                      <div style="margin-top: 8px">Upload</div>
+                      <div style="margin-top: 8px">上传图片</div>
                     </div>
                   </a-upload>
                 </a-form-item>
@@ -317,7 +321,7 @@
               <a-col :lg="18" :md="18" :sm="24">
                 <a-form-item :labelCol="{xs: { span: 24 },sm: { span: 3 }}"
                              :wrapperCol="{xs: { span: 24 },sm: { span: 20 }}" label="上传提示">
-                  图片最多4张，且单张大小不超过1M
+                  图片最多4张，且单张大小不超过2M
                 </a-form-item>
               </a-col>
               <a-col :lg="6" :md="6" :sm="24"></a-col>
@@ -331,7 +335,7 @@
 </template>
 
 <script lang="ts">
-import {ref, reactive, onMounted, watch, computed, readonly} from 'vue';
+import {ref, reactive, onMounted, watch} from 'vue';
 import {
   Modal,
   Upload,
@@ -344,7 +348,7 @@ import {
   Tabs,
   Select,
   Tooltip,
-  TreeSelect, Input, InputNumber, Checkbox, SelectOption, TabPane, Table,
+  TreeSelect, Input, InputNumber, Checkbox, SelectOption, TabPane, Table, UploadChangeParam,
 } from "ant-design-vue";
 import {cloneDeep} from 'lodash-es';
 import {PlusOutlined} from '@ant-design/icons-vue';
@@ -360,6 +364,8 @@ import {getAttributeList, getAttributeById} from "@/api/product/productAttribute
 import {useMessage} from "@/hooks/web/useMessage";
 import BatchSetPriceModal from "@/views/product/info/components/BatchSetPriceModal.vue";
 import BatchSetStockModal from "@/views/product/info/components/BatchSetStockModal.vue";
+import {uploadOss} from "@/api/basic/common";
+
 export default {
   name: 'ProductInfoModal',
   emits: ['success', 'cancel'],
@@ -386,7 +392,7 @@ export default {
     BatchSetStockModal
   },
   setup(_, context) {
-    const { createMessage } = useMessage();
+    const {createMessage} = useMessage();
     const productStandard = ref<String>('');
     const productName = ref<String>('');
     const confirmLoading = ref(false);
@@ -697,11 +703,12 @@ export default {
     const skuTwoData = ref([]);
     const skuThreeData = ref([]);
     const skuArr = ref([]);
+
     function onSkuChange(value, array) {
       if (array === skuOne) {
         skuOneData.value = value
       } else if (array === skuTwo) {
-        skuTwoData.value =value
+        skuTwoData.value = value
       } else if (array === skuThree) {
         skuThreeData.value = value
       }
@@ -716,6 +723,7 @@ export default {
         }
       }
     }
+
     function autoSkuList() {
       let arr = [];
 
@@ -757,9 +765,9 @@ export default {
       loadBarCode();
     }
 
-    function loadBarCode(){
+    function loadBarCode() {
       getBarCode().then(res => {
-        if (res && res.code==='00000') {
+        if (res && res.code === '00000') {
           let maxBarCode = res.data
           if (skuArr.value.length > 0) {
             meTable.dataSource.splice(0); // 清空meTableData数组
@@ -778,11 +786,10 @@ export default {
 
     function loadStock() {
       getStock().then(res => {
-        if (res && res.code==='00000') {
+        if (res && res.code === '00000') {
           let stockList = res.data
           if (stockList.length > 0) {
             stock.dataSource.splice(0);
-            console.info(stockList)
             for (let i = 0; i < stockList.length; i++) {
               const rowData = {
                 key: stockList[i].id,
@@ -793,7 +800,6 @@ export default {
               }
               stock.dataSource.push(rowData);
             }
-            console.info(stock.dataSource)
             stock.dataSource.forEach(row => {
               editStock(row.key);
             });
@@ -857,7 +863,7 @@ export default {
     }
 
     function batchSetPrice(type) {
-      if(manySkuSelected.value > 0) {
+      if (manySkuSelected.value > 0) {
         priceModalForm.value.add(type);
         priceModalForm.value.openPriceModal = true;
       } else {
@@ -871,7 +877,7 @@ export default {
     }
 
     function batchSetPriceModalFormOk(price, batchType) {
-      if(meTable.dataSource.length === 0) {
+      if (meTable.dataSource.length === 0) {
         createMessage.warn('请先录入条码、单位等信息！');
         return;
       }
@@ -981,6 +987,50 @@ export default {
     const previewTitle = ref('');
     const fileList = ref<UploadProps['fileList']>([])
 
+
+    function beforeUpload(file) {
+      const isPNG =
+          file.type === "image/png" ||
+          file.type === "image/jpeg" ||
+          file.type === "image/jpg" ||
+          file.type === "image/gif" ||
+          file.type === "image/bmp";
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isPNG) {
+        createMessage.error(`${file.name}，该文件不是图片类型`);
+        return isPNG || Upload.LIST_IGNORE
+      }
+      if (!isLt2M) {
+        createMessage.error(`${file.name}，该文件超过2MB大小限制`);
+        return isLt2M || Upload.LIST_IGNORE
+      }
+    }
+
+    const handleChange = ({ file, fileList }: UploadChangeParam) => {
+      if (file.status !== 'uploading') {
+        console.log(file, fileList);
+      }
+    };
+
+    function uploadImage(options) {
+      const { file, onSuccess, onError, onProgress } = options;
+      const formData = new FormData();
+      formData.append('files', file);
+      // 调用 uploadOss 方法进行上传
+      uploadOss(formData, {
+        onUploadProgress: ({total, loaded}) => {
+          onProgress(
+              {percent: Math.round((loaded / total) * 100).toFixed(2)},
+              file
+          );
+        },
+      }).then((res) => {
+        onSuccess(res, file);
+      }).catch((error) => {
+        onError(error);
+      });
+    }
+
     const handlePreview = async (file: UploadProps['fileList'][number]) => {
       if (!file.url && !file.preview) {
         file.preview = (await getBase64(file.originFileObj)) as string;
@@ -1047,7 +1097,11 @@ export default {
       stock,
       editStockData,
       stockModalForm,
-      batchSetStokModalFormOk
+      batchSetStokModalFormOk,
+      beforeUpload,
+      uploadImage,
+      handleChange,
+      handlePreview
     };
   },
 }
