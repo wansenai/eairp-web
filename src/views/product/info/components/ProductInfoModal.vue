@@ -204,10 +204,10 @@
                   + 插入一行
                 </a-button>
                 <a-button style="margin-left: 8px" danger @click="deleteRows" type="primary"> 删除选中行</a-button>
-                <a-button style="margin-left: 8px" @click="">采购价-批量</a-button>
-                <a-button style="margin-left: 8px" @click="">零售价-批量</a-button>
-                <a-button style="margin-left: 8px" @click="">销售价-批量</a-button>
-                <a-button style="margin-left: 8px" @click="">最低售价-批量</a-button>
+                <a-button style="margin-left: 8px" @click="batchSetPrice('purchase')">采购价-批量</a-button>
+                <a-button style="margin-left: 8px" @click="batchSetPrice('retail')">零售价-批量</a-button>
+                <a-button style="margin-left: 8px" @click="batchSetPrice('sale')">销售价-批量</a-button>
+                <a-button style="margin-left: 8px" @click="batchSetPrice('low')">最低售价-批量</a-button>
                 <span style="margin-left: 8px">
                </span>
               </div>
@@ -273,6 +273,7 @@
               <a-button style="margin-left: 8px" @click="batchSetStock('lowSafeStock')">最低安全库存-批量</a-button>
               <a-button style="margin-left: 8px" @click="batchSetStock('highSafeStock')">最高安全库存-批量</a-button>
             </template>
+            <batch-set-price-modal ref="priceModalForm" @ok="batchSetPriceModalFormOk"></batch-set-price-modal>
           </a-tab-pane>
           <a-tab-pane key="4" tab="图片信息" forceRender>
             <a-row class="form-row" :gutter="24">
@@ -338,6 +339,8 @@ import {DefaultOptionType} from "ant-design-vue/es/vc-tree-select/TreeSelect";
 import {ProductAttributeListReq} from "@/api/product/model/productAttributeModel"
 import {getBarCode} from "@/api/product/product"
 import {getAttributeList, getAttributeById} from "@/api/product/productAttribute"
+import {useMessage} from "@/hooks/web/useMessage";
+import BatchSetPriceModal from "@/views/product/info/components/BatchSetPriceModal.vue";
 
 export default {
   name: 'ProductInfoModal',
@@ -345,7 +348,7 @@ export default {
   components: {
     'a-modal': Modal,
     'a-upload': Upload,
-    'a-a-button': Button,
+    'a-button': Button,
     'a-spin': Spin,
     'a-row': Row,
     'a-col': Col,
@@ -361,8 +364,10 @@ export default {
     'a-tabs': Tabs,
     'a-tab-pane': TabPane,
     'a-table': Table,
+    BatchSetPriceModal,
   },
   setup(_, context) {
+    const { createMessage } = useMessage();
     const productStandard = ref<String>('');
     const productName = ref<String>('');
     const confirmLoading = ref(false);
@@ -386,6 +391,8 @@ export default {
     const skuOne = reactive([]);
     const skuTwo = reactive([]);
     const skuThree = reactive([]);
+
+    const priceModalForm = ref(null);
 
     onMounted(() => {
       // 在组件初始化加载时调用请求接口的方法
@@ -715,7 +722,6 @@ export default {
             meTable.dataSource.forEach(row => {
               edit(row.key);
             });
-            console.info(meTable.dataSource);
           }
         }
       })
@@ -733,8 +739,6 @@ export default {
           productAttributeList.value[i].disabled = true
         }
       }
-
-
     });
 
     async function onManySkuChange(value) {
@@ -777,11 +781,45 @@ export default {
       }
     }
 
-
-    function batchSetStock(type) {
-
+    function batchSetPrice(type) {
+      if(manySkuSelected.value > 0) {
+        priceModalForm.value.add(type);
+        priceModalForm.value.openPriceModal = true;
+      } else {
+        createMessage.warn('抱歉，您还没有选择多属性，开启多属性后才能批量设置金额');
+      }
     }
 
+    function batchSetStock(type) {
+    }
+
+    function batchSetPriceModalFormOk(price, batchType) {
+      if(meTable.dataSource.length === 0) {
+        createMessage.warn('请先录入条码、单位等信息！');
+        return;
+      }
+      if (batchType === 'purchase') {
+        for (let i = 0; i < meTable.dataSource.length; i++) {
+          meTable.dataSource[i].purchasePrice = price
+        }
+      } else if (batchType === 'retail') {
+        for (let i = 0; i < meTable.dataSource.length; i++) {
+          meTable.dataSource[i].retailPrice = price
+        }
+      } else if (batchType === 'sale') {
+        for (let i = 0; i < meTable.dataSource.length; i++) {
+          meTable.dataSource[i].salesPrice = price
+        }
+      } else if (batchType === 'low') {
+        for (let i = 0; i < meTable.dataSource.length; i++) {
+          meTable.dataSource[i].lowSalesPrice = price
+        }
+      }
+      meTable.dataSource.forEach(row => {
+        edit(row.key);
+      });
+
+    }
 
     const editableData = reactive({});
 
@@ -806,7 +844,6 @@ export default {
     const edit = (key) => {
       const rowData = meTable.dataSource.find(item => item.key === key);
       if (rowData) {
-        console.info("能不能修改key: " + key)
         editableData[key] = cloneDeep(rowData);
       }
     };
@@ -898,6 +935,9 @@ export default {
       productStandard,
       productName,
       unit,
+      batchSetPrice,
+      priceModalForm,
+      batchSetPriceModalFormOk
     };
   },
 }
