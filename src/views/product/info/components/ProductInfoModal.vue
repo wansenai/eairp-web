@@ -204,16 +204,15 @@
                   + 插入一行
                 </a-button>
                 <a-button style="margin-left: 8px" danger @click="deleteRows" type="primary"> 删除选中行</a-button>
-                <a-button style="margin-left: 8px" @click="">采购价-批量</a-button>
-                <a-button style="margin-left: 8px" @click="">零售价-批量</a-button>
-                <a-button style="margin-left: 8px" @click="">销售价-批量</a-button>
-                <a-button style="margin-left: 8px" @click="">最低售价-批量</a-button>
+                <a-button style="margin-left: 8px" @click="batchSetPrice('purchase')">采购价-批量</a-button>
+                <a-button style="margin-left: 8px" @click="batchSetPrice('retail')">零售价-批量</a-button>
+                <a-button style="margin-left: 8px" @click="batchSetPrice('sale')">销售价-批量</a-button>
+                <a-button style="margin-left: 8px" @click="batchSetPrice('low')">最低售价-批量</a-button>
                 <span style="margin-left: 8px">
                </span>
               </div>
               <div>
-                <a-table @change="onValueChange"
-                         :loading="meTable.loading"
+                <a-table :loading="meTable.loading"
                          :columns="meTable.columns"
                          :dataSource="meTable.dataSource"
                          :dataSource.sync="meTable.dataSource"
@@ -228,6 +227,7 @@
                   </template>
                 </a-table>
               </div>
+              <batch-set-price-modal ref="priceModalForm" @ok="batchSetPriceModalFormOk"></batch-set-price-modal>
             </div>
             <a-row class="form-row" :gutter="24">
               <a-col :lg="24" :md="24" :sm="24">
@@ -268,11 +268,30 @@
             </a-row>
           </a-tab-pane>
           <a-tab-pane key="3" tab="库存数量" forceRender>
-            <template>
+            <a-row class="form-row" :gutter="24">
               <a-button style="margin: 0px 0px 8px 0px" @click="batchSetStock('initStock')">期初库存-批量</a-button>
               <a-button style="margin-left: 8px" @click="batchSetStock('lowSafeStock')">最低安全库存-批量</a-button>
               <a-button style="margin-left: 8px" @click="batchSetStock('highSafeStock')">最高安全库存-批量</a-button>
-            </template>
+            </a-row>
+              <a-row class="form-row" :gutter="24">
+                <a-table :loading="stock.loading"
+                         :columns="stock.columns"
+                         :dataSource="stock.dataSource"
+                         :rowNumber="true"
+                         bordered
+                         :scroll="{ x: '100%', y: 300 }">
+                  <template #bodyCell="{ column, text, record }">
+                    <template v-if="column.key === 'warehouseName'">
+                      <a-input v-model:value="editStockData[record.key][column.key]" disabled />
+                    </template>
+                    <template v-else-if="editStockData[record.key]">
+                      <a-input v-model:value="editStockData[record.key][column.key]"
+                               :placeholder="`请输入${getColumnTitle(column)}`" />
+                    </template>
+                  </template>
+                </a-table>
+              </a-row>
+            <batch-set-stock-modal ref="stockModalForm" @ok="batchSetStokModalFormOk"></batch-set-stock-modal>
           </a-tab-pane>
           <a-tab-pane key="4" tab="图片信息" forceRender>
             <a-row class="form-row" :gutter="24">
@@ -312,7 +331,7 @@
 </template>
 
 <script lang="ts">
-import {ref, reactive, onMounted, watch, computed} from 'vue';
+import {ref, reactive, onMounted, watch, computed, readonly} from 'vue';
 import {
   Modal,
   Upload,
@@ -336,16 +355,18 @@ import {getCategoryList} from "/@/api/product/productCategory"
 import {ProductUnitQueryReq} from "/@/api/product/model/productUnitModel"
 import {DefaultOptionType} from "ant-design-vue/es/vc-tree-select/TreeSelect";
 import {ProductAttributeListReq} from "@/api/product/model/productAttributeModel"
-import {getBarCode} from "@/api/product/product"
+import {getBarCode, getStock} from "@/api/product/product"
 import {getAttributeList, getAttributeById} from "@/api/product/productAttribute"
-
+import {useMessage} from "@/hooks/web/useMessage";
+import BatchSetPriceModal from "@/views/product/info/components/BatchSetPriceModal.vue";
+import BatchSetStockModal from "@/views/product/info/components/BatchSetStockModal.vue";
 export default {
   name: 'ProductInfoModal',
   emits: ['success', 'cancel'],
   components: {
     'a-modal': Modal,
     'a-upload': Upload,
-    'a-a-button': Button,
+    'a-button': Button,
     'a-spin': Spin,
     'a-row': Row,
     'a-col': Col,
@@ -361,8 +382,11 @@ export default {
     'a-tabs': Tabs,
     'a-tab-pane': TabPane,
     'a-table': Table,
+    BatchSetPriceModal,
+    BatchSetStockModal
   },
   setup(_, context) {
+    const { createMessage } = useMessage();
     const productStandard = ref<String>('');
     const productName = ref<String>('');
     const confirmLoading = ref(false);
@@ -386,6 +410,9 @@ export default {
     const skuOne = reactive([]);
     const skuTwo = reactive([]);
     const skuThree = reactive([]);
+
+    const priceModalForm = ref(null);
+    const stockModalForm = ref(null);
 
     onMounted(() => {
       // 在组件初始化加载时调用请求接口的方法
@@ -496,6 +523,35 @@ export default {
       ]
     });
 
+    const stock = reactive({
+      loading: false,
+      dataSource: [],
+      columns: [
+        {
+          title: '仓库',
+          key: 'warehouseName',
+          type: 'input',
+        },
+        {
+          title: '期初库存数量',
+          key: 'initStockQuantity',
+          type: 'inputNumber',
+          placeholder: '请输入${title}'
+        },
+        {
+          title: '最低安全库存数量',
+          key: 'lowStockQuantity',
+          type: 'inputNumber',
+          placeholder: '请输入${title}'
+        },
+        {
+          title: '最高安全库存数量',
+          key: 'highStockQuantity',
+          type: 'inputNumber',
+          placeholder: '请输入${title}'
+        }
+      ]
+    });
 
     const productInfo = reactive({
       mfrs: '制造商',
@@ -523,6 +579,7 @@ export default {
       loadUnitListData();
       loadCategoryTreeData();
       loadAttributeTreeData();
+      loadStock();
     }
 
     function unitOnChange(event) {
@@ -561,7 +618,6 @@ export default {
       }
       editableData[record.key][dataIndex] = value;
     };
-
 
     async function loadUnitListData() {
       const unitObject: ProductUnitQueryReq = {
@@ -715,7 +771,32 @@ export default {
             meTable.dataSource.forEach(row => {
               edit(row.key);
             });
-            console.info(meTable.dataSource);
+          }
+        }
+      })
+    }
+
+    function loadStock() {
+      getStock().then(res => {
+        if (res && res.code==='00000') {
+          let stockList = res.data
+          if (stockList.length > 0) {
+            stock.dataSource.splice(0);
+            console.info(stockList)
+            for (let i = 0; i < stockList.length; i++) {
+              const rowData = {
+                key: stockList[i].id,
+                warehouseName: stockList[i].warehouseName,
+                initStockQuantity: stockList[i].initStockQuantity,
+                lowStockQuantity: stockList[i].lowStockQuantity,
+                highStockQuantity: stockList[i].highStockQuantity
+              }
+              stock.dataSource.push(rowData);
+            }
+            console.info(stock.dataSource)
+            stock.dataSource.forEach(row => {
+              editStock(row.key);
+            });
           }
         }
       })
@@ -733,8 +814,6 @@ export default {
           productAttributeList.value[i].disabled = true
         }
       }
-
-
     });
 
     async function onManySkuChange(value) {
@@ -777,11 +856,66 @@ export default {
       }
     }
 
-
-    function batchSetStock(type) {
-
+    function batchSetPrice(type) {
+      if(manySkuSelected.value > 0) {
+        priceModalForm.value.add(type);
+        priceModalForm.value.openPriceModal = true;
+      } else {
+        createMessage.warn('抱歉，您还没有选择多属性，开启多属性后才能批量设置金额');
+      }
     }
 
+    function batchSetStock(type) {
+      stockModalForm.value.add(type);
+      stockModalForm.value.openStockModal = true;
+    }
+
+    function batchSetPriceModalFormOk(price, batchType) {
+      if(meTable.dataSource.length === 0) {
+        createMessage.warn('请先录入条码、单位等信息！');
+        return;
+      }
+      if (batchType === 'purchase') {
+        for (let i = 0; i < meTable.dataSource.length; i++) {
+          meTable.dataSource[i].purchasePrice = price
+        }
+      } else if (batchType === 'retail') {
+        for (let i = 0; i < meTable.dataSource.length; i++) {
+          meTable.dataSource[i].retailPrice = price
+        }
+      } else if (batchType === 'sale') {
+        for (let i = 0; i < meTable.dataSource.length; i++) {
+          meTable.dataSource[i].salesPrice = price
+        }
+      } else if (batchType === 'low') {
+        for (let i = 0; i < meTable.dataSource.length; i++) {
+          meTable.dataSource[i].lowSalesPrice = price
+        }
+      }
+      meTable.dataSource.forEach(row => {
+        edit(row.key);
+      });
+    }
+
+    function batchSetStokModalFormOk(stockNumber, batchType) {
+      if (batchType === 'initStock') {
+        for (let i = 0; i < stock.dataSource.length; i++) {
+          stock.dataSource[i].initStockQuantity = stockNumber
+        }
+      } else if (batchType === 'lowSafeStock') {
+        for (let i = 0; i < stock.dataSource.length; i++) {
+          stock.dataSource[i].lowStockQuantity = stockNumber
+        }
+      } else if (batchType === 'highSafeStock') {
+        for (let i = 0; i < stock.dataSource.length; i++) {
+          stock.dataSource[i].highStockQuantity = stockNumber
+        }
+      }
+      stock.dataSource.forEach(row => {
+        editStock(row.key);
+      });
+
+    }
 
     const editableData = reactive({});
 
@@ -806,8 +940,14 @@ export default {
     const edit = (key) => {
       const rowData = meTable.dataSource.find(item => item.key === key);
       if (rowData) {
-        console.info("能不能修改key: " + key)
         editableData[key] = cloneDeep(rowData);
+      }
+    };
+
+    const editStock = (key) => {
+      const rowData = stock.dataSource.find(item => item.key === key);
+      if (rowData) {
+        editStockData[key] = cloneDeep(rowData);
       }
     };
 
@@ -823,6 +963,9 @@ export default {
       meTable.dataSource = meTable.dataSource.filter(row => !selectedKeys.includes(row.key));
       rowSelection.value.selectedRowKeys = [];
     }
+
+    const editStockData = reactive([])
+
 
     function getBase64(file: File) {
       return new Promise((resolve, reject) => {
@@ -898,6 +1041,13 @@ export default {
       productStandard,
       productName,
       unit,
+      batchSetPrice,
+      priceModalForm,
+      batchSetPriceModalFormOk,
+      stock,
+      editStockData,
+      stockModalForm,
+      batchSetStokModalFormOk
     };
   },
 }
