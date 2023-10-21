@@ -4,8 +4,6 @@
       :width="500"
       v-model:open="openStockModal"
       :confirm-loading="confirmLoading"
-      :mask-style="{'top':'93px','left':'154px'}"
-      :mask-closable="false"
       @ok="handleOk"
       @cancel="handleCancel"
       style="top:30%;height: 30%;">
