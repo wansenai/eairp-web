@@ -9,28 +9,29 @@
       switchFullscreen
       v-model:open="open"
       @cancel="handleCancel"
+      @ok="handleOk"
       style="top:20%;height: 95%;">
     <a-spin :spinning="confirmLoading">
-      <a-form>
+      <a-form ref="productFormRef" :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-tabs default-active-key="1" size="small">
           <a-tab-pane key="1" tab="基本信息" id="materialHeadModal" forceRender>
             <a-row class="form-row" :gutter="24">
               <a-col :md="6" :sm="24">
                 <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="名称" data-step="1" data-title="名称"
-                             data-intro="名称必填，可以重复" rules="[{ required: true, message: '请输入名称' }]">
-                  <a-input v-model:value="productName" placeholder="请输入名称"/>
+                             data-intro="名称必填，可以重复" :rules="[{ required: true}]">
+                  <a-input v-model:value="formState.productName" placeholder="请输入名称"/>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="规格" data-step="2" data-title="规格"
                              data-intro="规格不必填，比如：10克">
-                  <a-input v-model:value="productStandard" placeholder="请输入规格"/>
+                  <a-input v-model:value="formState.productStandard" placeholder="请输入规格"/>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="型号" data-step="3" data-title="型号"
                              data-intro="型号是比规格更小的属性，比如：RX-01">
-                  <a-input placeholder="请输入型号"/>
+                  <a-input v-model:value="formState.productModel" placeholder="请输入型号"/>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
@@ -40,19 +41,19 @@
                              :data-step="4"
                              data-title="单位"
                              :data-intro="`此处支持单个单位和多单位，勾选多单位就可以切换到多单位的下拉框，多单位需要先在【计量单位】页面进行录入。
-                  比如牛奶有瓶和箱两种单位，12瓶=1箱，这就构成了多单位，多单位中有个换算比例`">
+                  比如牛奶有瓶和箱两种单位，12瓶=1箱，这就构成了多单位，多单位中有个换算比例`"
+                             :rules="[{ required: true}]">
                   <a-row class="form-row" :gutter="24">
                     <a-col :lg="15" :md="15" :sm="24" style="padding:0px 0px 0px 12px;">
                       <a-input v-if="!unitChecked"
                                placeholder="输入单位"
-                               v-model:value="unit"
-                               :rules="[validatorRules.unit]"
+                               v-model:value="formState.productUnit"
+                               :rules="[{ required: true}]"
                                @change="onlyUnitOnChange"/>
                       <a-select v-else
-                                :value="unitId"
                                 placeholder="选择多单位"
-                                v-model="unitId"
-                                :rules="[validatorRules.unitId]"
+                                v-model:value="formState.productUnitId"
+                                :rules="[{ required: true}]"
                                 @change="manyUnitOnChange"
                                 showSearch
                                 optionFilterProp="children"
@@ -85,22 +86,21 @@
               <a-col :md="6" :sm="24">
                 <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="颜色" data-step="5" data-title="颜色"
                              data-intro="请填写商品的颜色，如果是多属性商品可以不填（下面有多属性开关）">
-                  <a-input placeholder="请输入颜色" v-decorator.trim="[ 'color' ]"/>
+                  <a-input placeholder="请输入颜色" v-model:value="formState.productColor"/>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="基础重量" data-step="6"
                              data-title="基础重量"
                              data-intro="请填写基本单位对应的重量，用于计算按重量分摊费用时单据中各行商品分摊的费用成本">
-                  <a-input-number style="width: 100%" placeholder="请输入基础重量(kg)" v-decorator.trim="[ 'weight' ]"/>
+                  <a-input-number style="width: 100%" placeholder="请输入基础重量(kg)" v-model:value="formState.productWeight"/>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="保质期" data-step="7"
                              data-title="保质期"
                              data-intro="保质期指的是商品的保质期(天)，主要针对带生产日期的，此类商品一般有批号">
-                  <a-input-number style="width: 100%" placeholder="请输入保质期(天)"
-                                  v-decorator.trim="[ 'expiryNum' ]"/>
+                  <a-input-number style="width: 100%" placeholder="请输入保质期(天)" v-model:value="formState.productExpiryNum"/>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
@@ -109,7 +109,7 @@
                              data-step="8" data-title="类别"
                              data-intro="类别需要在【商品类别】页面进行录入，录入之后在此处进行调用">
                   <a-tree-select style="width:100%" :dropdownStyle="{maxHeight:'200px',overflow:'auto'}" allow-clear
-                                 :treeData="categoryTree.value" v-decorator="[ 'categoryId' ]" placeholder="请选择类别">
+                                 :treeData="categoryTree.value" v-model:value="formState.productCategoryId" placeholder="请选择类别">
                   </a-tree-select>
                 </a-form-item>
               </a-col>
@@ -120,7 +120,7 @@
                              data-title="序列号"
                              data-intro="此处是商品的序列号开关，如果选择了有，则在采购入库单据需要录入该商品的序列号，在销售出库单据需要选择该商品的序列号进行出库">
                   <a-tooltip title="如果选择为有，则在采购入库单需要录入该商品的序列号">
-                    <a-select placeholder="有无序列号" v-decorator="[ 'enableSerialNumber' ]">
+                    <a-select placeholder="有无序列号" v-model:value="formState.enableSerialNumber">
                       <a-select-option value="1">有</a-select-option>
                       <a-select-option value="0">无</a-select-option>
                     </a-select>
@@ -131,7 +131,7 @@
                 <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="批号" data-step="10" data-title="批号"
                              data-intro="此处是商品的批号开关，如果选择了有，则在采购入库单据需要录入该商品的批号和有效期，在销售出库单据需要选择该商品的批号进行出库">
                   <a-tooltip title="如果选择为有，则在采购入库单需要录入该商品的批号和有效期">
-                    <a-select placeholder="有无批号" v-decorator="[ 'enableBatchNumber' ]">
+                    <a-select placeholder="有无批号" v-model:value="formState.enableBatchNumber">
                       <a-select-option value="1">有</a-select-option>
                       <a-select-option value="0">无</a-select-option>
                     </a-select>
@@ -142,17 +142,17 @@
                 <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="仓位货架" data-step="11"
                              data-title="仓位货架"
                              data-intro="仓位货架指的是仓库中的仓位和货架号，主要适用于仓库较大的场景，方便查找商品的准确位置">
-                  <a-input style="width: 100%" placeholder="请输入仓位货架" v-decorator.trim="[ 'position' ]"/>
+                  <a-input style="width: 100%" placeholder="请输入仓位货架" v-model:value="formState.warehouseShelves"/>
                 </a-form-item>
               </a-col>
-              <a-col :md="6" :sm="24" v-if="!model.id">
+              <a-col :md="6" :sm="24">
                 <a-form-item :labelCol="{xs: { span: 24 },sm: { span: 4 }}"
                              :wrapperCol="{xs: { span: 24 },sm: { span: 20 }}" label="多属性" data-step="12"
                              data-title="多属性"
                              data-intro="多属性是针对的sku商品（比如服装、鞋帽行业），此处开关如果启用就可以在下方进行多sku的配置，配置具体的颜色、尺码之类的组合">
                   <a-tooltip title="多属性针对服装、鞋帽等行业，需要先录入单位才能激活此处输入框">
                     <a-tag class="tag-info" v-if="!manySkuStatus">需要先录入单位才能激活</a-tag>
-                    <a-select mode="multiple" v-decorator="[ 'manySku' ]" showSearch optionFilterProp="children"
+                    <a-select mode="multiple" showSearch optionFilterProp="children"
                               placeholder="请选择多属性（可多选）" @change="onManySkuChange" v-show="manySkuStatus">
                       <a-select-option v-for="(item,index) in productAttributeList.value" :key="index" :value="item.id"
                                        :disabled="item.disabled">
@@ -215,14 +215,13 @@
                 <a-table :loading="meTable.loading"
                          :columns="meTable.columns"
                          :dataSource="meTable.dataSource"
-                         :dataSource.sync="meTable.dataSource"
                          bordered
                          :row-selection="rowSelection"
                          :scroll="{ x: '100%', y: 300 }">
                   <template #bodyCell="{ column, text, record }">
                     <template v-if="editableData[record.key]">
                       <a-input v-model:value="editableData[record.key][column.key]"
-                               :placeholder="`请输入${getColumnTitle(column)}`"/>
+                               :placeholder="`请输入${getColumnTitle(column)}`" @change="meTableValueChange(record.key)"/>
                     </template>
                   </template>
                 </a-table>
@@ -232,7 +231,7 @@
             <a-row class="form-row" :gutter="24">
               <a-col :lg="24" :md="24" :sm="24">
                 <a-form-item :labelCol="labelCol" :wrapperCol="{xs: { span: 24 },sm: { span: 24 }}" label="">
-                  <a-textarea :rows="1" placeholder="请输入备注" v-decorator="[ 'remark' ]" style="margin-top:8px;"/>
+                  <a-textarea :rows="1" placeholder="请输入备注" style="margin-top:8px;"/>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -241,28 +240,28 @@
             <a-row class="form-row" :gutter="24">
               <a-col :lg="6" :md="6" :sm="6">
                 <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" :label="productInfo.mfrs">
-                  <a-input v-decorator.trim="[ 'mfrs' ]"/>
+                  <a-input v-model:value="formState.productManufacturer"/>
                 </a-form-item>
               </a-col>
             </a-row>
             <a-row class="form-row" :gutter="24">
               <a-col :lg="6" :md="6" :sm="6">
                 <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" :label="productInfo.otherField1">
-                  <a-input v-decorator.trim="[ 'otherField1' ]"/>
+                  <a-input v-model:value="formState.otherFieldOne"/>
                 </a-form-item>
               </a-col>
             </a-row>
             <a-row class="form-row" :gutter="24">
               <a-col :lg="6" :md="6" :sm="6">
                 <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" :label="productInfo.otherField2">
-                  <a-input v-decorator.trim="[ 'otherField2' ]"/>
+                  <a-input v-model:value="formState.otherFieldTwo"/>
                 </a-form-item>
               </a-col>
             </a-row>
             <a-row class="form-row" :gutter="24">
               <a-col :lg="6" :md="6" :sm="6">
                 <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" :label="productInfo.otherField3">
-                  <a-input v-decorator.trim="[ 'otherField3' ]"/>
+                  <a-input v-model:value="formState.otherFieldThree"/>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -286,12 +285,12 @@
                   </template>
                   <template v-else-if="editStockData[record.key]">
                     <a-input v-model:value="editStockData[record.key][column.key]"
-                             :placeholder="`请输入${getColumnTitle(column)}`"/>
+                             :placeholder="`请输入${getColumnTitle(column)}`" @change="stockTableValueChange(record.key)"/>
                   </template>
                 </template>
               </a-table>
             </a-row>
-            <batch-set-stock-modal ref="stockModalForm" @ok="batchSetStokModalFormOk"></batch-set-stock-modal>
+            <batch-set-stock-modal ref="stockModalForm" @ok="batchSetStockModalFormOk"></batch-set-stock-modal>
           </a-tab-pane>
           <a-tab-pane key="4" tab="图片信息" forceRender>
             <a-row class="form-row" :gutter="24">
@@ -313,6 +312,9 @@
                       <div style="margin-top: 8px">上传图片</div>
                     </div>
                   </a-upload>
+                  <a-modal :open="previewVisible" :title="previewTitle" :footer="null" @cancel="handleImageViewCancel">
+                    <img alt="example" style="width: 100%" :src="previewImage" />
+                  </a-modal>
                 </a-form-item>
               </a-col>
               <a-col :lg="6" :md="6" :sm="24"></a-col>
@@ -335,24 +337,30 @@
 </template>
 
 <script lang="ts">
-import {ref, reactive, onMounted, watch} from 'vue';
+import {onMounted, reactive, ref, toRaw, UnwrapRef, watch} from 'vue';
+import {UploadProps,} from 'ant-design-vue';
 import {
-  Modal,
-  Upload,
   Button,
-  Spin,
-  Row,
+  Checkbox,
   Col,
-  FormItem,
   Form,
-  Tabs,
+  FormItem,
+  Input,
+  InputNumber,
+  Modal,
+  Row,
   Select,
+  SelectOption,
+  Spin,
+  Table,
+  TabPane,
+  Tabs,
   Tooltip,
-  TreeSelect, Input, InputNumber, Checkbox, SelectOption, TabPane, Table, UploadChangeParam,
+  TreeSelect,
+  Upload,
+  UploadChangeParam,
 } from "ant-design-vue";
 import {cloneDeep} from 'lodash-es';
-import {PlusOutlined} from '@ant-design/icons-vue';
-import type {UploadProps,} from 'ant-design-vue';
 import {getUnitList} from "/@/api/product/productUnit"
 import {ProductCategoryResp} from '/@/api/product/model/productCategoryModel'
 import {getCategoryList} from "/@/api/product/productCategory"
@@ -360,11 +368,30 @@ import {ProductUnitQueryReq} from "/@/api/product/model/productUnitModel"
 import {DefaultOptionType} from "ant-design-vue/es/vc-tree-select/TreeSelect";
 import {ProductAttributeListReq} from "@/api/product/model/productAttributeModel"
 import {getBarCode, getStock} from "@/api/product/product"
-import {getAttributeList, getAttributeById} from "@/api/product/productAttribute"
+import {getAttributeById, getAttributeList} from "@/api/product/productAttribute"
 import {useMessage} from "@/hooks/web/useMessage";
 import BatchSetPriceModal from "@/views/product/info/components/BatchSetPriceModal.vue";
 import BatchSetStockModal from "@/views/product/info/components/BatchSetStockModal.vue";
 import {uploadOss} from "@/api/basic/common";
+
+export interface FormState {
+  productName: string,
+  productStandard: string,
+  productModel: string,
+  productUnit: string | undefined,
+  productUnitId: number | undefined,
+  productColor: string,
+  productWeight: number,
+  productExpiryNum: number,
+  productCategoryId: number,
+  enableSerialNumber: number,
+  enableBatchNumber: number,
+  warehouseShelves: string
+  productManufacturer: string,
+  otherFieldOne: string,
+  otherFieldTwo: string,
+  otherFieldThree: string,
+}
 
 export default {
   name: 'ProductInfoModal',
@@ -393,25 +420,25 @@ export default {
   },
   setup(_, context) {
     const {createMessage} = useMessage();
+    const productFormRef = ref()
     const productStandard = ref<String>('');
     const productName = ref<String>('');
-    const confirmLoading = ref(false);
-    const unit = ref('');
+    const confirmLoading = ref<boolean>(false);
     const title = ref('新增商品信息');
     const open = ref(false);
     const prefixNo = ref('product');
-    const manySkuSelected = ref(0);
+    const manySkuSelected = ref<number>(0);
     const unitChecked = ref(false);
     const manyUnitStatus = ref(false);
     const manySkuStatus = ref(false);
 
-    const unitStatus = ref(false);
-    const switchDisabled = ref(false);
-    const barCodeSwitch = ref(false);
+    const unitStatus = ref<boolean>(false);
+    const switchDisabled = ref<boolean>(false);
+    const barCodeSwitch = ref<boolean>(false);
 
-    const skuOneTitle = ref('属性1');
-    const skuTwoTitle = ref('属性2');
-    const skuThreeTitle = ref('属性3');
+    const skuOneTitle = ref<string>('属性1');
+    const skuTwoTitle = ref<string>('属性2');
+    const skuThreeTitle = ref<string>('属性3');
 
     const skuOne = reactive([]);
     const skuTwo = reactive([]);
@@ -419,6 +446,7 @@ export default {
 
     const priceModalForm = ref(null);
     const stockModalForm = ref(null);
+    const maxBarCodeInfo = ref();
 
     onMounted(() => {
       // 在组件初始化加载时调用请求接口的方法
@@ -427,6 +455,25 @@ export default {
     });
 
     const model = ref({});
+
+    const formState: UnwrapRef<FormState> = reactive({
+      productName: undefined,
+      productStandard: undefined,
+      productModel: undefined,
+      productUnit: undefined,
+      productUnitId: undefined,
+      productColor: undefined,
+      productWeight: undefined,
+      productExpiryNum: undefined,
+      productCategoryId: undefined,
+      enableSerialNumber: undefined,
+      enableBatchNumber: undefined,
+      warehouseShelves: undefined,
+      productManufacturer: undefined,
+      otherFieldOne: undefined,
+      otherFieldTwo: undefined,
+      otherFieldThree: undefined,
+    });
 
     const labelCol = reactive({
       xs: {span: 24},
@@ -442,34 +489,6 @@ export default {
     const skuThreeList = reactive([])
     const productAttributeList = reactive([])
     const categoryTree = reactive([])
-    const validatorRules = reactive({
-      name: {
-        rules: [
-          {required: true, message: '请输入名称!'},
-          {max: 100, message: '长度请小于100个字符', trigger: 'blur'}
-        ]
-      },
-      standard: {
-        rules: [
-          {max: 100, message: '长度请小于100个字符', trigger: 'blur'}
-        ]
-      },
-      model: {
-        rules: [
-          {max: 100, message: '长度请小于100个字符', trigger: 'blur'}
-        ]
-      },
-      unit: {
-        rules: [
-          {required: true, message: '请输入单位!'}
-        ]
-      },
-      unitId: {
-        rules: [
-          {required: true, message: '请选择多单位!'}
-        ]
-      }
-    })
     const meTable = reactive({
       loading: false,
       dataSource: [],
@@ -477,7 +496,7 @@ export default {
         {
           title: '条码',
           key: 'barCode',
-          type: 'input',
+          type: 'inputNumber',
           placeholder: '请输入${title}',
           validateRules: [
             {required: true, message: '${title}不能为空'},
@@ -486,7 +505,7 @@ export default {
         },
         {
           title: '单位',
-          key: 'unit',
+          key: 'productUnit',
           type: 'input',
           placeholder: '请输入${title}',
           validateRules: [{required: true, message: '${title}不能为空'}]
@@ -594,6 +613,7 @@ export default {
         unitStatus.value = true;
         manyUnitStatus.value = false;
         unitChecked.value = true
+        formState.productUnit = undefined
       } else {
         unitStatus.value = false;
         manyUnitStatus.value = true;
@@ -610,7 +630,7 @@ export default {
       }
       const dataSource = meTable.dataSource
       for (let i = 0; i < dataSource.length; i++) {
-        dataSource[i].unit = e.target.value
+        dataSource[i].productUnit = e.target.value
       }
       meTable.dataSource = dataSource
       for (let i = 0; i < meTable.dataSource.length; i++) {
@@ -618,11 +638,34 @@ export default {
       }
     }
 
-    const onValueChange = (record, dataIndex, value) => {
+    const meTableValueChange = (record, dataIndex, value, key) => {
       if (!editableData[record.key]) {
         editableData[record.key] = {};
       }
-      editableData[record.key][dataIndex] = value;
+      if (meTable.dataSource) {
+        const filteredItems = meTable.dataSource.filter(item => record === item.key);
+        if (filteredItems.length > 0) {
+          const filteredItem = filteredItems[0];
+          editableData[record][key] = cloneDeep(filteredItem[key]);
+          Object.assign(filteredItem, editableData[record]);
+          delete editableData[record][key];
+        }
+      }
+    };
+
+    const stockTableValueChange = (record, dataIndex, value, key) => {
+      if (!editStockData[record.key]) {
+        editStockData[record.key] = {};
+      }
+      if (stock.dataSource) {
+        const filteredItems = stock.dataSource.filter(item => record === item.key);
+        if (filteredItems.length > 0) {
+          const filteredItem = filteredItems[0];
+          editStockData[record][key] = cloneDeep(filteredItem[key]);
+          Object.assign(filteredItem, editStockData[record]);
+          delete editStockData[record][key];
+        }
+      }
     };
 
     async function loadUnitListData() {
@@ -674,29 +717,65 @@ export default {
     }
 
     //修改商品明细中的价格触发计算
-    function changeDecimalByValue(row) {
-      let unitArr = unitList
-      let basicUnit = '', otherUnit = '', ratio = 1, otherUnitTwo = '', ratioTwo = 1, otherUnitThree = '',
-          ratioThree = 1
+    // function changeDecimalByValue(row) {
+    //   let unitArr = unitList
+    //   let basicUnit = '', otherUnit = '', ratio = 1, otherUnitTwo = '', ratioTwo = 1, otherUnitThree = '',
+    //       ratioThree = 1
+    //   for (let i = 0; i < unitArr.length; i++) {
+    //     if (unitArr[i].id === this.form.getFieldValue('unitId')) {
+    //       basicUnit = unitArr[i].basicUnit
+    //       otherUnit = unitArr[i].otherUnit
+    //       ratio = unitArr[i].ratio
+    //       if (unitArr[i].otherUnitTwo) {
+    //         otherUnitTwo = unitArr[i].otherUnitTwo
+    //         ratioTwo = unitArr[i].ratioTwo
+    //       }
+    //       if (unitArr[i].otherUnitThree) {
+    //         otherUnitThree = unitArr[i].otherUnitThree
+    //         ratioThree = unitArr[i].ratioThree
+    //       }
+    //     }
+    //   }
+    // }
+
+    function manyUnitOnChange(value) {
+      let unitArr = unitList.value
+      let basicUnit = '', otherUnit = '', ratio = 1, otherUnitTwo = '', ratioTwo = 1, otherUnitThree = '', ratioThree = 1
       for (let i = 0; i < unitArr.length; i++) {
-        if (unitArr[i].id === this.form.getFieldValue('unitId')) {
+        if(unitArr[i].id === value) {
           basicUnit = unitArr[i].basicUnit
           otherUnit = unitArr[i].otherUnit
           ratio = unitArr[i].ratio
-          if (unitArr[i].otherUnitTwo) {
+          if(unitArr[i].otherUnitTwo) {
             otherUnitTwo = unitArr[i].otherUnitTwo
             ratioTwo = unitArr[i].ratioTwo
           }
-          if (unitArr[i].otherUnitThree) {
+          if(unitArr[i].otherUnitThree) {
             otherUnitThree = unitArr[i].otherUnitThree
             ratioThree = unitArr[i].ratioThree
           }
         }
       }
-    }
-
-    function manyUnitOnChange() {
-
+      getBarCode().then(res => {
+        if (res && res.code === '00000') {
+          let maxBarCode = res.data
+          for (let i = 0; i < meTable.dataSource.length; i++) {
+            meTable.dataSource[i].barCode = maxBarCode + i
+            if (i === 0) {
+              meTable.dataSource[i].productUnit = basicUnit
+            } else if (i === 1) {
+              meTable.dataSource[i].productUnit = otherUnit
+            } else if (i === 2) {
+              meTable.dataSource[i].productUnit = otherUnitTwo
+            } else if (i === 3) {
+              meTable.dataSource[i].productUnit = otherUnitThree
+            }
+          }
+          for (let i = 0; i < meTable.dataSource.length; i++) {
+            editableData[meTable.dataSource[i].key] = meTable.dataSource[i]
+          }
+        }
+      })
     }
 
     const skuOneData = ref([]);
@@ -715,54 +794,49 @@ export default {
       autoSkuList();
     }
 
-    function removeByVal(arrylist, val) {
-      for (var i = 0; i < arrylist.length; i++) {
-        if (arrylist[i] == val) {
-          arrylist.splice(i, 1);
-          break;
-        }
-      }
-    }
-
     function autoSkuList() {
       let arr = [];
-
-      if (skuOneData.value.length > 0 && skuTwoData.value.length > 0 && skuThreeData.value.length > 0) {
-        for (let i = 0; i < skuOneData.value.length; i++) {
-          for (let j = 0; j < skuTwoData.value.length; j++) {
-            for (let k = 0; k < skuThreeData.value.length; k++) {
-              arr.push(skuOneData.value[i] + '/' + skuTwoData.value[j] + '/' + skuThreeData.value[k]);
+      if(formState.productUnit) {
+        if (skuOneData.value.length > 0 && skuTwoData.value.length > 0 && skuThreeData.value.length > 0) {
+          for (let i = 0; i < skuOneData.value.length; i++) {
+            for (let j = 0; j < skuTwoData.value.length; j++) {
+              for (let k = 0; k < skuThreeData.value.length; k++) {
+                arr.push(skuOneData.value[i] + '/' + skuTwoData.value[j] + '/' + skuThreeData.value[k]);
+              }
             }
           }
-        }
-      } else if (skuOneData.value.length > 0 && skuTwoData.value.length > 0) {
-        for (let i = 0; i < skuOneData.value.length; i++) {
+        } else if (skuOneData.value.length > 0 && skuTwoData.value.length > 0) {
+          for (let i = 0; i < skuOneData.value.length; i++) {
+            for (let j = 0; j < skuTwoData.value.length; j++) {
+              arr.push(skuOneData.value[i] + '/' + skuTwoData.value[j]);
+            }
+          }
+        } else if (skuOneData.value.length > 0 && skuThreeData.value.length > 0) {
+          for (let i = 0; i < skuOneData.value.length; i++) {
+            for (let k = 0; k < skuThreeData.value.length; k++) {
+              arr.push(skuOneData.value[i] + '/' + skuThreeData.value[k]);
+            }
+          }
+        } else if (skuTwoData.value.length > 0 && skuThreeData.value.length > 0) {
           for (let j = 0; j < skuTwoData.value.length; j++) {
-            arr.push(skuOneData.value[i] + '/' + skuTwoData.value[j]);
+            for (let k = 0; k < skuThreeData.value.length; k++) {
+              arr.push(skuTwoData.value[j] + '/' + skuThreeData.value[k]);
+            }
           }
+        } else if (skuOneData.value.length > 0) {
+          arr = skuOneData.value;
+        } else if (skuTwoData.value.length > 0) {
+          arr = skuTwoData.value;
+        } else if (skuThreeData.value.length > 0) {
+          arr = skuThreeData.value;
         }
-      } else if (skuOneData.value.length > 0 && skuThreeData.value.length > 0) {
-        for (let i = 0; i < skuOneData.value.length; i++) {
-          for (let k = 0; k < skuThreeData.value.length; k++) {
-            arr.push(skuOneData.value[i] + '/' + skuThreeData.value[k]);
-          }
-        }
-      } else if (skuTwoData.value.length > 0 && skuThreeData.value.length > 0) {
-        for (let j = 0; j < skuTwoData.value.length; j++) {
-          for (let k = 0; k < skuThreeData.value.length; k++) {
-            arr.push(skuTwoData.value[j] + '/' + skuThreeData.value[k]);
-          }
-        }
-      } else if (skuOneData.value.length > 0) {
-        arr = skuOneData.value;
-      } else if (skuTwoData.value.length > 0) {
-        arr = skuTwoData.value;
-      } else if (skuThreeData.value.length > 0) {
-        arr = skuThreeData.value;
-      }
 
-      skuArr.value = arr;
-      loadBarCode();
+        skuArr.value = arr;
+        loadBarCode();
+      } else {
+        createMessage.warn('请填写单位（注意不要勾选多单位）');
+        barCodeSwitch.value = false
+      }
     }
 
     function loadBarCode() {
@@ -773,7 +847,7 @@ export default {
             meTable.dataSource.splice(0); // 清空meTableData数组
             for (let i = 0; i < skuArr.value.length; i++) {
               let currentBarCode = maxBarCode + i
-              const newRowData = {key: i, unit: unit, barCode: currentBarCode, sku: skuArr.value[i]}
+              const newRowData = {key: i, productUnit: formState.productUnit, barCode: currentBarCode, sku: skuArr.value[i]}
               meTable.dataSource.push(newRowData);
             }
             meTable.dataSource.forEach(row => {
@@ -793,6 +867,7 @@ export default {
             for (let i = 0; i < stockList.length; i++) {
               const rowData = {
                 key: stockList[i].id,
+                warehouseId: stockList[i].warehouseId,
                 warehouseName: stockList[i].warehouseName,
                 initStockQuantity: stockList[i].initStockQuantity,
                 lowStockQuantity: stockList[i].lowStockQuantity,
@@ -903,7 +978,7 @@ export default {
       });
     }
 
-    function batchSetStokModalFormOk(stockNumber, batchType) {
+    function batchSetStockModalFormOk(stockNumber, batchType) {
       if (batchType === 'initStock') {
         for (let i = 0; i < stock.dataSource.length; i++) {
           stock.dataSource[i].initStockQuantity = stockNumber
@@ -928,8 +1003,19 @@ export default {
     const addRow = () => {
       const newRow = {key: Date.now()}; // Create a new row with a unique key
       editableData[newRow.key] = cloneDeep(newRow); // Add the new row to editableData
-      if (unit) {
-        newRow.unit = unit
+      if (formState.productUnit) {
+        newRow.productUnit = formState.productUnit
+      }
+      if(maxBarCodeInfo.value) {
+        maxBarCodeInfo.value++
+        newRow.barCode = maxBarCodeInfo.value + 1
+      } else {
+        getBarCode().then(res => {
+          if (res && res.code === '00000') {
+            maxBarCodeInfo.value = res.data
+            newRow.barCode = maxBarCodeInfo.value
+          }
+        })
       }
       meTable.dataSource.push(newRow);
       edit(newRow.key);
@@ -1008,7 +1094,6 @@ export default {
 
     const handleChange = ({ file, fileList }: UploadChangeParam) => {
       if (file.status !== 'uploading') {
-        console.log(file, fileList);
       }
     };
 
@@ -1040,6 +1125,47 @@ export default {
       previewTitle.value = file.name || file.url.substring(file.url.lastIndexOf('/') + 1);
     };
 
+    const handleImageViewCancel = () => {
+      previewVisible.value = false;
+      previewTitle.value = '';
+    }
+
+    function handleOk() {
+      // 如果名称为空，则提示请输入名称
+      if (!formState.productName) {
+        createMessage.error('请输入商品名称');
+        return;
+      }
+      // 先判断单位是否勾选了多单位，如果勾选了多单位，则判断单位是否选择了多单位，如果没有选择多单位，则提示请选择多单位
+      if (unitChecked.value) {
+        if (!formState.productUnitId) {
+          createMessage.error('请选择商品单位');
+          return;
+        }
+      } else if (!formState.productUnit){
+        createMessage.error('请输入商品单位');
+        return;
+      }
+      console.info(toRaw(formState))
+      // 获取meTable中的数据 和 stock中的数据
+      console.info(toRaw(meTable.dataSource))
+      console.info(toRaw(stock.dataSource))
+    }
+
+    const onSubmit = () => {
+      productFormRef.value
+          .validate()
+          .then(() => {
+            console.log('values', formState, toRaw(formState));
+          })
+          .catch(error => {
+            console.log('error', error);
+          });
+    };
+    const resetForm = () => {
+      productFormRef.value.resetFields();
+    };
+
 
     return {
       confirmLoading,
@@ -1051,7 +1177,6 @@ export default {
       prefixNo,
       labelCol,
       wrapperCol,
-      validatorRules,
       manySkuSelected,
       unitChecked,
       unitStatus,
@@ -1090,18 +1215,27 @@ export default {
       skuThree,
       productStandard,
       productName,
-      unit,
       batchSetPrice,
       priceModalForm,
       batchSetPriceModalFormOk,
       stock,
       editStockData,
       stockModalForm,
-      batchSetStokModalFormOk,
+      batchSetStockModalFormOk,
       beforeUpload,
       uploadImage,
       handleChange,
-      handlePreview
+      handlePreview,
+      previewVisible,
+      previewImage,
+      previewTitle,
+      handleImageViewCancel,
+      handleOk,
+      formState,
+      onSubmit,
+      resetForm,
+      meTableValueChange,
+      stockTableValueChange
     };
   },
 }
