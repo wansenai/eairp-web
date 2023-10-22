@@ -367,12 +367,14 @@ import {getCategoryList} from "/@/api/product/productCategory"
 import {ProductUnitQueryReq} from "/@/api/product/model/productUnitModel"
 import {DefaultOptionType} from "ant-design-vue/es/vc-tree-select/TreeSelect";
 import {ProductAttributeListReq} from "@/api/product/model/productAttributeModel"
-import {getBarCode, getStock} from "@/api/product/product"
+import {getBarCode, getProductInfoDetail, addProduct} from "@/api/product/product"
 import {getAttributeById, getAttributeList} from "@/api/product/productAttribute"
 import {useMessage} from "@/hooks/web/useMessage";
 import BatchSetPriceModal from "@/views/product/info/components/BatchSetPriceModal.vue";
 import BatchSetStockModal from "@/views/product/info/components/BatchSetStockModal.vue";
 import {uploadOss} from "@/api/basic/common";
+import {getWarehouse} from "@/api/basic/warehouse";
+import {AddProductImageReq, AddProductReq} from "@/api/product/model/productModel";
 
 export interface FormState {
   productName: string,
@@ -420,11 +422,10 @@ export default {
   },
   setup(_, context) {
     const {createMessage} = useMessage();
-    const productFormRef = ref()
     const productStandard = ref<String>('');
     const productName = ref<String>('');
     const confirmLoading = ref<boolean>(false);
-    const title = ref('新增商品信息');
+    const title = ref('');
     const open = ref(false);
     const prefixNo = ref('product');
     const manySkuSelected = ref<number>(0);
@@ -598,13 +599,20 @@ export default {
       open.value = false
     }
 
-    function openModal() {
+    function openModal(id) {
       open.value = true
-      // init data
-      loadUnitListData();
-      loadCategoryTreeData();
-      loadAttributeTreeData();
-      loadStock();
+      if (id) {
+        title.value = '修改商品信息'
+        loadBarCode()
+        loadProductInfoDetail(id)
+      } else {
+        title.value = '新增商品'
+        loadBarCode()
+        loadUnitListData()
+        loadCategoryTreeData()
+        loadAttributeTreeData()
+        loadWarehouse()
+      }
     }
 
     function unitOnChange(event) {
@@ -858,20 +866,42 @@ export default {
       })
     }
 
-    function loadStock() {
-      getStock().then(res => {
+    function loadProductInfoDetail(id) {
+      getProductInfoDetail(id).then(res => {
         if (res && res.code === '00000') {
-          let stockList = res.data
-          if (stockList.length > 0) {
-            stock.dataSource.splice(0);
-            for (let i = 0; i < stockList.length; i++) {
+          let data = res.data
+          console.info(data)
+          // if (stockList.length > 0) {
+          //   stock.dataSource.splice(0);
+          //   for (let i = 0; i < stockList.length; i++) {
+          //     const rowData = {
+          //       key: stockList[i].id,
+          //       warehouseId: stockList[i].warehouseId,
+          //       warehouseName: stockList[i].warehouseName,
+          //       initStockQuantity: stockList[i].initStockQuantity,
+          //       lowStockQuantity: stockList[i].lowStockQuantity,
+          //       highStockQuantity: stockList[i].highStockQuantity
+          //     }
+          //     stock.dataSource.push(rowData);
+          //   }
+          //   stock.dataSource.forEach(row => {
+          //     editStock(row.key);
+          //   });
+          // }
+        }
+      })
+    }
+
+    function loadWarehouse() {
+      getWarehouse().then(res => {
+        if(res && res.code === '00000') {
+          let warehouseList = res.data
+          if(warehouseList.length > 0) {
+            for(let i = 0; i < warehouseList.length; i++) {
               const rowData = {
-                key: stockList[i].id,
-                warehouseId: stockList[i].warehouseId,
-                warehouseName: stockList[i].warehouseName,
-                initStockQuantity: stockList[i].initStockQuantity,
-                lowStockQuantity: stockList[i].lowStockQuantity,
-                highStockQuantity: stockList[i].highStockQuantity
+                key: warehouseList[i].id,
+                warehouseId: warehouseList[i].id,
+                warehouseName: warehouseList[i].warehouseName,
               }
               stock.dataSource.push(rowData);
             }
@@ -1130,7 +1160,7 @@ export default {
       previewTitle.value = '';
     }
 
-    function handleOk() {
+    async function handleOk() {
       // 如果名称为空，则提示请输入名称
       if (!formState.productName) {
         createMessage.error('请输入商品名称');
@@ -1146,25 +1176,53 @@ export default {
         createMessage.error('请输入商品单位');
         return;
       }
-      console.info(toRaw(formState))
-      // 获取meTable中的数据 和 stock中的数据
-      console.info(toRaw(meTable.dataSource))
-      console.info(toRaw(stock.dataSource))
-    }
 
-    const onSubmit = () => {
-      productFormRef.value
-          .validate()
-          .then(() => {
-            console.log('values', formState, toRaw(formState));
-          })
-          .catch(error => {
-            console.log('error', error);
-          });
-    };
-    const resetForm = () => {
-      productFormRef.value.resetFields();
-    };
+      // 将fileList中的数据转换成AddProductImageReq对象保存到imageList变量中
+      const imageList = []
+      for(let i = 0; i < fileList.value.length; i++) {
+        const image : AddProductImageReq = {
+          uid: fileList.value[i].uid,
+          type: fileList.value[i].type,
+          status: fileList.value[i].status,
+          imageName: fileList.value[i].originFileObj.name,
+          imageUrl: fileList.value[i].response.data[0],
+          imageSize: fileList.value[i].size,
+        }
+        imageList.push(image)
+      }
+      console.info(imageList)
+      const product : AddProductReq = {
+        productName: formState.productName,
+        productStandard: formState.productStandard,
+        productModel: formState.productModel,
+        productUnit: formState.productUnit,
+        productUnitId: formState.productUnitId,
+        productColor: formState.productColor,
+        productWeight: formState.productWeight,
+        productExpiryNum: formState.productExpiryNum,
+        productCategoryId: formState.productCategoryId,
+        enableSerialNumber: formState.enableSerialNumber,
+        enableBatchNumber: formState.enableBatchNumber,
+        warehouseShelves: formState.warehouseShelves,
+        productManufacturer: formState.productManufacturer,
+        otherFieldOne: formState.otherFieldOne,
+        otherFieldTwo: formState.otherFieldTwo,
+        otherFieldThree: formState.otherFieldThree,
+        priceList: meTable.dataSource,
+        stockList: stock.dataSource,
+        imageList: imageList
+      }
+
+      const addProductResult = await addProduct(product);
+      if(addProductResult.code === 'P0010') {
+        createMessage.success('新增商品成功');
+        closeModal();
+        context.emit('success');
+      } else {
+        createMessage.error('新增商品失败');
+        context.emit('error');
+      }
+    }
 
 
     return {
@@ -1232,8 +1290,6 @@ export default {
       handleImageViewCancel,
       handleOk,
       formState,
-      onSubmit,
-      resetForm,
       meTableValueChange,
       stockTableValueChange
     };

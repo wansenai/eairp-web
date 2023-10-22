@@ -45,6 +45,7 @@ import {BasicTable, TableAction, useTable} from "@/components/Table";
 import {useMessage} from "@/hooks/web/useMessage";
 import {columns, searchFormSchema} from "@/views/product/info/info.data";
 import ProductInfoModal from "@/views/product/info/components/ProductInfoModal.vue";
+import {getProductInfo} from "@/api/product/product";
 
 export default defineComponent({
   name: 'ProductInfo',
@@ -56,6 +57,7 @@ export default defineComponent({
       title: '商品信息列表',
       rowKey: 'id',
       columns: columns,
+      api: getProductInfo,
       rowSelection: {
         type: 'checkbox',
       },
@@ -63,6 +65,7 @@ export default defineComponent({
         labelWidth: 110,
         schemas: searchFormSchema,
       },
+      bordered: true,
       tableSetting: { fullScreen: true },
       useSearchForm: true,
       clickToRowSelect: false,
@@ -87,7 +90,8 @@ export default defineComponent({
       }
     }
 
-    async function handleEdit(record: Recordable) {
+    function handleEdit(record: Recordable) {
+      productModalRef.value.openModal(record.id)
     }
 
     async function handleDelete(record: Recordable) {
