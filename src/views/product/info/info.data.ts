@@ -11,62 +11,62 @@ const { t } = useI18n();
 export const columns: BasicColumn[] = [
     {
         title: '条码',
-        dataIndex: 'name',
+        dataIndex: 'productBarcode',
         width: 80,
     },
     {
         title: '名称',
-        dataIndex: 'type',
+        dataIndex: 'productName',
         width: 100,
     },
     {
         title: '规格',
-        dataIndex: 'type',
+        dataIndex: 'productStandard',
         width: 80,
     },
     {
         title: '型号',
-        dataIndex: 'type',
+        dataIndex: 'productModel',
         width: 100,
     },
     {
         title: '颜色',
-        dataIndex: 'type',
+        dataIndex: 'productColor',
         width: 60,
     },
     {
         title: '类别',
-        dataIndex: 'type',
+        dataIndex: 'productCategoryName',
         width: 80,
     },
     {
         title: '单位',
-        dataIndex: 'type',
+        dataIndex: 'productUnit',
         width: 80,
     },
     {
         title: '库存',
-        dataIndex: 'type',
+        dataIndex: 'productStock',
         width: 60,
     },
     {
         title: '采购价',
-        dataIndex: 'type',
+        dataIndex: 'purchasePrice',
         width: 60,
     },
     {
         title: '零售价',
-        dataIndex: 'type',
+        dataIndex: 'retailPrice',
         width: 60,
     },
     {
         title: '销售价',
-        dataIndex: 'type',
+        dataIndex: 'salePrice',
         width: 60,
     },
     {
         title: '最低售价',
-        dataIndex: 'type',
+        dataIndex: 'lowPrice',
         width: 60,
     },
     {
@@ -111,7 +111,7 @@ export const columns: BasicColumn[] = [
 export const searchFormSchema: FormSchema[] = [
     {
         label: '类别',
-        field: 'type',
+        field: 'productCategoryId',
         component: 'Select',
         colProps: {
             xl: 8,
@@ -120,7 +120,7 @@ export const searchFormSchema: FormSchema[] = [
     },
     {
         label: '关键词',
-        field: 'name',
+        field: 'keywords',
         component: 'Input',
         colProps: {
             xl: 8,
@@ -129,7 +129,7 @@ export const searchFormSchema: FormSchema[] = [
     },
     {
         label: '颜色',
-        field: 'name',
+        field: 'productColor',
         component: 'Input',
         colProps: {
             xl: 8,
@@ -138,7 +138,7 @@ export const searchFormSchema: FormSchema[] = [
     },
     {
         label: '状态',
-        field: 'name',
+        field: 'status',
         component: 'Input',
         colProps: {
             xl: 12,
@@ -147,7 +147,7 @@ export const searchFormSchema: FormSchema[] = [
     },
     {
         label: '序列号',
-        field: 'name',
+        field: 'enableSerialNumber',
         component: 'Input',
         colProps: {
             xl: 12,
@@ -156,7 +156,7 @@ export const searchFormSchema: FormSchema[] = [
     },
     {
         label: '批次号',
-        field: 'name',
+        field: 'enableBatchNumber',
         component: 'Input',
         colProps: {
             xl: 12,
@@ -165,7 +165,7 @@ export const searchFormSchema: FormSchema[] = [
     },
     {
         label: '仓位货架',
-        field: 'name',
+        field: 'warehouseShelves',
         component: 'Input',
         colProps: {
             xl: 12,
@@ -174,25 +174,7 @@ export const searchFormSchema: FormSchema[] = [
     },
     {
         label: '扩展信息',
-        field: 'name',
-        component: 'Input',
-        colProps: {
-            xl: 12,
-            xxl: 8,
-        },
-    },
-    {
-        label: '基础重量',
-        field: 'name',
-        component: 'Input',
-        colProps: {
-            xl: 12,
-            xxl: 8,
-        },
-    },
-    {
-        label: '保质期',
-        field: 'name',
+        field: 'extendInfo',
         component: 'Input',
         colProps: {
             xl: 12,
