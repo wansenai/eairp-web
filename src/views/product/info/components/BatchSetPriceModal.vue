@@ -4,8 +4,6 @@
         :width="500"
         v-model:open="openPriceModal"
         :confirm-loading="confirmLoading"
-        :mask-style="{'top':'93px','left':'154px'}"
-        :mask-closable="false"
         @ok="handleOk"
         @cancel="handleCancel"
         style="top:30%;height: 30%;">
@@ -93,6 +91,7 @@ export default {
 
     const handleCancel = () => {
       close();
+
     };
 
     return {
