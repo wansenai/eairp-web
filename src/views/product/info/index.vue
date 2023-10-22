@@ -33,7 +33,7 @@
         </template>
       </template>
     </BasicTable>
-    <ProductInfoModal ref="productModalRef" @cancel="handleCancel"/>
+    <ProductInfoModal ref="productModalRef" @cancel="handleCancel" @success="handleOk"/>
   </div>
 </template>
 <div>
@@ -113,6 +113,10 @@ export default defineComponent({
       reload();
     }
 
+    async function handleOk() {
+      reload();
+    }
+
     return {
       registerTable,
       handleCreate,
@@ -122,6 +126,7 @@ export default defineComponent({
       handleSuccess,
       handleOnStatus,
       handleCancel,
+      handleOk,
       productModalRef,
     }
   }
