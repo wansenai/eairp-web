@@ -397,7 +397,7 @@ export interface FormState {
 
 export default {
   name: 'ProductInfoModal',
-  emits: ['success', 'cancel'],
+  emits: ['success', 'cancel', 'error'],
   components: {
     'a-modal': Modal,
     'a-upload': Upload,
@@ -592,6 +592,7 @@ export default {
 
     function handleCancel() {
       close();
+      clearData()
       context.emit('cancel');
     }
 
@@ -612,7 +613,44 @@ export default {
         loadCategoryTreeData()
         loadAttributeTreeData()
         loadWarehouse()
+        clearData()
       }
+    }
+
+    function clearData(){
+      formState.productName = undefined
+      formState.productStandard = undefined
+      formState.productModel = undefined
+      formState.productUnit = undefined
+      formState.productUnitId = undefined
+      formState.productColor = undefined
+      formState.productWeight = undefined
+      formState.productExpiryNum = undefined
+      formState.productCategoryId = undefined
+      formState.enableSerialNumber = undefined
+      formState.enableBatchNumber = undefined
+      formState.warehouseShelves = undefined
+      formState.productManufacturer = undefined
+      formState.otherFieldOne = undefined
+      formState.otherFieldTwo = undefined
+      formState.otherFieldThree = undefined
+      unitChecked.value = false
+      manyUnitStatus.value = false
+      manySkuStatus.value = false
+      unitStatus.value = false
+      switchDisabled.value = false
+      barCodeSwitch.value = false
+      // 清除所有的sku
+      manySkuSelected.value = 0
+      skuOneList.value = []
+      skuTwoList.value = []
+      skuThreeList.value = []
+      skuOne.value = []
+      skuTwo.value = []
+      skuThree.value = []
+      meTable.dataSource = []
+      stock.dataSource = []
+      fileList.value = []
     }
 
     function unitOnChange(event) {
@@ -723,28 +761,6 @@ export default {
         productAttributeList.value = attributeListResult.data.records
       }
     }
-
-    //修改商品明细中的价格触发计算
-    // function changeDecimalByValue(row) {
-    //   let unitArr = unitList
-    //   let basicUnit = '', otherUnit = '', ratio = 1, otherUnitTwo = '', ratioTwo = 1, otherUnitThree = '',
-    //       ratioThree = 1
-    //   for (let i = 0; i < unitArr.length; i++) {
-    //     if (unitArr[i].id === this.form.getFieldValue('unitId')) {
-    //       basicUnit = unitArr[i].basicUnit
-    //       otherUnit = unitArr[i].otherUnit
-    //       ratio = unitArr[i].ratio
-    //       if (unitArr[i].otherUnitTwo) {
-    //         otherUnitTwo = unitArr[i].otherUnitTwo
-    //         ratioTwo = unitArr[i].ratioTwo
-    //       }
-    //       if (unitArr[i].otherUnitThree) {
-    //         otherUnitThree = unitArr[i].otherUnitThree
-    //         ratioThree = unitArr[i].ratioThree
-    //       }
-    //     }
-    //   }
-    // }
 
     function manyUnitOnChange(value) {
       let unitArr = unitList.value
@@ -870,24 +886,74 @@ export default {
       getProductInfoDetail(id).then(res => {
         if (res && res.code === '00000') {
           let data = res.data
-          console.info(data)
-          // if (stockList.length > 0) {
-          //   stock.dataSource.splice(0);
-          //   for (let i = 0; i < stockList.length; i++) {
-          //     const rowData = {
-          //       key: stockList[i].id,
-          //       warehouseId: stockList[i].warehouseId,
-          //       warehouseName: stockList[i].warehouseName,
-          //       initStockQuantity: stockList[i].initStockQuantity,
-          //       lowStockQuantity: stockList[i].lowStockQuantity,
-          //       highStockQuantity: stockList[i].highStockQuantity
-          //     }
-          //     stock.dataSource.push(rowData);
-          //   }
-          //   stock.dataSource.forEach(row => {
-          //     editStock(row.key);
-          //   });
-          // }
+          if (data) {
+            // 将data中的数据赋值给formState
+            formState.productName = data.productName
+            formState.productStandard = data.productStandard
+            formState.productModel = data.productModel
+            formState.productUnit = data.productUnit
+            formState.productUnitId = data.productUnitId
+            formState.productColor = data.productColor
+            formState.productWeight = data.productWeight
+            formState.productExpiryNum = data.productExpiryNum
+            formState.productCategoryId = data.productCategoryId
+            formState.enableSerialNumber = data.enableSerialNumber
+            formState.enableBatchNumber = data.enableBatchNumber
+            formState.warehouseShelves = data.warehouseShelves
+            formState.productManufacturer = data.productManufacturer
+            formState.otherFieldOne = data.otherFieldOne
+            formState.otherFieldTwo = data.otherFieldTwo
+            formState.otherFieldThree = data.otherFieldThree
+            if (data.priceList) {
+              meTable.dataSource.splice(0); // 清空meTableData数组
+              for (let i = 0; i < data.priceList.length; i++) {
+                const newRowData = {
+                  key: i,
+                  barCode: data.priceList[i].barCode,
+                  productUnit: data.priceList[i].productUnit,
+                  sku: data.priceList[i].sku,
+                  purchasePrice: data.priceList[i].purchasePrice,
+                  retailPrice: data.priceList[i].retailPrice,
+                  salesPrice: data.priceList[i].salesPrice,
+                  lowSalesPrice: data.priceList[i].lowSalesPrice
+                }
+                meTable.dataSource.push(newRowData);
+              }
+              meTable.dataSource.forEach(row => {
+                edit(row.key);
+              });
+            }
+            if (data.stockList) {
+              stock.dataSource.splice(0);
+              for (let i = 0; i < data.stockList.length; i++) {
+                const newRowData = {
+                  key: i,
+                  warehouseId: data.stockList[i].warehouseId,
+                  warehouseName: data.stockList[i].warehouseName,
+                  initStockQuantity: data.stockList[i].initStockQuantity,
+                  lowStockQuantity: data.stockList[i].lowStockQuantity,
+                  highStockQuantity: data.stockList[i].highStockQuantity
+                }
+                stock.dataSource.push(newRowData);
+              }
+              stock.dataSource.forEach(row => {
+                editStock(row.key);
+              });
+            }
+            if (data.imageList) {
+              fileList.value.splice(0);
+              for (let i = 0; i < data.imageList.length; i++) {
+                const newRowData = {
+                  uid: i,
+                  name: data.imageList[i].imageName,
+                  status: 'done',
+                  url: data.imageList[i].imageUrl,
+                  thumbUrl: data.imageList[i].imageUrl,
+                }
+                fileList.value.push(newRowData);
+              }
+            }
+          }
         }
       })
     }
@@ -897,6 +963,7 @@ export default {
         if(res && res.code === '00000') {
           let warehouseList = res.data
           if(warehouseList.length > 0) {
+            stock.dataSource.splice(0);
             for(let i = 0; i < warehouseList.length; i++) {
               const rowData = {
                 key: warehouseList[i].id,
@@ -1190,7 +1257,6 @@ export default {
         }
         imageList.push(image)
       }
-      console.info(imageList)
       const product : AddProductReq = {
         productName: formState.productName,
         productStandard: formState.productStandard,
@@ -1216,8 +1282,9 @@ export default {
       const addProductResult = await addProduct(product);
       if(addProductResult.code === 'P0010') {
         createMessage.success('新增商品成功');
-        closeModal();
         context.emit('success');
+        closeModal();
+        clearData();
       } else {
         createMessage.error('新增商品失败');
         context.emit('error');

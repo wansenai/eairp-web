@@ -72,10 +72,12 @@ export default {
     const handleOk = () => {
       const stockNumber = batchNumber.value
       context.emit('ok', stockNumber, batchType.value);
-      openStockModal.value = false
+      batchNumber.value = null;
+      close();
     };
 
     const handleCancel = () => {
+      batchNumber.value = null;
       close();
     };
 

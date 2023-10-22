@@ -4,6 +4,7 @@
         :width="500"
         v-model:open="openPriceModal"
         :confirm-loading="confirmLoading"
+        :destroyOnClose="true"
         @ok="handleOk"
         @cancel="handleCancel"
         style="top:30%;height: 30%;">
@@ -21,10 +22,6 @@
 import { ref, reactive, UnwrapRef } from 'vue';
 import {Button, Form, FormItem, InputNumber, Modal, Spin} from "ant-design-vue";
 import {Rule} from 'ant-design-vue/es/form';
-
-interface FormState {
-  batchPrice: number;
-}
 
 export default {
   name: 'BatchSetPriceModal',
@@ -72,7 +69,6 @@ export default {
       } else if (type === 'low') {
         title.value = '最低售价-批量设置';
       }
-      // formRef.value.resetFields();
     };
 
     const edit = (record) => {
@@ -86,12 +82,13 @@ export default {
     const handleOk = () => {
       const price = batchPrice.value
       context.emit('ok', price, batchType.value);
-      openPriceModal.value = false
+      batchPrice.value = null;
+      close();
     };
 
     const handleCancel = () => {
+      batchPrice.value = null;
       close();
-
     };
 
     return {
