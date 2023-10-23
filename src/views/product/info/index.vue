@@ -45,7 +45,7 @@ import {BasicTable, TableAction, useTable} from "@/components/Table";
 import {useMessage} from "@/hooks/web/useMessage";
 import {columns, searchFormSchema} from "@/views/product/info/info.data";
 import ProductInfoModal from "@/views/product/info/components/ProductInfoModal.vue";
-import {getProductInfo} from "@/api/product/product";
+import {getProductInfo, deleteProduct, updateProductStatus} from "@/api/product/product";
 
 export default defineComponent({
   name: 'ProductInfo',
@@ -82,11 +82,16 @@ export default defineComponent({
       productModalRef.value.openModal()
     }
 
-    async function handleBatchDelete(record: Recordable) {
+    async function handleBatchDelete() {
       const data = getSelectRows();
       if (data.length === 0) {
         createMessage.warn('请选择一条数据');
         return;
+      }
+      const ids = data.map((item) => item.id);
+      const { code } = await deleteProduct(ids);
+      if (code === "P0012") {
+        await reload();
       }
     }
 
@@ -95,6 +100,11 @@ export default defineComponent({
     }
 
     async function handleDelete(record: Recordable) {
+      // 调用deleteProduct接口 注意是批量删除 这里传递的是数组
+      const { code } = await deleteProduct([record.id]);
+      if (code === "P0012") {
+        await reload();
+      }
     }
 
     async function handleSuccess() {
@@ -106,6 +116,11 @@ export default defineComponent({
       if (data.length === 0) {
         createMessage.warn('请选择一条数据');
         return;
+      }
+      const ids = data.map((item) => item.id);
+      const result = await updateProductStatus(ids, newStatus);
+      if (result.code === "P0013") {
+        await reload();
       }
     }
 

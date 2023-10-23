@@ -5,9 +5,11 @@ import {ErrorMessageMode} from "#/axios";
 
 enum Api {
     getBarCode = '/product/getBarCode',
-    addProduct = '/product/addProduct',
+    addProduct = '/product/addOrUpdateProduct',
     getProductInfo = '/product/getProductInfo',
     getProductInfoDetail = '/product/getProductInfoDetail',
+    deleteProduct = '/product/deleteProduct',
+    updateProductStatus = '/product/updateProductStatus',
 }
 
 export function getBarCode() {
@@ -18,7 +20,7 @@ export function getBarCode() {
     );
 }
 
-export function addProduct(params: AddProductReq, mode: ErrorMessageMode = 'notice') {
+export function addOrUpdateProduct(params: AddProductReq, mode: ErrorMessageMode = 'notice') {
     return defHttp.post<BaseResp>(
         {
             url: Api.addProduct,
@@ -46,6 +48,26 @@ export function getProductInfoDetail(productId: number) {
     return defHttp.get<BaseDataResp<ProductInfoDetailResp>>(
         {
             url: `${Api.getProductInfoDetail}/${productId}`,
+        }
+    );
+}
+
+export function deleteProduct(productIds: number[], mode: ErrorMessageMode = 'notice') {
+    return defHttp.delete<BaseResp>(
+        {
+            url: `${Api.deleteProduct}/${productIds}`,
+        },{
+            errorMessageMode: mode,
+        }
+    );
+}
+
+export function updateProductStatus(productIds: number[], status: number, mode: ErrorMessageMode = 'notice') {
+    return defHttp.put<BaseResp>(
+        {
+            url: `${Api.updateProductStatus}/${productIds}/${status}`,
+        },{
+            errorMessageMode: mode,
         }
     );
 }

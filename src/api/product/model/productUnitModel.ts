@@ -23,4 +23,6 @@ export interface AddOrUpdateProductUnitReq {
 
 export interface ProductUnitQueryReq {
     computeUnit: string;
+    page: number;
+    pageSize: number;
 }

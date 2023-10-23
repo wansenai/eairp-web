@@ -17,6 +17,7 @@
           <a-tab-pane key="1" tab="基本信息" id="materialHeadModal" forceRender>
             <a-row class="form-row" :gutter="24">
               <a-col :md="6" :sm="24">
+                <a-input v-model:value="formState.productId" v-show="false"/>
                 <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="名称" data-step="1" data-title="名称"
                              data-intro="名称必填，可以重复" :rules="[{ required: true}]">
                   <a-input v-model:value="formState.productName" placeholder="请输入名称"/>
@@ -76,7 +77,7 @@
                       </a-select>
                     </a-col>
                     <a-col :lg="9" :md="9" :sm="24" style="padding:0px; text-align:center">
-                      <a-checkbox @change="unitOnChange">多单位</a-checkbox>
+                      <a-checkbox v-model:checked="unitChecked" @change="unitOnChange">多单位</a-checkbox>
                     </a-col>
                   </a-row>
                 </a-form-item>
@@ -149,6 +150,7 @@
                 <a-form-item :labelCol="{xs: { span: 24 },sm: { span: 4 }}"
                              :wrapperCol="{xs: { span: 24 },sm: { span: 20 }}" label="多属性" data-step="12"
                              data-title="多属性"
+                             v-show="manySkuItem"
                              data-intro="多属性是针对的sku商品（比如服装、鞋帽行业），此处开关如果启用就可以在下方进行多sku的配置，配置具体的颜色、尺码之类的组合">
                   <a-tooltip title="多属性针对服装、鞋帽等行业，需要先录入单位才能激活此处输入框">
                     <a-tag class="tag-info" v-if="!manySkuStatus">需要先录入单位才能激活</a-tag>
@@ -337,7 +339,7 @@
 </template>
 
 <script lang="ts">
-import {onMounted, reactive, ref, toRaw, UnwrapRef, watch} from 'vue';
+import {onMounted, reactive, Ref, ref, toRaw, toRef, UnwrapRef, watch} from 'vue';
 import {UploadProps,} from 'ant-design-vue';
 import {
   Button,
@@ -367,7 +369,7 @@ import {getCategoryList} from "/@/api/product/productCategory"
 import {ProductUnitQueryReq} from "/@/api/product/model/productUnitModel"
 import {DefaultOptionType} from "ant-design-vue/es/vc-tree-select/TreeSelect";
 import {ProductAttributeListReq} from "@/api/product/model/productAttributeModel"
-import {getBarCode, getProductInfoDetail, addProduct} from "@/api/product/product"
+import {getBarCode, getProductInfoDetail, addOrUpdateProduct} from "@/api/product/product"
 import {getAttributeById, getAttributeList} from "@/api/product/productAttribute"
 import {useMessage} from "@/hooks/web/useMessage";
 import BatchSetPriceModal from "@/views/product/info/components/BatchSetPriceModal.vue";
@@ -377,11 +379,12 @@ import {getWarehouse} from "@/api/basic/warehouse";
 import {AddProductImageReq, AddProductReq} from "@/api/product/model/productModel";
 
 export interface FormState {
+  productId: number,
   productName: string,
   productStandard: string,
   productModel: string,
-  productUnit: string | undefined,
-  productUnitId: number | undefined,
+  productUnit: string,
+  productUnitId: number,
   productColor: string,
   productWeight: number,
   productExpiryNum: number,
@@ -432,6 +435,7 @@ export default {
     const unitChecked = ref(false);
     const manyUnitStatus = ref(false);
     const manySkuStatus = ref(false);
+    const manySkuItem = ref(true);
 
     const unitStatus = ref<boolean>(false);
     const switchDisabled = ref<boolean>(false);
@@ -458,6 +462,7 @@ export default {
     const model = ref({});
 
     const formState: UnwrapRef<FormState> = reactive({
+      productId: null,
       productName: undefined,
       productStandard: undefined,
       productModel: undefined,
@@ -467,8 +472,8 @@ export default {
       productWeight: undefined,
       productExpiryNum: undefined,
       productCategoryId: undefined,
-      enableSerialNumber: undefined,
-      enableBatchNumber: undefined,
+      enableSerialNumber: null,
+      enableBatchNumber: null,
       warehouseShelves: undefined,
       productManufacturer: undefined,
       otherFieldOne: undefined,
@@ -602,38 +607,43 @@ export default {
 
     function openModal(id) {
       open.value = true
+      loadBarCode()
+      loadUnitListData()
+      loadCategoryTreeData()
+      loadAttributeTreeData()
       if (id) {
         title.value = '修改商品信息'
-        loadBarCode()
         loadProductInfoDetail(id)
+        manySkuStatus.value = false
+        manySkuItem.value = false
+        manySkuSelected.value = 0
       } else {
         title.value = '新增商品'
-        loadBarCode()
-        loadUnitListData()
-        loadCategoryTreeData()
-        loadAttributeTreeData()
         loadWarehouse()
         clearData()
+        manySkuItem.value = true
+        manySkuStatus.value = true
       }
     }
 
     function clearData(){
-      formState.productName = undefined
-      formState.productStandard = undefined
-      formState.productModel = undefined
-      formState.productUnit = undefined
-      formState.productUnitId = undefined
-      formState.productColor = undefined
-      formState.productWeight = undefined
-      formState.productExpiryNum = undefined
-      formState.productCategoryId = undefined
-      formState.enableSerialNumber = undefined
-      formState.enableBatchNumber = undefined
-      formState.warehouseShelves = undefined
-      formState.productManufacturer = undefined
-      formState.otherFieldOne = undefined
-      formState.otherFieldTwo = undefined
-      formState.otherFieldThree = undefined
+      formState.id = null
+      formState.productName = ""
+      formState.productStandard = ""
+      formState.productModel = ""
+      formState.productUnit = ""
+      formState.productUnitId = null
+      formState.productColor = ""
+      formState.productWeight = null
+      formState.productExpiryNum = null
+      formState.productCategoryId = null
+      formState.enableSerialNumber = null
+      formState.enableBatchNumber = null
+      formState.warehouseShelves = ""
+      formState.productManufacturer = ""
+      formState.otherFieldOne = ""
+      formState.otherFieldTwo = ""
+      formState.otherFieldThree = ""
       unitChecked.value = false
       manyUnitStatus.value = false
       manySkuStatus.value = false
@@ -659,7 +669,7 @@ export default {
         unitStatus.value = true;
         manyUnitStatus.value = false;
         unitChecked.value = true
-        formState.productUnit = undefined
+        formState.productUnit = ''
       } else {
         unitStatus.value = false;
         manyUnitStatus.value = true;
@@ -888,6 +898,7 @@ export default {
           let data = res.data
           if (data) {
             // 将data中的数据赋值给formState
+            formState.productId = data.productId
             formState.productName = data.productName
             formState.productStandard = data.productStandard
             formState.productModel = data.productModel
@@ -904,11 +915,27 @@ export default {
             formState.otherFieldOne = data.otherFieldOne
             formState.otherFieldTwo = data.otherFieldTwo
             formState.otherFieldThree = data.otherFieldThree
+
+            if(data.productUnitId) {
+              // 说明是多属性 选中多属性的checkbox 赋值给下拉框3
+              unitStatus.value = true;
+              manyUnitStatus.value = false;
+              unitChecked.value = true
+              formState.productUnit = ''
+              formState.productUnitId = data.productUnitId
+            } else {
+              unitStatus.value = false;
+              manyUnitStatus.value = true;
+              unitChecked.value = false
+              formState.productUnit = data.productUnit
+            }
+
             if (data.priceList) {
               meTable.dataSource.splice(0); // 清空meTableData数组
               for (let i = 0; i < data.priceList.length; i++) {
                 const newRowData = {
                   key: i,
+                  productPriceId: data.priceList[i].productPriceId,
                   barCode: data.priceList[i].barCode,
                   productUnit: data.priceList[i].productUnit,
                   sku: data.priceList[i].sku,
@@ -928,6 +955,7 @@ export default {
               for (let i = 0; i < data.stockList.length; i++) {
                 const newRowData = {
                   key: i,
+                  productStockId: data.stockList[i].productStockId,
                   warehouseId: data.stockList[i].warehouseId,
                   warehouseName: data.stockList[i].warehouseName,
                   initStockQuantity: data.stockList[i].initStockQuantity,
@@ -945,6 +973,7 @@ export default {
               for (let i = 0; i < data.imageList.length; i++) {
                 const newRowData = {
                   uid: i,
+                  productImageId: data.imageList[i].productImageId,
                   name: data.imageList[i].imageName,
                   status: 'done',
                   url: data.imageList[i].imageUrl,
@@ -1228,12 +1257,10 @@ export default {
     }
 
     async function handleOk() {
-      // 如果名称为空，则提示请输入名称
       if (!formState.productName) {
         createMessage.error('请输入商品名称');
         return;
       }
-      // 先判断单位是否勾选了多单位，如果勾选了多单位，则判断单位是否选择了多单位，如果没有选择多单位，则提示请选择多单位
       if (unitChecked.value) {
         if (!formState.productUnitId) {
           createMessage.error('请选择商品单位');
@@ -1243,21 +1270,38 @@ export default {
         createMessage.error('请输入商品单位');
         return;
       }
-
-      // 将fileList中的数据转换成AddProductImageReq对象保存到imageList变量中
-      const imageList = []
-      for(let i = 0; i < fileList.value.length; i++) {
-        const image : AddProductImageReq = {
-          uid: fileList.value[i].uid,
-          type: fileList.value[i].type,
-          status: fileList.value[i].status,
-          imageName: fileList.value[i].originFileObj.name,
-          imageUrl: fileList.value[i].response.data[0],
-          imageSize: fileList.value[i].size,
-        }
-        imageList.push(image)
+      if (meTable.dataSource.length === 0) {
+        createMessage.error('请插入一行数据，录入商品条码价格信息');
+        return;
       }
+
+      const imageList = []
+      if (fileList && fileList.value) {
+        for (let i = 0; i < fileList.value.length; i++) {
+          if (fileList.value[i].url) {
+            const image : AddProductImageReq = {
+              uid: fileList.value[i].uid,
+              status: fileList.value[i].status,
+              imageName: fileList.value[i].name,
+              imageUrl: fileList.value[i].url,
+            }
+            imageList.push(image)
+          } else {
+            const image : AddProductImageReq = {
+              uid: fileList.value[i].uid,
+              type: fileList.value[i].type,
+              status: fileList.value[i].status,
+              imageName: fileList.value[i].name,
+              imageUrl: fileList.value[i].response.data[0],
+              imageSize: fileList.value[i].size,
+            }
+            imageList.push(image)
+          }
+        }
+      }
+
       const product : AddProductReq = {
+        productId: formState.productId,
         productName: formState.productName,
         productStandard: formState.productStandard,
         productModel: formState.productModel,
@@ -1279,18 +1323,23 @@ export default {
         imageList: imageList
       }
 
-      const addProductResult = await addProduct(product);
-      if(addProductResult.code === 'P0010') {
+      const addOrUpdateProductResult = await addOrUpdateProduct(product);
+      if(addOrUpdateProductResult.code === 'P0010') {
         createMessage.success('新增商品成功');
         context.emit('success');
         closeModal();
         clearData();
-      } else {
+      } else if (addOrUpdateProductResult.code === 'P0011') {
+        createMessage.success('商品信息修改成功');
+        context.emit('success');
+        closeModal();
+        clearData();
+      } else if (addOrUpdateProductResult.code === 'P0512') {
         createMessage.error('新增商品失败');
-        context.emit('error');
+      } else if (addOrUpdateProductResult.code === 'P0513') {
+        createMessage.error('商品信息修改失败');
       }
     }
-
 
     return {
       confirmLoading,
@@ -1307,6 +1356,7 @@ export default {
       unitStatus,
       manyUnitStatus,
       manySkuStatus,
+      manySkuItem,
       switchDisabled,
       barCodeSwitch,
       onSkuChange,
