@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts">
-import { ref, reactive, UnwrapRef } from 'vue';
+import { ref, reactive } from 'vue';
 import {Button, Form, FormItem, InputNumber, Modal, Spin} from "ant-design-vue";
 import {Rule} from 'ant-design-vue/es/form';
 

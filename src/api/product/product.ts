@@ -1,6 +1,11 @@
 import {defHttp} from '/@/utils/http/axios';
 import {BaseDataResp, BaseResp} from "@/api/model/baseModel";
-import {AddProductReq, ProductInfoDetailResp, QueryProductReq} from "@/api/product/model/productModel";
+import {
+    AddProductReq,
+    ProductInfoDetailResp,
+    QueryProductReq,
+    UpdateBatchProductInfoReq
+} from "@/api/product/model/productModel";
 import {ErrorMessageMode} from "#/axios";
 
 enum Api {
@@ -10,6 +15,7 @@ enum Api {
     getProductInfoDetail = '/product/getProductInfoDetail',
     deleteProduct = '/product/deleteProduct',
     updateProductStatus = '/product/updateProductStatus',
+    updateBatchProductInfo = '/product/updateBatchProductInfo',
 }
 
 export function getBarCode() {
@@ -66,6 +72,17 @@ export function updateProductStatus(productIds: number[], status: number, mode: 
     return defHttp.put<BaseResp>(
         {
             url: `${Api.updateProductStatus}/${productIds}/${status}`,
+        },{
+            errorMessageMode: mode,
+        }
+    );
+}
+
+export function updateBatchProductInfo(params: UpdateBatchProductInfoReq, mode: ErrorMessageMode = 'notice') {
+    return defHttp.put<BaseResp>(
+        {
+            url: Api.updateBatchProductInfo,
+            params
         },{
             errorMessageMode: mode,
         }

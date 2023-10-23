@@ -109,3 +109,14 @@ export interface ProductStockResp {
     lowStockQuantity: number;
     highStockQuantity: number;
 }
+
+export interface UpdateBatchProductInfoReq {
+    productIds: number[];
+    productCategoryId: number | string;
+    productColor: string;
+    productWeight: number;
+    productExpiryNum: number;
+    enableSerialNumber: string;
+    enableBatchNumber: string;
+    remark: string;
+}
