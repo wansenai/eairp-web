@@ -4,7 +4,8 @@ import { h } from 'vue';
 import {Switch} from "ant-design-vue";
 import {useMessage} from "@/hooks/web/useMessage";
 import {useI18n} from "@/hooks/web/useI18n";
-import {updateOperatorStatus} from "@/api/basic/operator";
+import {updateProductStatus} from "@/api/product/product";
+import {getCategoryList} from "@/api/product/productCategory";
 
 const { t } = useI18n();
 
@@ -90,7 +91,7 @@ export const columns: BasicColumn[] = [
                     }
                     record.pendingStatus = true;
                     const newStatus = checked ? 0 : 1;
-                    updateOperatorStatus([record.id], newStatus )
+                    updateProductStatus([record.id], newStatus )
                         .then(() => {
                             record.status = newStatus;
                         })
@@ -110,12 +111,18 @@ export const columns: BasicColumn[] = [
 
 export const searchFormSchema: FormSchema[] = [
     {
-        label: '类别',
+        label: '商品类别',
         field: 'productCategoryId',
-        component: 'Select',
+        component: 'ApiTreeSelect',
         colProps: {
             xl: 8,
             xxl: 8,
+        },
+        componentProps: {
+            api: getCategoryList,
+            resultField: 'data',
+            labelField: 'categoryName',
+            valueField: 'id',
         },
     },
     {
@@ -139,28 +146,46 @@ export const searchFormSchema: FormSchema[] = [
     {
         label: '状态',
         field: 'status',
-        component: 'Input',
+        component: 'Select',
         colProps: {
             xl: 12,
             xxl: 8,
+        },
+        componentProps: {
+            options: [
+                { label: '启用', value: 0, key: 0 },
+                { label: '停用', value: 1, key: 1 },
+            ],
         },
     },
     {
         label: '序列号',
         field: 'enableSerialNumber',
-        component: 'Input',
+        component: 'Select',
         colProps: {
             xl: 12,
             xxl: 8,
+        },
+        componentProps: {
+            options: [
+                { label: '无', value: 0, key: 0 },
+                { label: '有', value: 1, key: 1 },
+            ],
         },
     },
     {
         label: '批次号',
         field: 'enableBatchNumber',
-        component: 'Input',
+        component: 'Select',
         colProps: {
             xl: 12,
             xxl: 8,
+        },
+        componentProps: {
+            options: [
+                { label: '无', value: 0, key: 0 },
+                { label: '有', value: 1, key: 1 },
+            ],
         },
     },
     {
