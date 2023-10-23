@@ -1,4 +1,5 @@
 export interface AddProductStockReq {
+    productStockId: number | string;
     warehouseId: number | string;
     warehouseName: string;
     initStockQuantity: number;
@@ -7,6 +8,7 @@ export interface AddProductStockReq {
 }
 
 export interface AddProductPriceReq {
+    productPriceId: number | string;
     barCode: number;
     productUnit: string;
     multiAttribute: string;
@@ -17,6 +19,7 @@ export interface AddProductPriceReq {
 }
 
 export interface AddProductImageReq {
+    productImageId: number | string;
     uid: string;
     type: string;
     status: string;
@@ -26,6 +29,7 @@ export interface AddProductImageReq {
 }
 
 export interface AddProductReq {
+    productId: number | string;
     productName: string;
     productStandard: string;
     productModel: string;
