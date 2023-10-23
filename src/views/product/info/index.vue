@@ -6,9 +6,9 @@
         <a-button type="primary" @click="handleBatchDelete"> 批量删除</a-button>
         <a-button type="primary" @click="handleOnStatus(0)"> 批量启用</a-button>
         <a-button type="primary" @click="handleOnStatus(1)"> 批量禁用</a-button>
-        <a-button type="primary" @click=""> 导入</a-button>
+        <a-button type="primary" @click="handleImport"> 导入</a-button>
         <a-button type="primary" @click=""> 导出</a-button>
-        <a-button type="primary" @click=""> 批量编辑</a-button>
+        <a-button type="primary" @click="handleBatchProductInfo"> 批量编辑</a-button>
         <a-button type="primary" @click=""> 修正库存</a-button>
       </template>
       <template #bodyCell="{ column, record }">
@@ -34,6 +34,8 @@
       </template>
     </BasicTable>
     <ProductInfoModal ref="productModalRef" @cancel="handleCancel" @success="handleOk"/>
+    <BatchEditModal ref="batchProductInfoModalRef" @cancel="handleCancel" @success="handleOk"/>
+    <ImportFileModal ref="importModalRef" @cancel="handleCancel"/>
   </div>
 </template>
 <div>
@@ -45,14 +47,18 @@ import {BasicTable, TableAction, useTable} from "@/components/Table";
 import {useMessage} from "@/hooks/web/useMessage";
 import {columns, searchFormSchema} from "@/views/product/info/info.data";
 import ProductInfoModal from "@/views/product/info/components/ProductInfoModal.vue";
+import BatchEditModal from "@/views/product/info/components/BatchEditModal.vue";
 import {getProductInfo, deleteProduct, updateProductStatus} from "@/api/product/product";
+import ImportFileModal from "@/components/Tools/ImportFileModal.vue";
 
 export default defineComponent({
   name: 'ProductInfo',
-  components: {TableAction, BasicTable, ProductInfoModal },
+  components: {TableAction, BasicTable, ProductInfoModal, BatchEditModal, ImportFileModal},
   setup() {
     const { createMessage } = useMessage();
+    const importModalRef = ref(null);
     const productModalRef = ref(null);
+    const batchProductInfoModalRef = ref(null);
     const [registerTable, { reload, getSelectRows }] = useTable({
       title: '商品信息列表',
       rowKey: 'id',
@@ -125,11 +131,28 @@ export default defineComponent({
     }
 
     async function handleCancel() {
-      reload();
+      await reload();
     }
 
     async function handleOk() {
-      reload();
+      await reload();
+    }
+
+    function handleBatchProductInfo() {
+      const data = getSelectRows();
+      if (data.length === 0) {
+        createMessage.warn('请选择一条数据');
+        return;
+      }
+      const ids = data.map((item) => item.id);
+      batchProductInfoModalRef.value.open(ids)
+    }
+
+    function handleImport() {
+      const templateUrl  = 'https://wansen-1317413588.cos.ap-shanghai.myqcloud.com/%E4%BC%9A%E5%91%98%E4%BF%A1%E6%81%AF%E6%A8%A1%E6%9D%BF.xlsx'
+      const templateName  = '商品信息Excel模板[下载]'
+      importModalRef.value.initModal(templateUrl, templateName);
+      importModalRef.value.title = "商品信息数据导入";
     }
 
     return {
@@ -143,6 +166,10 @@ export default defineComponent({
       handleCancel,
       handleOk,
       productModalRef,
+      batchProductInfoModalRef,
+      handleBatchProductInfo,
+      handleImport,
+      importModalRef
     }
   }
 })
