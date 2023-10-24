@@ -58,22 +58,17 @@
                                 @change="manyUnitOnChange"
                                 showSearch
                                 optionFilterProp="children"
-                                :dropdownMatchSelectWidth="false">
-                        <!--                        <template v-slot:dropdownRender="props" >-->
-                        <!--                          <v-nodes :vnodes="props.menu" />-->
-                        <!--                          <a-divider style="margin: 4px 0;" />-->
-                        <!--                          <div style="padding: 4px 8px; cursor: pointer;"-->
-                        <!--                               @mousedown="e => e.preventDefault()"-->
-                        <!--                               @click="addUnit">-->
-                        <!--                            <a-icon type="plus" />-->
-                        <!--                            新增计量单位-->
-                        <!--                          </div>-->
-                        <!--                        </template>-->
-                        <a-select-option v-for="(item, index) in unitList.value"
-                                         :key="index"
-                                         :value="item.id">
-                          {{ item.computeUnit }}
-                        </a-select-option>
+                                :dropdownMatchSelectWidth="false"
+                                v-if="unitChecked"
+                                :options="unitList.map(item => ({ value: item.id, label: item.computeUnit }))">
+                        <template #dropdownRender="{ menuNode: menu }">
+                          <v-nodes :vnodes="menu" />
+                          <a-divider style="margin: 4px 0" />
+                          <div style="padding: 4px 8px; cursor: pointer;"
+                               @mousedown="e => e.preventDefault()" @click="addUnit">
+                            <plus-outlined />
+                            新增计量单位</div>
+                        </template>
                       </a-select>
                     </a-col>
                     <a-col :lg="9" :md="9" :sm="24" style="padding:0px; text-align:center">
@@ -156,8 +151,7 @@
                     <a-tag class="tag-info" v-if="!manySkuStatus">需要先录入单位才能激活</a-tag>
                     <a-select mode="multiple" showSearch optionFilterProp="children"
                               placeholder="请选择多属性（可多选）" @change="onManySkuChange" v-show="manySkuStatus">
-                      <a-select-option v-for="(item,index) in productAttributeList.value" :key="index" :value="item.id"
-                                       :disabled="item.disabled">
+                      <a-select-option v-for="(item,index) in productAttributeList.value" :key="index" :value="item.id" :disabled="item.disabled">
                         {{ item.attributeName }}
                       </a-select-option>
                     </a-select>
@@ -335,11 +329,12 @@
       </a-form>
     </a-spin>
   </a-modal>
-
+  <UnitModal @register="registerModal" @success="handleUnitSuccess" />
 </template>
 
 <script lang="ts">
-import {onMounted, reactive, ref, UnwrapRef, watch} from 'vue';
+import {defineComponent, onMounted, reactive, ref, UnwrapRef, watch} from 'vue';
+import {PlusOutlined} from '@ant-design/icons-vue';
 import {UploadProps,} from 'ant-design-vue';
 import {
   Button,
@@ -377,6 +372,8 @@ import BatchSetStockModal from "@/views/product/info/components/BatchSetStockMod
 import {uploadOss} from "@/api/basic/common";
 import {getWarehouse} from "@/api/basic/warehouse";
 import {AddProductImageReq, AddProductReq} from "@/api/product/model/productModel";
+import UnitModal from "@/views/product/units/components/UnitModal.vue";
+import {useModal} from "@/components/Modal";
 
 export interface FormState {
   productId: number,
@@ -398,7 +395,19 @@ export interface FormState {
   otherFieldThree: string,
 }
 
-export default {
+const VNodes = {
+  props: {
+    vnodes: {
+      type: Object,
+      required: true,
+    },
+  },
+  render() {
+    return this.vnodes;
+  },
+};
+
+export default defineComponent({
   name: 'ProductInfoModal',
   emits: ['success', 'cancel', 'error'],
   components: {
@@ -420,8 +429,12 @@ export default {
     'a-tabs': Tabs,
     'a-tab-pane': TabPane,
     'a-table': Table,
+    'v-nodes': VNodes,
+    'plus-outlined': PlusOutlined,
     BatchSetPriceModal,
-    BatchSetStockModal
+    BatchSetStockModal,
+    UnitModal,
+    VNodes
   },
   setup(_, context) {
     const {createMessage} = useMessage();
@@ -451,6 +464,7 @@ export default {
 
     const priceModalForm = ref(null);
     const stockModalForm = ref(null);
+    const [registerModal, {openModal}] = useModal();
     const maxBarCodeInfo = ref();
 
     onMounted(() => {
@@ -489,7 +503,7 @@ export default {
       xs: {span: 24},
       sm: {span: 16},
     })
-    const unitList = reactive([])
+    const unitList = ref([])
     const skuOneList = reactive([])
     const skuTwoList = reactive([])
     const skuThreeList = reactive([])
@@ -518,7 +532,7 @@ export default {
         },
         {
           title: '多属性',
-          key: 'sku',
+          key: 'multiAttribute',
           type: 'input',
           readonly: true,
           placeholder: '请输入${title}'
@@ -592,12 +606,16 @@ export default {
     })
 
     function addUnit() {
-
+      openModal(true, {
+        isUpdate: false,
+      });
     }
 
     function handleCancel() {
       close();
-      clearData()
+      if (formState.productId) {
+        clearData()
+      }
       context.emit('cancel');
     }
 
@@ -605,7 +623,7 @@ export default {
       open.value = false
     }
 
-    function openModal(id) {
+    function openProductInfoModal(id) {
       open.value = true
       loadBarCode()
       loadUnitListData()
@@ -620,47 +638,8 @@ export default {
       } else {
         title.value = '新增商品'
         loadWarehouse()
-        clearData()
         manySkuItem.value = true
-        manySkuStatus.value = true
       }
-    }
-
-    function clearData(){
-      formState.id = null
-      formState.productName = ""
-      formState.productStandard = ""
-      formState.productModel = ""
-      formState.productUnit = ""
-      formState.productUnitId = null
-      formState.productColor = ""
-      formState.productWeight = null
-      formState.productExpiryNum = null
-      formState.productCategoryId = null
-      formState.enableSerialNumber = null
-      formState.enableBatchNumber = null
-      formState.warehouseShelves = ""
-      formState.productManufacturer = ""
-      formState.otherFieldOne = ""
-      formState.otherFieldTwo = ""
-      formState.otherFieldThree = ""
-      unitChecked.value = false
-      manyUnitStatus.value = false
-      manySkuStatus.value = false
-      unitStatus.value = false
-      switchDisabled.value = false
-      barCodeSwitch.value = false
-      // 清除所有的sku
-      manySkuSelected.value = 0
-      skuOneList.value = []
-      skuTwoList.value = []
-      skuThreeList.value = []
-      skuOne.value = []
-      skuTwo.value = []
-      skuThree.value = []
-      meTable.dataSource = []
-      stock.dataSource = []
-      fileList.value = []
     }
 
     function unitOnChange(event) {
@@ -694,7 +673,7 @@ export default {
       }
     }
 
-    const meTableValueChange = (record, dataIndex, value, key) => {
+    const meTableValueChange = (record, key) => {
       if (!editableData[record.key]) {
         editableData[record.key] = {};
       }
@@ -868,7 +847,7 @@ export default {
         skuArr.value = arr;
         loadBarCode();
       } else {
-        createMessage.warn('请填写单位（注意不要勾选多单位）');
+        createMessage.warn('如果使用多属性，请填写单位（注意不要勾选多单位）');
         barCodeSwitch.value = false
       }
     }
@@ -881,7 +860,7 @@ export default {
             meTable.dataSource.splice(0); // 清空meTableData数组
             for (let i = 0; i < skuArr.value.length; i++) {
               let currentBarCode = maxBarCode + i
-              const newRowData = {key: i, productUnit: formState.productUnit, barCode: currentBarCode, sku: skuArr.value[i]}
+              const newRowData = {key: i, productUnit: formState.productUnit, barCode: currentBarCode, multiAttribute: skuArr.value[i]}
               meTable.dataSource.push(newRowData);
             }
             meTable.dataSource.forEach(row => {
@@ -938,7 +917,7 @@ export default {
                   productPriceId: data.priceList[i].productPriceId,
                   barCode: data.priceList[i].barCode,
                   productUnit: data.priceList[i].productUnit,
-                  sku: data.priceList[i].sku,
+                  multiAttribute: data.priceList[i].multiAttribute,
                   purchasePrice: data.priceList[i].purchasePrice,
                   retailPrice: data.priceList[i].retailPrice,
                   salesPrice: data.priceList[i].salesPrice,
@@ -1184,7 +1163,6 @@ export default {
 
     const editStockData = reactive([])
 
-
     function getBase64(file: File) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -1256,6 +1234,42 @@ export default {
       previewTitle.value = '';
     }
 
+    function clearData(){
+      formState.productName = ""
+      formState.productStandard = ""
+      formState.productModel = ""
+      formState.productUnit = ""
+      formState.productUnitId = null
+      formState.productColor = ""
+      formState.productWeight = null
+      formState.productExpiryNum = null
+      formState.productCategoryId = null
+      formState.enableSerialNumber = null
+      formState.enableBatchNumber = null
+      formState.warehouseShelves = ""
+      formState.productManufacturer = ""
+      formState.otherFieldOne = ""
+      formState.otherFieldTwo = ""
+      formState.otherFieldThree = ""
+      unitChecked.value = false
+      manyUnitStatus.value = false
+      manySkuStatus.value = false
+      unitStatus.value = false
+      switchDisabled.value = false
+      barCodeSwitch.value = false
+      // 清除所有的sku
+      manySkuSelected.value = 0
+      skuOneList.value = []
+      skuTwoList.value = []
+      skuThreeList.value = []
+      skuOne.value = []
+      skuTwo.value = []
+      skuThree.value = []
+      meTable.dataSource = []
+      stock.dataSource = []
+      fileList.value = []
+    }
+
     async function handleOk() {
       if (!formState.productName) {
         createMessage.error('请输入商品名称');
@@ -1272,6 +1286,11 @@ export default {
       }
       if (meTable.dataSource.length === 0) {
         createMessage.error('请插入一行数据，录入商品条码价格信息');
+        return;
+      }
+      // 检查库存信息是否为空
+      if (stock.dataSource.length === 0) {
+        createMessage.warn('系统检查到您没有仓库信息，请在基本资料菜单栏->添加至少1条仓库信息');
         return;
       }
 
@@ -1299,6 +1318,11 @@ export default {
           }
         }
       }
+
+      console.info(editableData)
+      console.info(meTable.dataSource)
+      // 我的editableData是一个对象，但是meTable.dataSource是一个数组，
+      // 我需要将数据覆盖到meTable.dataSource中 我的源数据是editableData 这里应该循环editableData
 
       const product : AddProductReq = {
         productId: formState.productId,
@@ -1341,9 +1365,14 @@ export default {
       }
     }
 
+    function handleUnitSuccess() {
+      // 重新渲染单位下拉框数据
+      loadUnitListData()
+    }
+
     return {
       confirmLoading,
-      openModal,
+      openProductInfoModal,
       closeModal,
       handleCancel,
       title,
@@ -1408,10 +1437,13 @@ export default {
       handleOk,
       formState,
       meTableValueChange,
-      stockTableValueChange
+      stockTableValueChange,
+      VNodes,
+      registerModal,
+      handleUnitSuccess
     };
   },
-}
+})
 </script>
 
 <style scoped>

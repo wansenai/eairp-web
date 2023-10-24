@@ -7,7 +7,7 @@
         <a-button type="primary" @click="handleOnStatus(0)"> 批量启用</a-button>
         <a-button type="primary" @click="handleOnStatus(1)"> 批量禁用</a-button>
         <a-button type="primary" @click="handleImport"> 导入</a-button>
-        <a-button type="primary" @click=""> 导出</a-button>
+        <a-button type="primary" @click="handleExport"> 导出</a-button>
         <a-button type="primary" @click="handleBatchProductInfo"> 批量编辑</a-button>
         <a-button type="primary" @click=""> 修正库存</a-button>
       </template>
@@ -50,6 +50,7 @@ import ProductInfoModal from "@/views/product/info/components/ProductInfoModal.v
 import BatchEditModal from "@/views/product/info/components/BatchEditModal.vue";
 import {getProductInfo, deleteProduct, updateProductStatus} from "@/api/product/product";
 import ImportFileModal from "@/components/Tools/ImportFileModal.vue";
+import {exportXlsx} from "@/api/basic/common";
 
 export default defineComponent({
   name: 'ProductInfo',
@@ -85,7 +86,7 @@ export default defineComponent({
     });
 
     function handleCreate() {
-      productModalRef.value.openModal()
+      productModalRef.value.openProductInfoModal()
     }
 
     async function handleBatchDelete() {
@@ -102,7 +103,7 @@ export default defineComponent({
     }
 
     function handleEdit(record: Recordable) {
-      productModalRef.value.openModal(record.id)
+      productModalRef.value.openProductInfoModal(record.id)
     }
 
     async function handleDelete(record: Recordable) {
@@ -155,6 +156,29 @@ export default defineComponent({
       importModalRef.value.title = "商品信息数据导入";
     }
 
+    const getTimestamp = (date) => {
+      return (
+          date.getFullYear() * 10000000000 +
+          (date.getMonth() + 1) * 100000000 +
+          date.getDate() * 1000000 +
+          date.getHours() * 10000 +
+          date.getMinutes() * 100 +
+          date.getSeconds()
+      ).toString();
+    };
+
+    async function handleExport() {
+      const file = await exportXlsx("商品信息列表")
+      const blob = new Blob([file]);
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      const timestamp = getTimestamp(new Date());
+      link.download = "商品信息数据" + timestamp + ".xlsx";
+      link.target = "_blank";
+      link.click();
+    }
+
+
     return {
       registerTable,
       handleCreate,
@@ -169,6 +193,7 @@ export default defineComponent({
       batchProductInfoModalRef,
       handleBatchProductInfo,
       handleImport,
+      handleExport,
       importModalRef
     }
   }
