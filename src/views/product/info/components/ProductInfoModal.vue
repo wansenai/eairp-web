@@ -1319,11 +1319,6 @@ export default defineComponent({
         }
       }
 
-      console.info(editableData)
-      console.info(meTable.dataSource)
-      // 我的editableData是一个对象，但是meTable.dataSource是一个数组，
-      // 我需要将数据覆盖到meTable.dataSource中 我的源数据是editableData 这里应该循环editableData
-
       const product : AddProductReq = {
         productId: formState.productId,
         productName: formState.productName,
