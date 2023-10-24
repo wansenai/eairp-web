@@ -329,10 +329,11 @@
       </a-form>
     </a-spin>
   </a-modal>
+  <UnitModal @register="registerModal" @success="handleUnitSuccess" />
 </template>
 
 <script lang="ts">
-import {onMounted, reactive, ref, UnwrapRef, watch} from 'vue';
+import {defineComponent, onMounted, reactive, ref, UnwrapRef, watch} from 'vue';
 import {PlusOutlined} from '@ant-design/icons-vue';
 import {UploadProps,} from 'ant-design-vue';
 import {
@@ -371,6 +372,8 @@ import BatchSetStockModal from "@/views/product/info/components/BatchSetStockMod
 import {uploadOss} from "@/api/basic/common";
 import {getWarehouse} from "@/api/basic/warehouse";
 import {AddProductImageReq, AddProductReq} from "@/api/product/model/productModel";
+import UnitModal from "@/views/product/units/components/UnitModal.vue";
+import {useModal} from "@/components/Modal";
 
 export interface FormState {
   productId: number,
@@ -404,7 +407,7 @@ const VNodes = {
   },
 };
 
-export default {
+export default defineComponent({
   name: 'ProductInfoModal',
   emits: ['success', 'cancel', 'error'],
   components: {
@@ -430,6 +433,7 @@ export default {
     'plus-outlined': PlusOutlined,
     BatchSetPriceModal,
     BatchSetStockModal,
+    UnitModal,
     VNodes
   },
   setup(_, context) {
@@ -460,6 +464,7 @@ export default {
 
     const priceModalForm = ref(null);
     const stockModalForm = ref(null);
+    const [registerModal, {openModal}] = useModal();
     const maxBarCodeInfo = ref();
 
     onMounted(() => {
@@ -601,7 +606,9 @@ export default {
     })
 
     function addUnit() {
-
+      openModal(true, {
+        isUpdate: false,
+      });
     }
 
     function handleCancel() {
@@ -616,7 +623,7 @@ export default {
       open.value = false
     }
 
-    function openModal(id) {
+    function openProductInfoModal(id) {
       open.value = true
       loadBarCode()
       loadUnitListData()
@@ -1358,9 +1365,14 @@ export default {
       }
     }
 
+    function handleUnitSuccess() {
+      // 重新渲染单位下拉框数据
+      loadUnitListData()
+    }
+
     return {
       confirmLoading,
-      openModal,
+      openProductInfoModal,
       closeModal,
       handleCancel,
       title,
@@ -1426,10 +1438,12 @@ export default {
       formState,
       meTableValueChange,
       stockTableValueChange,
-      VNodes
+      VNodes,
+      registerModal,
+      handleUnitSuccess
     };
   },
-}
+})
 </script>
 
 <style scoped>
