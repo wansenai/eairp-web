@@ -86,7 +86,7 @@ export default defineComponent({
     });
 
     function handleCreate() {
-      productModalRef.value.openModal()
+      productModalRef.value.openProductInfoModal()
     }
 
     async function handleBatchDelete() {
@@ -103,7 +103,7 @@ export default defineComponent({
     }
 
     function handleEdit(record: Recordable) {
-      productModalRef.value.openModal(record.id)
+      productModalRef.value.openProductInfoModal(record.id)
     }
 
     async function handleDelete(record: Recordable) {
