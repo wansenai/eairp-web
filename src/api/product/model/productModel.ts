@@ -19,34 +19,34 @@ export interface AddProductPriceReq {
 }
 
 export interface AddProductImageReq {
-    productImageId: number | string;
-    uid: string;
-    type: string;
-    status: string;
-    imageName: string;
-    imageUrl: string;
-    imageSize: number;
+    productImageId: number | string | null;
+    uid: string | null;
+    type: string | null | undefined;
+    status: string | null | undefined;
+    imageName: string | null;
+    imageUrl: string | null;
+    imageSize: number | null | undefined;
 }
 
 export interface AddProductReq {
     productId: number | string;
     productName: string;
     productStandard: string;
-    productModel: string;
-    productUnit: string | undefined,
-    productUnitId: number | string | undefined;
-    productColor: string;
-    productWeight: number;
-    productExpiryNum: number;
-    productCategoryId: number | string | undefined;
-    enableSerialNumber: number;
-    enableBatchNumber: number;
-    warehouseShelves: string;
-    remark: string;
-    productManufacturer: string;
-    otherFieldOne: string;
-    otherFieldTwo: string;
-    otherFieldThree: string;
+    productModel: string
+    productUnit: string
+    productUnitId: number | string;
+    productColor: string
+    productWeight: number | string;
+    productExpiryNum: number | string;
+    productCategoryId: number | string;
+    enableSerialNumber: number | string;
+    enableBatchNumber: number | string;
+    warehouseShelves: string
+    remark: string
+    productManufacturer: string
+    otherFieldOne: string
+    otherFieldTwo: string
+    otherFieldThree: string
     priceList: AddProductPriceReq[];
     stockList: AddProductStockReq[];
     imageList: AddProductImageReq[];
@@ -67,6 +67,8 @@ export interface QueryProductReq {
 export interface ProductInfoDetailResp {
     productId: string;
     productCategoryId: string;
+    productUnitId: string;
+    productUnit: string;
     productName: string;
     productStandard: string;
     productModel: string;
@@ -81,17 +83,20 @@ export interface ProductInfoDetailResp {
     otherFieldOne: string;
     otherFieldTwo: string;
     otherFieldThree: string;
+    remark: string;
     priceList: ProductPriceResp[];
     stockList: ProductStockResp[];
     imageList: ProductImageResp[];
 }
 
 export interface ProductImageResp {
+    productImageId: string;
     imageName: string;
-    iImageUrl: string;
+    imageUrl: string;
 }
 
 export interface ProductPriceResp {
+    productPriceId: string;
     barCode: number;
     productUnit: string;
     multiAttribute: string;
@@ -102,7 +107,7 @@ export interface ProductPriceResp {
 }
 
 export interface ProductStockResp {
-    id: number | string;
+    productStockId: number | string;
     warehouseId: number | string;
     warehouseName: string;
     initStockQuantity: number;

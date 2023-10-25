@@ -55,7 +55,7 @@
                                 placeholder="选择多单位"
                                 v-model:value="formState.productUnitId"
                                 :rules="[{ required: true}]"
-                                @change="manyUnitOnChange"
+                                @change="manyUnitOnChange(formState.productUnitId)"
                                 showSearch
                                 optionFilterProp="children"
                                 :dropdownMatchSelectWidth="false"
@@ -151,7 +151,7 @@
                     <a-tag class="tag-info" v-if="!manySkuStatus">需要先录入单位才能激活</a-tag>
                     <a-select mode="multiple" showSearch optionFilterProp="children"
                               placeholder="请选择多属性（可多选）" @change="onManySkuChange" v-show="manySkuStatus">
-                      <a-select-option v-for="(item,index) in productAttributeList.value" :key="index" :value="item.id" :disabled="item.disabled">
+                      <a-select-option v-for="(item,index) in productAttributeList" :key="index" :value="item.id" :disabled="item.disabled">
                         {{ item.attributeName }}
                       </a-select-option>
                     </a-select>
@@ -165,7 +165,7 @@
                              :wrapperCol="{xs: { span: 24 },sm: { span: 20 }}" :label="skuOneTitle">
                   <a-select mode="multiple" v-model="skuOne" showSearch
                             placeholder="请选择（可多选）" @change="onSkuChange($event, skuOne)">
-                    <a-select-option v-for="(item,index) in skuOneList.value" :key="index" :value="item.value">
+                    <a-select-option v-for="(item,index) in skuOneList" :key="index" :value="item.value">
                       {{ item.value }}
                     </a-select-option>
                   </a-select>
@@ -176,7 +176,7 @@
                              :wrapperCol="{xs: { span: 24 },sm: { span: 20 }}" :label="skuTwoTitle">
                   <a-select mode="multiple" v-model="skuTwo" showSearch
                             placeholder="请选择（可多选）" @change="onSkuChange($event, skuTwo)">
-                    <a-select-option v-for="(item,index) in skuTwoList.value" :key="index" :value="item.value">
+                    <a-select-option v-for="(item,index) in skuTwoList" :key="index" :value="item.value">
                       {{ item.value }}
                     </a-select-option>
                   </a-select>
@@ -187,7 +187,7 @@
                              :wrapperCol="{xs: { span: 24 },sm: { span: 20 }}" :label="skuThreeTitle">
                   <a-select mode="multiple" v-model="skuThree" showSearch
                             placeholder="请选择（可多选）" @change="onSkuChange($event, skuThree)">
-                    <a-select-option v-for="(item,index) in skuThreeList.value" :key="index" :value="item.value">
+                    <a-select-option v-for="(item,index) in skuThreeList" :key="index" :value="item.value">
                       {{ item.value }}
                     </a-select-option>
                   </a-select>
@@ -214,7 +214,7 @@
                          bordered
                          :row-selection="rowSelection"
                          :scroll="{ x: '100%', y: 300 }">
-                  <template #bodyCell="{ column, text, record }">
+                  <template #bodyCell="{ column, record }">
                     <template v-if="editableData[record.key]">
                       <a-input v-model:value="editableData[record.key][column.key]"
                                :placeholder="`请输入${getColumnTitle(column)}`" @change="meTableValueChange(record.key)"/>
@@ -227,7 +227,7 @@
             <a-row class="form-row" :gutter="24">
               <a-col :lg="24" :md="24" :sm="24">
                 <a-form-item :labelCol="labelCol" :wrapperCol="{xs: { span: 24 },sm: { span: 24 }}" label="">
-                  <a-textarea :rows="1" placeholder="请输入备注" style="margin-top:8px;"/>
+                  <a-input v-model:vale="formState.remark" placeholder="请输入备注" style="margin-top:8px;"/>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -333,9 +333,9 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, onMounted, reactive, ref, UnwrapRef, watch} from 'vue';
+import {defineComponent, reactive, ref, watch, Ref} from 'vue';
 import {PlusOutlined} from '@ant-design/icons-vue';
-import {UploadProps,} from 'ant-design-vue';
+import {Textarea, UploadProps,} from 'ant-design-vue';
 import {
   Button,
   Checkbox,
@@ -358,42 +358,25 @@ import {
   UploadChangeParam,
 } from "ant-design-vue";
 import {cloneDeep} from 'lodash-es';
-import {getUnitList} from "/@/api/product/productUnit"
-import {ProductCategoryResp} from '/@/api/product/model/productCategoryModel'
-import {getCategoryList} from "/@/api/product/productCategory"
-import {ProductUnitQueryReq} from "/@/api/product/model/productUnitModel"
+import {getUnitList} from "/@/api/product/productUnit";
+import {getCategoryList} from "/@/api/product/productCategory";
+import {ProductUnitQueryReq} from "/@/api/product/model/productUnitModel";
 import {DefaultOptionType} from "ant-design-vue/es/vc-tree-select/TreeSelect";
-import {ProductAttributeListReq} from "@/api/product/model/productAttributeModel"
-import {getBarCode, getProductInfoDetail, addOrUpdateProduct} from "@/api/product/product"
-import {getAttributeById, getAttributeList} from "@/api/product/productAttribute"
+import {getBarCode, getProductInfoDetail, addOrUpdateProduct} from "@/api/product/product";
+import {getAttributeById, getAttributeList} from "@/api/product/productAttribute";
 import {useMessage} from "@/hooks/web/useMessage";
 import BatchSetPriceModal from "@/views/product/info/components/BatchSetPriceModal.vue";
 import BatchSetStockModal from "@/views/product/info/components/BatchSetStockModal.vue";
 import {uploadOss} from "@/api/basic/common";
 import {getWarehouse} from "@/api/basic/warehouse";
-import {AddProductImageReq, AddProductReq} from "@/api/product/model/productModel";
 import UnitModal from "@/views/product/units/components/UnitModal.vue";
 import {useModal} from "@/components/Modal";
 
-export interface FormState {
-  productId: number,
-  productName: string,
-  productStandard: string,
-  productModel: string,
-  productUnit: string,
-  productUnitId: number,
-  productColor: string,
-  productWeight: number,
-  productExpiryNum: number,
-  productCategoryId: number,
-  enableSerialNumber: number,
-  enableBatchNumber: number,
-  warehouseShelves: string
-  productManufacturer: string,
-  otherFieldOne: string,
-  otherFieldTwo: string,
-  otherFieldThree: string,
-}
+import {AddProductImageReq, AddProductReq, AddProductStockReq} from "@/api/product/model/productModel";
+import {ProductCategoryResp} from '/@/api/product/model/productCategoryModel';
+import {ProductAttributeListReq} from "@/api/product/model/productAttributeModel";
+import {ProductAttributeModel, ProductStockModel, Unit} from "@/views/product/info/model/productInfoModel";
+import {meTable, stock, productInfo, formState} from "@/views/product/info/info.data";
 
 const VNodes = {
   props: {
@@ -430,6 +413,7 @@ export default defineComponent({
     'a-tab-pane': TabPane,
     'a-table': Table,
     'v-nodes': VNodes,
+    'a-textarea': Textarea,
     'plus-outlined': PlusOutlined,
     BatchSetPriceModal,
     BatchSetStockModal,
@@ -462,38 +446,13 @@ export default defineComponent({
     const skuTwo = reactive([]);
     const skuThree = reactive([]);
 
-    const priceModalForm = ref(null);
-    const stockModalForm = ref(null);
+    const priceModalForm = ref<BatchSetPriceModal>();
+    const stockModalForm = ref<BatchSetStockModal>();
     const [registerModal, {openModal}] = useModal();
     const maxBarCodeInfo = ref();
 
-    onMounted(() => {
-      // 在组件初始化加载时调用请求接口的方法
-      // loadUnitListData();
-      // loadCategoryTreeData();
-    });
-
     const model = ref({});
 
-    const formState: UnwrapRef<FormState> = reactive({
-      productId: null,
-      productName: undefined,
-      productStandard: undefined,
-      productModel: undefined,
-      productUnit: undefined,
-      productUnitId: undefined,
-      productColor: undefined,
-      productWeight: undefined,
-      productExpiryNum: undefined,
-      productCategoryId: undefined,
-      enableSerialNumber: null,
-      enableBatchNumber: null,
-      warehouseShelves: undefined,
-      productManufacturer: undefined,
-      otherFieldOne: undefined,
-      otherFieldTwo: undefined,
-      otherFieldThree: undefined,
-    });
 
     const labelCol = reactive({
       xs: {span: 24},
@@ -502,107 +461,6 @@ export default defineComponent({
     const wrapperCol = reactive({
       xs: {span: 24},
       sm: {span: 16},
-    })
-    const unitList = ref([])
-    const skuOneList = reactive([])
-    const skuTwoList = reactive([])
-    const skuThreeList = reactive([])
-    const productAttributeList = reactive([])
-    const categoryTree = reactive([])
-    const meTable = reactive({
-      loading: false,
-      dataSource: [],
-      columns: [
-        {
-          title: '条码',
-          key: 'barCode',
-          type: 'inputNumber',
-          placeholder: '请输入${title}',
-          validateRules: [
-            {required: true, message: '${title}不能为空'},
-            {pattern: /^.{4,40}$/, message: '长度为4到40位'}
-          ]
-        },
-        {
-          title: '单位',
-          key: 'productUnit',
-          type: 'input',
-          placeholder: '请输入${title}',
-          validateRules: [{required: true, message: '${title}不能为空'}]
-        },
-        {
-          title: '多属性',
-          key: 'multiAttribute',
-          type: 'input',
-          readonly: true,
-          placeholder: '请输入${title}'
-        },
-        {
-          title: '采购价',
-          key: 'purchasePrice',
-          type: 'inputNumber',
-          defaultValue: '',
-          placeholder: '请输入${title}'
-        },
-        {
-          title: '零售价',
-          key: 'retailPrice',
-          type: 'inputNumber',
-          defaultValue: '',
-          placeholder: '请输入${title}'
-        },
-        {
-          title: '销售价',
-          key: 'salesPrice',
-          type: 'inputNumber',
-          defaultValue: '',
-          placeholder: '请输入${title}'
-        },
-        {
-          title: '最低售价',
-          key: 'lowSalesPrice',
-          type: 'inputNumber',
-          defaultValue: '',
-          placeholder: '请输入${title}'
-        }
-      ]
-    });
-
-    const stock = reactive({
-      loading: false,
-      dataSource: [],
-      columns: [
-        {
-          title: '仓库',
-          key: 'warehouseName',
-          type: 'input',
-        },
-        {
-          title: '期初库存数量',
-          key: 'initStockQuantity',
-          type: 'inputNumber',
-          placeholder: '请输入${title}'
-        },
-        {
-          title: '最低安全库存数量',
-          key: 'lowStockQuantity',
-          type: 'inputNumber',
-          placeholder: '请输入${title}'
-        },
-        {
-          title: '最高安全库存数量',
-          key: 'highStockQuantity',
-          type: 'inputNumber',
-          placeholder: '请输入${title}'
-        }
-      ]
-    });
-
-    const productInfo = reactive({
-      mfrs: '制造商',
-      otherField1: '自定义1',
-      otherField2: '自定义2',
-      otherField3: '自定义3'
     })
 
     function addUnit() {
@@ -623,7 +481,7 @@ export default defineComponent({
       open.value = false
     }
 
-    function openProductInfoModal(id) {
+    function openProductInfoModal(id: string | undefined) {
       open.value = true
       loadBarCode()
       loadUnitListData()
@@ -657,18 +515,10 @@ export default defineComponent({
     }
 
     function onlyUnitOnChange(e) {
-      if (e.target.value) {
-        // 单位有填写了之后则显示多属性的文本框
-        manySkuStatus.value = true;
-      } else {
-        manySkuStatus.value = false;
-      }
+      manySkuStatus.value = !!e.target.value;
       const dataSource = meTable.dataSource
       for (let i = 0; i < dataSource.length; i++) {
         dataSource[i].productUnit = e.target.value
-      }
-      meTable.dataSource = dataSource
-      for (let i = 0; i < meTable.dataSource.length; i++) {
         editableData[meTable.dataSource[i].key] = meTable.dataSource[i]
       }
     }
@@ -705,6 +555,7 @@ export default defineComponent({
 
     async function loadUnitListData() {
       const unitObject: ProductUnitQueryReq = {
+        computeUnit: undefined,
         page: 1,
         pageSize: 1000,
       }
@@ -718,7 +569,7 @@ export default defineComponent({
       const tree: DefaultOptionType[] = [];
       for (const item of flatData) {
         if (item.parentId === parentId) {
-          const children = buildTree(flatData, item.id);
+          const children = buildTree(flatData, item.id.toString());
           const defaultOption: DefaultOptionType = {
             value: item.id,
             title: item.categoryName,
@@ -732,16 +583,19 @@ export default defineComponent({
       return tree;
     }
 
+    const categoryTree: DefaultOptionType[] = reactive([]);
     async function loadCategoryTreeData() {
-      const categoryTreeResult = await getCategoryList()
+      const categoryTreeResult = await getCategoryList();
       if (categoryTreeResult) {
         const flatData = categoryTreeResult.data;
         categoryTree.value = buildTree(flatData, null);
       }
     }
 
+    const productAttributeList = ref<ProductAttributeModel[]>([]);
     async function loadAttributeTreeData() {
       const attributeObject: ProductAttributeListReq = {
+        attributeName: undefined,
         page: 1,
         pageSize: 1000,
       }
@@ -751,24 +605,27 @@ export default defineComponent({
       }
     }
 
-    function manyUnitOnChange(value) {
-      let unitArr = unitList.value
-      let basicUnit = '', otherUnit = '', ratio = 1, otherUnitTwo = '', ratioTwo = 1, otherUnitThree = '', ratioThree = 1
+    const unitList = ref<Unit[]>([])
+    function manyUnitOnChange(value: number | string) {
+      let unitArr = unitList.value;
+      let basicUnit = '';
+      let otherUnit = '';
+      let otherUnitTwo = '';
+      let otherUnitThree = '';
+
       for (let i = 0; i < unitArr.length; i++) {
-        if(unitArr[i].id === value) {
-          basicUnit = unitArr[i].basicUnit
-          otherUnit = unitArr[i].otherUnit
-          ratio = unitArr[i].ratio
-          if(unitArr[i].otherUnitTwo) {
-            otherUnitTwo = unitArr[i].otherUnitTwo
-            ratioTwo = unitArr[i].ratioTwo
+        if (unitArr[i].id === value) {
+          basicUnit = unitArr[i].basicUnit;
+          otherUnit = unitArr[i].otherUnit;
+          if (unitArr[i].otherUnitTwo) {
+            otherUnitTwo = unitArr[i].otherUnitTwo;
           }
-          if(unitArr[i].otherUnitThree) {
-            otherUnitThree = unitArr[i].otherUnitThree
-            ratioThree = unitArr[i].ratioThree
+          if (unitArr[i].otherUnitThree) {
+            otherUnitThree = unitArr[i].otherUnitThree;
           }
         }
       }
+
       getBarCode().then(res => {
         if (res && res.code === '00000') {
           let maxBarCode = res.data
@@ -791,10 +648,10 @@ export default defineComponent({
       })
     }
 
-    const skuOneData = ref([]);
-    const skuTwoData = ref([]);
-    const skuThreeData = ref([]);
-    const skuArr = ref([]);
+    const skuOneData: Ref<string[]>  = ref([]);
+    const skuTwoData: Ref<string[]> = ref([]);
+    const skuThreeData: Ref<string[]> = ref([]);
+    const skuArr: Ref<string[]> = ref([]);
 
     function onSkuChange(value, array) {
       if (array === skuOne) {
@@ -808,7 +665,7 @@ export default defineComponent({
     }
 
     function autoSkuList() {
-      let arr = [];
+      let arr: string[] = [];
       if(formState.productUnit) {
         if (skuOneData.value.length > 0 && skuTwoData.value.length > 0 && skuThreeData.value.length > 0) {
           for (let i = 0; i < skuOneData.value.length; i++) {
@@ -857,7 +714,7 @@ export default defineComponent({
         if (res && res.code === '00000') {
           let maxBarCode = res.data
           if (skuArr.value.length > 0) {
-            meTable.dataSource.splice(0); // 清空meTableData数组
+            meTable.dataSource = [] // 清空meTableData数组
             for (let i = 0; i < skuArr.value.length; i++) {
               let currentBarCode = maxBarCode + i
               const newRowData = {key: i, productUnit: formState.productUnit, barCode: currentBarCode, multiAttribute: skuArr.value[i]}
@@ -894,6 +751,7 @@ export default defineComponent({
             formState.otherFieldOne = data.otherFieldOne
             formState.otherFieldTwo = data.otherFieldTwo
             formState.otherFieldThree = data.otherFieldThree
+            formState.remark = data.remark
 
             if(data.productUnitId) {
               // 说明是多属性 选中多属性的checkbox 赋值给下拉框3
@@ -910,7 +768,7 @@ export default defineComponent({
             }
 
             if (data.priceList) {
-              meTable.dataSource.splice(0); // 清空meTableData数组
+              meTable.dataSource = []; // 清空meTableData数组
               for (let i = 0; i < data.priceList.length; i++) {
                 const newRowData = {
                   key: i,
@@ -928,9 +786,10 @@ export default defineComponent({
               meTable.dataSource.forEach(row => {
                 edit(row.key);
               });
+              console.info(meTable.dataSource)
             }
             if (data.stockList) {
-              stock.dataSource.splice(0);
+              stock.dataSource = [];
               for (let i = 0; i < data.stockList.length; i++) {
                 const newRowData = {
                   key: i,
@@ -948,10 +807,10 @@ export default defineComponent({
               });
             }
             if (data.imageList) {
-              fileList.value.splice(0);
+              fileList.value = [];
               for (let i = 0; i < data.imageList.length; i++) {
                 const newRowData = {
-                  uid: i,
+                  uid: i.toString(),
                   productImageId: data.imageList[i].productImageId,
                   name: data.imageList[i].imageName,
                   status: 'done',
@@ -969,9 +828,9 @@ export default defineComponent({
     function loadWarehouse() {
       getWarehouse().then(res => {
         if(res && res.code === '00000') {
-          let warehouseList = res.data
+          let warehouseList: ProductStockModel[] = res.data
           if(warehouseList.length > 0) {
-            stock.dataSource.splice(0);
+            stock.dataSource = [] as ProductStockModel[];
             for(let i = 0; i < warehouseList.length; i++) {
               const rowData = {
                 key: warehouseList[i].id,
@@ -989,8 +848,6 @@ export default defineComponent({
     }
 
     watch(manySkuSelected, (value) => {
-      // 控制多属性下拉框中选择项的状态
-      // 1.如果value < 3 则将所有的多属性下拉框中的选项都设置为可选，但是可以取消勾选 2.如果value >= 3 则将所有的多属性下拉框中的选项都设置为不可选
       if (value < 3) {
         for (let i = 0; i < productAttributeList.value.length; i++) {
           productAttributeList.value[i].disabled = false
@@ -1002,15 +859,19 @@ export default defineComponent({
       }
     });
 
+    const skuOneList = ref()
+    const skuTwoList = ref()
+    const skuThreeList = ref()
+
     async function onManySkuChange(value) {
       manySkuSelected.value = value.length;
-
       if (value.length >= 1) {
         let skuOneId = value[0];
-        const res = await getAttributeById(skuOneId);
-        if (res) {
-          skuOneList.value = res;
-          skuOneTitle.value = res[0].name;
+        const data = await getAttributeById(skuOneId);
+        if (data) {
+          console.info(data)
+          skuOneList.value = data
+          skuOneTitle.value = data[0].name;
         }
       } else {
         skuOneTitle.value = "";
@@ -1019,10 +880,10 @@ export default defineComponent({
 
       if (value.length >= 2) {
         let skuTwoId = value[1];
-        const res = await getAttributeById(skuTwoId);
-        if (res) {
-          skuTwoList.value = res;
-          skuTwoTitle.value = res[0].name;
+        const data = await getAttributeById(skuTwoId);
+        if (data) {
+          skuTwoList.value = data
+          skuTwoTitle.value = data[0].name;
         }
       } else {
         skuTwoTitle.value = "";
@@ -1031,18 +892,19 @@ export default defineComponent({
 
       if (value.length >= 3) {
         let skuThreeId = value[2];
-        const res = await getAttributeById(skuThreeId);
-        if (res) {
-          skuThreeList.value = res;
-          skuThreeTitle.value = res[0].name;
+        const data = await getAttributeById(skuThreeId);
+        if (data) {
+          skuThreeList.value = data
+          skuThreeTitle.value = data[0].name;
         }
       } else {
         skuThreeTitle.value = "";
         skuThreeList.value = [];
       }
+      console.info(skuOneList.value)
     }
 
-    function batchSetPrice(type) {
+    function batchSetPrice(type: string) {
       if (manySkuSelected.value > 0) {
         priceModalForm.value.add(type);
         priceModalForm.value.openPriceModal = true;
@@ -1051,12 +913,12 @@ export default defineComponent({
       }
     }
 
-    function batchSetStock(type) {
-      stockModalForm.value.add(type);
-      stockModalForm.value.openStockModal = true;
+    function batchSetStock(type : string) {
+      stockModalForm.value!.add(type);
+      stockModalForm.value!.openStockModal = true;
     }
 
-    function batchSetPriceModalFormOk(price, batchType) {
+    function batchSetPriceModalFormOk(price: number, batchType: string) {
       if (meTable.dataSource.length === 0) {
         createMessage.warn('请先录入条码、单位等信息！');
         return;
@@ -1081,9 +943,10 @@ export default defineComponent({
       meTable.dataSource.forEach(row => {
         edit(row.key);
       });
+      console.info(meTable.dataSource)
     }
 
-    function batchSetStockModalFormOk(stockNumber, batchType) {
+    function batchSetStockModalFormOk(stockNumber: number, batchType: string) {
       if (batchType === 'initStock') {
         for (let i = 0; i < stock.dataSource.length; i++) {
           stock.dataSource[i].initStockQuantity = stockNumber
@@ -1106,8 +969,9 @@ export default defineComponent({
     const editableData = reactive({});
 
     const addRow = () => {
-      const newRow = {key: Date.now()}; // Create a new row with a unique key
-      editableData[newRow.key] = cloneDeep(newRow); // Add the new row to editableData
+      // Create a new row with a unique key
+      const newRow: { key: number; productUnit?: string; barCode?: number } = { key: Date.now() };
+      editableData[newRow.key] = cloneDeep(newRow);
       if (formState.productUnit) {
         newRow.productUnit = formState.productUnit
       }
@@ -1161,7 +1025,7 @@ export default defineComponent({
       rowSelection.value.selectedRowKeys = [];
     }
 
-    const editStockData = reactive([])
+    const editStockData = reactive({})
 
     function getBase64(file: File) {
       return new Promise((resolve, reject) => {
@@ -1235,22 +1099,24 @@ export default defineComponent({
     }
 
     function clearData(){
-      formState.productName = ""
-      formState.productStandard = ""
-      formState.productModel = ""
-      formState.productUnit = ""
-      formState.productUnitId = null
-      formState.productColor = ""
-      formState.productWeight = null
-      formState.productExpiryNum = null
-      formState.productCategoryId = null
-      formState.enableSerialNumber = null
-      formState.enableBatchNumber = null
-      formState.warehouseShelves = ""
-      formState.productManufacturer = ""
-      formState.otherFieldOne = ""
-      formState.otherFieldTwo = ""
-      formState.otherFieldThree = ""
+      formState.productId = ''
+      formState.productName = ''
+      formState.productStandard = ''
+      formState.productModel = ''
+      formState.productUnit = ''
+      formState.productUnitId = ''
+      formState.productColor = ''
+      formState.productWeight = ''
+      formState.productExpiryNum = ''
+      formState.productCategoryId = ''
+      formState.enableSerialNumber = ''
+      formState.enableBatchNumber = ''
+      formState.warehouseShelves = ''
+      formState.productManufacturer = ''
+      formState.otherFieldOne = ''
+      formState.otherFieldTwo = ''
+      formState.otherFieldThree = ''
+      formState.remark = ''
       unitChecked.value = false
       manyUnitStatus.value = false
       manySkuStatus.value = false
@@ -1262,9 +1128,9 @@ export default defineComponent({
       skuOneList.value = []
       skuTwoList.value = []
       skuThreeList.value = []
-      skuOne.value = []
-      skuTwo.value = []
-      skuThree.value = []
+      skuOne.splice(0, skuOne.length);
+      skuTwo.splice(0, skuTwo.length);
+      skuThree.splice(0, skuThree.length);
       meTable.dataSource = []
       stock.dataSource = []
       fileList.value = []
@@ -1294,35 +1160,36 @@ export default defineComponent({
         return;
       }
 
-      const imageList = []
+      console.info(editableData)
+      console.info(editStockData)
+
+      const imageList: AddProductImageReq[] = [];
       if (fileList && fileList.value) {
         for (let i = 0; i < fileList.value.length; i++) {
           if (fileList.value[i].url) {
-            const image : AddProductImageReq = {
+            const image = {
+              productImageId: null,
               uid: fileList.value[i].uid,
-              status: fileList.value[i].status,
+              type: null,
+              status: fileList.value[i].status || null,
               imageName: fileList.value[i].name,
-              imageUrl: fileList.value[i].url,
+              imageUrl: fileList.value[i].url || null,
+              imageSize: null,
             }
             imageList.push(image)
           } else {
-            const image : AddProductImageReq = {
+            const image = {
               uid: fileList.value[i].uid,
               type: fileList.value[i].type,
               status: fileList.value[i].status,
               imageName: fileList.value[i].name,
-              imageUrl: fileList.value[i].response.data[0],
+              imageUrl: fileList.value[i].response.data[0] as string,
               imageSize: fileList.value[i].size,
             }
             imageList.push(image)
           }
         }
       }
-
-      console.info(editableData)
-      console.info(meTable.dataSource)
-      // 我的editableData是一个对象，但是meTable.dataSource是一个数组，
-      // 我需要将数据覆盖到meTable.dataSource中 我的源数据是editableData 这里应该循环editableData
 
       const product : AddProductReq = {
         productId: formState.productId,
@@ -1342,10 +1209,14 @@ export default defineComponent({
         otherFieldOne: formState.otherFieldOne,
         otherFieldTwo: formState.otherFieldTwo,
         otherFieldThree: formState.otherFieldThree,
+        remark: formState.remark,
         priceList: meTable.dataSource,
         stockList: stock.dataSource,
         imageList: imageList
       }
+
+      console.info(meTable.dataSource)
+      console.info(stock.dataSource)
 
       const addOrUpdateProductResult = await addOrUpdateProduct(product);
       if(addOrUpdateProductResult.code === 'P0010') {
@@ -1452,7 +1323,7 @@ export default defineComponent({
   height: 32px;
   line-height: 32px;
   width: 100%;
-  padding: 0px 11px;
+  padding: 0 11px;
   color: #bbb;
   background-color: #ffffff;
 }
@@ -1460,10 +1331,5 @@ export default defineComponent({
 .ant-upload-select-picture-card i {
   font-size: 32px;
   color: #999;
-}
-
-.ant-upload-select-picture-card .ant-upload-text {
-  margin-top: 8px;
-  color: #666;
 }
 </style>

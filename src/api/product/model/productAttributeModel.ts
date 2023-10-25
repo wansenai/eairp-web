@@ -24,5 +24,7 @@ export interface AddOrUpdateProductAttributeReq {
 }
 
 export interface ProductAttributeListReq {
-    attributeName: string;
+    attributeName: string | undefined;
+    page: number;
+    pageSize: number;
 }
