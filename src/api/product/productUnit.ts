@@ -10,16 +10,12 @@ enum Api {
     UpdateStatus = '/product/unit/updateUnitStatus',
 }
 
-export function getUnitList(params: ProductUnitQueryReq ,mode: ErrorMessageMode = 'notice') {
+export function getUnitList(params: ProductUnitQueryReq) {
     return defHttp.post<BaseDataResp<ProductUnitResp>>(
         {
             url: Api.List,
             params,
-        },
-        {
-            errorMessageMode: mode,
-            successMessageMode: mode,
-        },
+        }
     );
 }
 

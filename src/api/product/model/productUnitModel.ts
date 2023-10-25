@@ -22,7 +22,7 @@ export interface AddOrUpdateProductUnitReq {
 }
 
 export interface ProductUnitQueryReq {
-    computeUnit: string;
+    computeUnit: string | undefined;
     page: number;
     pageSize: number;
 }

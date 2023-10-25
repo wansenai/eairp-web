@@ -10,16 +10,12 @@ enum Api {
     GetAttributeById = '/product/attribute/getValuesById',
 }
 
-export function getAttributeList(params: ProductAttributeListReq ,mode: ErrorMessageMode = 'notice') {
+export function getAttributeList(params: ProductAttributeListReq) {
     return defHttp.post<BaseDataResp<ProductAttributeResp>>(
         {
             url: Api.List,
             params,
-        },
-        {
-            errorMessageMode: mode,
-            successMessageMode: mode,
-        },
+        }
     );
 }
 

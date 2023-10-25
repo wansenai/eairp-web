@@ -9,14 +9,11 @@ enum Api {
     deleteBatch = '/product/category/deleteBatch',
 }
 
-export function getCategoryList(mode: ErrorMessageMode = 'notice') {
+export function getCategoryList() {
     return defHttp.get<BaseDataResp<ProductCategoryResp>>(
         {
             url: Api.List,
-        },
-        {
-            errorMessageMode: mode,
-        },
+        }
     );
 }
 

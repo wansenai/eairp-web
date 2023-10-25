@@ -1,15 +1,18 @@
 import {FormSchema} from "@/components/Form";
 import {BasicColumn} from "@/components/Table";
-import { h } from 'vue';
+import {h, reactive, ref} from 'vue';
 import {Switch} from "ant-design-vue";
 import {useMessage} from "@/hooks/web/useMessage";
 import {useI18n} from "@/hooks/web/useI18n";
 import {updateProductStatus} from "@/api/product/product";
 import {getCategoryList} from "@/api/product/productCategory";
+import {FormState, MeTable, ProductInfo, ProductStockModel, Stock} from "@/views/product/info/model/productInfoModel";
+import {UnwrapRef} from "vue/dist/vue";
+import {AddProductReq, AddProductStockReq} from "@/api/product/model/productModel";
 
 const { t } = useI18n();
 
-export const columns: BasicColumn[] = [
+const columns: BasicColumn[] = [
     {
         title: '条码',
         dataIndex: 'productBarcode',
@@ -109,7 +112,7 @@ export const columns: BasicColumn[] = [
     }
 ]
 
-export const searchFormSchema: FormSchema[] = [
+const searchFormSchema: FormSchema[] = [
     {
         label: '商品类别',
         field: 'productCategoryId',
@@ -217,6 +220,129 @@ export const searchFormSchema: FormSchema[] = [
     },
 ]
 
-export const formSchema: FormSchema[] = [
+const meTable: MeTable = reactive({
+    loading: false,
+    dataSource: ref([]),
+    columns: [
+        {
+            title: '条码',
+            key: 'barCode',
+            type: 'inputNumber',
+            placeholder: '请输入${title}',
+            validateRules: [
+                { required: true, message: '条码不能为空' },
+                { pattern: /^.{4,40}$/, message: '长度为4到40位' },
+            ],
+        },
+        {
+            title: '单位',
+            key: 'productUnit',
+            type: 'input',
+            placeholder: '请输入${title}',
+            validateRules: [{ required: true, message: '单位不能为空' }],
+        },
+        {
+            title: '多属性',
+            key: 'multiAttribute',
+            type: 'input',
+            readonly: true,
+            placeholder: '请输入${title}',
+        },
+        {
+            title: '采购价',
+            key: 'purchasePrice',
+            type: 'inputNumber',
+            defaultValue: '',
+            placeholder: '请输入${title}',
+        },
+        {
+            title: '零售价',
+            key: 'retailPrice',
+            type: 'inputNumber',
+            defaultValue: '',
+            placeholder: '请输入${title}',
+        },
+        {
+            title: '销售价',
+            key: 'salesPrice',
+            type: 'inputNumber',
+            defaultValue: '',
+            placeholder: '请输入${title}',
+        },
+        {
+            title: '最低售价',
+            key: 'lowSalesPrice',
+            type: 'inputNumber',
+            defaultValue: '',
+            placeholder: '请输入${title}',
+        },
+    ],
+});
 
-]
+const stock: Stock = reactive({
+    loading: false,
+    dataSource: ref([]),
+    columns: [
+        {
+            title: '仓库',
+            key: 'warehouseName',
+            type: 'input',
+        },
+        {
+            title: '期初库存数量',
+            key: 'initStockQuantity',
+            type: 'inputNumber',
+            placeholder: '请输入${title}',
+        },
+        {
+            title: '最低安全库存数量',
+            key: 'lowStockQuantity',
+            type: 'inputNumber',
+            placeholder: '请输入${title}',
+        },
+        {
+            title: '最高安全库存数量',
+            key: 'highStockQuantity',
+            type: 'inputNumber',
+            placeholder: '请输入${title}',
+        },
+    ],
+});
+
+const formState: AddProductReq = reactive({
+    productId: '',
+    productName: '',
+    productStandard: '',
+    productModel: '',
+    productUnit: '',
+    productUnitId: null,
+    productColor: '',
+    productWeight: null,
+    productExpiryNum: null,
+    productCategoryId: null,
+    enableSerialNumber: null,
+    enableBatchNumber: null,
+    remark: '',
+    warehouseShelves: '',
+    productManufacturer: '',
+    otherFieldOne: '',
+    otherFieldTwo: '',
+    otherFieldThree: '',
+});
+
+const productInfo: ProductInfo = reactive({
+    mfrs: '制造商',
+    otherField1: '自定义1',
+    otherField2: '自定义2',
+    otherField3: '自定义3',
+});
+
+
+export {
+    columns,
+    searchFormSchema,
+    meTable,
+    stock,
+    formState,
+    productInfo,
+};
