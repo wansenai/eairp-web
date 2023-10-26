@@ -6,9 +6,8 @@ import {useMessage} from "@/hooks/web/useMessage";
 import {useI18n} from "@/hooks/web/useI18n";
 import {updateProductStatus} from "@/api/product/product";
 import {getCategoryList} from "@/api/product/productCategory";
-import {FormState, MeTable, ProductInfo, ProductStockModel, Stock} from "@/views/product/info/model/productInfoModel";
-import {UnwrapRef} from "vue/dist/vue";
-import {AddProductReq, AddProductStockReq} from "@/api/product/model/productModel";
+import {MeTable, ProductInfo, Stock} from "@/views/product/info/model/productInfoModel";
+import {AddProductReq} from "@/api/product/model/productModel";
 
 const { t } = useI18n();
 
