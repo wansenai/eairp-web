@@ -44,7 +44,7 @@ import {BasicTable, TableAction, useTable} from "@/components/Table";
 import {useModal} from "@/components/Modal";
 import {useMessage} from "@/hooks/web/useMessage";
 import {columns, searchFormSchema} from "@/views/basic/member/member.data";
-import {getMemberList, deleteBatchMember, updateMemberStatus} from "@/api/basic/member";
+import {getMemberPageList, deleteBatchMember, updateMemberStatus} from "@/api/basic/member";
 import MemberModal from "@/views/basic/member/components/MemberModal.vue";
 import ImportFileModal from '@/components/Tools/ImportFileModal.vue';
 import { exportXlsx } from '@/api/basic/common';
@@ -60,7 +60,7 @@ export default defineComponent({
     const importModalRef = ref(null);
     const [registerTable, { reload, getSelectRows }] = useTable({
       title: '会员信息列表',
-      api: getMemberList,
+      api: getMemberPageList,
       rowKey: 'id',
       columns: columns,
       rowSelection: {

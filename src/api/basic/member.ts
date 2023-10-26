@@ -10,15 +10,16 @@ import {
 
 enum API {
     List = '/basic/member/list',
+    PageList = '/basic/member/pageList',
     AddOrUpdateMember = '/basic/member/addOrUpdate',
     DeleteBatch = '/basic/member/deleteBatch',
     UpdateStatus = '/basic/member/updateStatus',
 }
 
-export function getMemberList(params: QueryMemberReq, mode: ErrorMessageMode = 'notice') {
+export function getMemberPageList(params: QueryMemberReq, mode: ErrorMessageMode = 'notice') {
     return defHttp.post<BaseDataResp<MemberResp>>(
         {
-            url: API.List,
+            url: API.PageList,
             params,
         },
         {

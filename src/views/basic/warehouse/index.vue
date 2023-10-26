@@ -46,7 +46,7 @@ import {BasicTable, TableAction, useTable} from "@/components/Table";
 import {useModal} from "@/components/Modal";
 import {useMessage} from "@/hooks/web/useMessage";
 import {columns, searchFormSchema} from "@/views/basic/warehouse/warehouse.data";
-import {getWarehouseList, deleteBatchWarehouse, updateWarehouseStatus} from "@/api/basic/warehouse";
+import {getWarehousePageList, deleteBatchWarehouse, updateWarehouseStatus} from "@/api/basic/warehouse";
 import WarehouseModal from "@/views/basic/warehouse/components/WarehouseModal.vue";
 import {Tag} from "ant-design-vue";
 
@@ -58,7 +58,7 @@ export default defineComponent({
     const { createMessage } = useMessage();
     const [registerTable, { reload, getSelectRows }] = useTable({
       title: '仓库列表',
-      api: getWarehouseList,
+      api: getWarehousePageList,
       rowKey: 'id',
       columns: columns,
       rowSelection: {

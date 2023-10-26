@@ -9,17 +9,17 @@ import {
 
 
 enum API {
-    List = '/basic/warehouse/list',
+    PageList = '/basic/warehouse/pageList',
     AddOrUpdateWarehouse = '/basic/warehouse/addOrUpdate',
     DeleteBatch = '/basic/warehouse/delete',
     UpdateStatus = '/basic/warehouse/updateStatus',
     GetWarehouse = '/basic/warehouse/getWarehouse',
 }
 
-export function getWarehouseList(params: QueryWarehouseReq, mode: ErrorMessageMode = 'notice') {
+export function getWarehousePageList(params: QueryWarehouseReq, mode: ErrorMessageMode = 'notice') {
     return defHttp.post<BaseDataResp<WarehouseResp>>(
         {
-            url: API.List,
+            url: API.PageList,
             params,
         },
         {
